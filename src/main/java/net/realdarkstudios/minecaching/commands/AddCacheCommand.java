@@ -31,10 +31,8 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
             plr.sendMessage(ChatColor.RED + "You are already creating a cache!");
             return true;
         } else if (args.length < 1) {
-            cache = Minecache.EMPTY;
-            cache.setID(Utils.generateID(5));
             plr.sendMessage(ChatColor.LIGHT_PURPLE + "Starting creation of new cache...");
-            PlayerStorage.getInstance().setTempMinecache(plr.getUniqueId(), cache);
+            PlayerStorage.getInstance().setTempMinecache(plr.getUniqueId(), Minecache.EMPTY.setID(Utils.generateID(5)));
             return true;
         }
 
@@ -51,6 +49,18 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
             case "cancel" -> {
                 cache = null;
                 plr.sendMessage(ChatColor.RED + "Cancelled the creation of this minecache!");
+            }
+            case "type" -> {
+                if (args.length < 2) {
+                    plr.sendMessage(ChatColor.RED + "Incorrect Usage!");
+                    plr.sendMessage(ChatColor.RED + "/addcache type <type>");
+                }
+                MinecacheType type = MinecacheType.get(args[1].toUpperCase());
+                if (type.equals(MinecacheType.INVALID)) {
+                    plr.sendMessage(ChatColor.RED + "Invalid Minecache Type");
+                    return true;
+                } else cache.setType(type);
+                plr.sendMessage(ChatColor.LIGHT_PURPLE + "Set type to " + args[1]);
             }
             case "name" -> {
                 if (args.length < 2) {
@@ -82,11 +92,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     return true;
                 }
 
-                Config cfg = Config.getInstance();
-                if (x > cfg.getMaxX() || y > cfg.getMaxY() || z > cfg.getMaxZ() || x < cfg.getMinX() || y < cfg.getMinY() || z < cfg.getMinZ()) {
-                    plr.sendMessage(ChatColor.RED + "Invalid coordinates!");
-                    return true;
-                }
+                if (!validateLocation(plr, x, y, z)) return true;
 
                 cache.setLodeLocation(new Location(plr.getWorld(), x, y, z));
                 plr.sendMessage(String.format("%sSet lodestone coords to [%s](%d, %d, %d)", ChatColor.LIGHT_PURPLE, plr.getLocation().getWorld().getName(), x, y, z));
@@ -107,11 +113,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     return true;
                 }
 
-                Config cfg = Config.getInstance();
-                if (x > cfg.getMaxX() || y > cfg.getMaxY() || z > cfg.getMaxZ() || x < cfg.getMinX() || y < cfg.getMinY() || z < cfg.getMinZ()) {
-                    plr.sendMessage(ChatColor.RED + "Invalid coordinates!");
-                    return true;
-                }
+                if (!validateLocation(plr, x, y, z)) return true;
 
                 cache.setLocation(new Location(plr.getWorld(), x, y, z));
                 plr.sendMessage(String.format("%sSet coords to [%s](%d, %d, %d)", ChatColor.LIGHT_PURPLE, plr.getLocation().getWorld().getName(), x, y, z));
@@ -130,14 +132,14 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                 } else if (cache.lodeLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
                     plr.sendMessage(ChatColor.RED + "The lodestone coordinates are too far away! They must be under " + Config.getInstance().getMaxLodestoneDistance() + "blocks away!");
                 } else {
-                    cache.setStatus(MinecacheStatus.NEEDS_REVIEWED).setAuthor(plr.getUniqueId()).setType(MinecacheType.TRADITIONAL).setBlockType(cache.lodeLocation().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(Utils.EMPTY_UUID);
+                    cache.setStatus(MinecacheStatus.NEEDS_REVIEWED).setAuthor(plr.getUniqueId()).setBlockType(cache.lodeLocation().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(Utils.EMPTY_UUID);
                     MinecacheStorage.getInstance().saveMinecache(cache, true);
                     plr.sendMessage(ChatColor.LIGHT_PURPLE + "Created " + cache.id() + ": " + cache.name());
                     PlayerStorage.getInstance().setPlayerHides(plr, PlayerStorage.getInstance().getPlayerHides(plr) + 1);
                     cache = null;
                 }
             }
-            case "data" -> sender.sendMessage(String.format("ID: %s, Name: %s, Lode Coords: (%d, %d, %d), Cache Coords: (%d, %d, %d)", cache.id(), cache.name(), cache.lx(), cache.ly(), cache.lz(), cache.x(), cache.y(), cache.z()));
+            case "data" -> sender.sendMessage(String.format("ID: %s, Name: %s, Type: %s, Lode Coords: (%d, %d, %d), Cache Coords: (%d, %d, %d)", cache.id(), cache.name(), cache.type().getId(), cache.lx(), cache.ly(), cache.lz(), cache.x(), cache.y(), cache.z()));
         }
 
         PlayerStorage.getInstance().setTempMinecache(plr.getUniqueId(), cache);
@@ -240,6 +242,35 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
 //        MinecacheStorage.getInstance().saveMinecache(newCache, true);
     }
 
+    private boolean validateLocation(Player plr, int x, int y, int z) {
+        Config cfg = Config.getInstance();
+        if (x > cfg.getMaxX()) {
+            plr.sendMessage(ChatColor.RED + "X coordinate is above the allowed limit of " + cfg.getMaxX());
+            return false;
+        }
+        if (x > cfg.getMinX()) {
+            plr.sendMessage(ChatColor.RED + "X coordinate is below the allowed limit of " + cfg.getMinX());
+            return false;
+        }
+        if (y > cfg.getMaxY()) {
+            plr.sendMessage(ChatColor.RED + "Y coordinate is above the allowed limit of " + cfg.getMaxY());
+            return false;
+        }
+        if (y > cfg.getMinY()) {
+            plr.sendMessage(ChatColor.RED + "Y coordinate is below the allowed limit of " + cfg.getMinY());
+            return false;
+        }
+        if (z > cfg.getMaxZ()) {
+            plr.sendMessage(ChatColor.RED + "Z coordinate is above the allowed limit of " + cfg.getMaxZ());
+            return false;
+        }
+        if (z > cfg.getMinZ()) {
+            plr.sendMessage(ChatColor.RED + "Z coordinate is below the allowed limit of " + cfg.getMinZ());
+            return false;
+        }
+        return true;
+    }
+
     private int validateCoordinate(String coord, Player plr, String axis) {
         String a = axis.toUpperCase();
 
@@ -250,7 +281,6 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                 try {
                     return plr.getLocation().getBlockZ() + Integer.parseInt(coord.substring(1));
                 } catch (Exception e) {
-                    plr.sendMessage(ChatColor.RED + a + " coordinate is invalid!");
                     return (a.equals("X") ? Config.getInstance().getMaxX() : a.equals("Y") ? Config.getInstance().getMaxY() : Config.getInstance().getMaxZ()) + 1;
                 }
             }
@@ -258,7 +288,6 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
             try {
                 return Integer.parseInt(coord);
             } catch (NumberFormatException e) {
-                plr.sendMessage(ChatColor.RED + a + " coordinate is invalid!");
                 return (a.equals("X") ? Config.getInstance().getMaxX() : a.equals("Y") ? Config.getInstance().getMaxY() : Config.getInstance().getMaxZ()) + 1;
             }
         }
@@ -278,8 +307,8 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
 //        else return List.of();
 
         return switch (args.length) {
-            case 1 -> PlayerStorage.getInstance().getTempMinecache(plr.getUniqueId()) == null ? List.of() : Stream.of("cancel", "name", "lodecoords", "coords", "save", "data").filter(s -> s.contains(args[0])).toList();
-            case 2 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", "~ ~", "~ ~ ~", target.getX() + "", String.format("%d %d %d", target.getX(), target.getY(), target.getZ())) : List.of();
+            case 1 -> PlayerStorage.getInstance().getTempMinecache(plr.getUniqueId()) == null ? List.of() : Stream.of("cancel", "name", "lodecoords", "coords", "save", "data", "type").filter(s -> s.contains(args[0])).toList();
+            case 2 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", "~ ~", "~ ~ ~", target.getX() + "", String.format("%d %d %d", target.getX(), target.getY(), target.getZ())) : args[0].equals("type") ? List.of("Traditional", "Multi", "Mystery") : List.of();
             case 3 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", "~ ~", target.getY() + "", String.format("%d %d", target.getY(), target.getZ())) : List.of();
             case 4 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", target.getZ() + "") : List.of();
             // case 4 -> args[0].equals("lodecoords") || args[0].equals("coords") ? Stream.of("Traditional", "Multi", "Mystery").filter((s -> s.contains(args[3]))).toList();
