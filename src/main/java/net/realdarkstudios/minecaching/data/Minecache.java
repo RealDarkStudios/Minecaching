@@ -29,6 +29,9 @@ public class Minecache {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.lx = lx;
+        this.ly = ly;
+        this.lz = lz;
         this.ftf = ftf;
         this.status = status;
         this.hidden = hidden;
