@@ -248,7 +248,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
             plr.sendMessage(ChatColor.RED + "X coordinate is above the allowed limit of " + cfg.getMaxX());
             return false;
         }
-        if (x > cfg.getMinX()) {
+        if (x < cfg.getMinX()) {
             plr.sendMessage(ChatColor.RED + "X coordinate is below the allowed limit of " + cfg.getMinX());
             return false;
         }
@@ -256,7 +256,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
             plr.sendMessage(ChatColor.RED + "Y coordinate is above the allowed limit of " + cfg.getMaxY());
             return false;
         }
-        if (y > cfg.getMinY()) {
+        if (y < cfg.getMinY()) {
             plr.sendMessage(ChatColor.RED + "Y coordinate is below the allowed limit of " + cfg.getMinY());
             return false;
         }
@@ -264,7 +264,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
             plr.sendMessage(ChatColor.RED + "Z coordinate is above the allowed limit of " + cfg.getMaxZ());
             return false;
         }
-        if (z > cfg.getMinZ()) {
+        if (z < cfg.getMinZ()) {
             plr.sendMessage(ChatColor.RED + "Z coordinate is below the allowed limit of " + cfg.getMinZ());
             return false;
         }
