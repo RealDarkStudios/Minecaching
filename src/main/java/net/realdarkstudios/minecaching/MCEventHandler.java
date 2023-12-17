@@ -18,7 +18,7 @@ public class MCEventHandler implements Listener {
         HashMap<Location, Minecache> locations = MinecacheStorage.getInstance().getLocations();
 
         for (Location cacheLocation: locations.keySet()) {
-            if (cacheLocation.distance(loc) < 1) {
+            if (loc.getWorld().equals(cacheLocation.getWorld()) && cacheLocation.distance(loc) < 1) {
                 Minecache cache = locations.get(cacheLocation);
                 cache.setBlockType(Material.AIR);
                 cache.setInvalidated(true);

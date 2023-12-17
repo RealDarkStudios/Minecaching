@@ -60,7 +60,7 @@ public class ListCachesCommand implements CommandExecutor, TabExecutor {
                 TextComponent entry = new TextComponentBuilder(String.format("%s%d. [%s] [%s%s%s] %s: \"%s\" (Finds: %s) ", primaryColor, (page * 10) + i + 1, cache.invalidated() ? MinecacheType.INVALID : cache.type().toString(), statusColor, cache.invalidated() ? MinecacheStatus.INVALID : cache.status(), primaryColor, cache.id(), cache.name(), cache.finds())).build();
                 TextComponent findEntry = new TextComponentBuilder("Find\n").color(ChatColor.AQUA.asBungee()).underline().clickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/findcache " + cache.id()).build();
                 msg.addExtra(entry);
-                msg.addExtra(findEntry);
+                if (cache.status().equals(MinecacheStatus.INVALID) && cache.type().equals(MinecacheType.INVALID)) msg.addExtra(findEntry);
             }
         } else {
             msg = new TextComponentBuilder("No caches to show!").color(ChatColor.RED.asBungee()).build();

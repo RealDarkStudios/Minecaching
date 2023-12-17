@@ -29,7 +29,6 @@ public class FindCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-
         if (args.length < 1) {
             sender.spigot().sendMessage(MCPluginMessages.INCORRECT_USAGE);
             return false;
@@ -40,6 +39,11 @@ public class FindCacheCommand implements CommandExecutor, TabExecutor {
 
         if (cache.equals(Minecache.EMPTY)) {
             sender.sendMessage(ChatColor.RED + "Did not find minecache with ID " + id);
+            return true;
+        }
+
+        if (!plr.getWorld().equals(cache.world())) {
+            sender.sendMessage(ChatColor.RED + "This cache is in a different world!");
             return true;
         }
 
