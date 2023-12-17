@@ -1,0 +1,60 @@
+name: Minecaching
+version: '${project.version}'
+main: net.realdarkstudios.minecaching.Minecaching
+api-version: '1.19'
+prefix: Minecaching
+load: POSTWORLD
+authors: [RealDarkStudios / RDS]
+description: Bring Geocaching to your Minecraft server!
+commands:
+  addcache:
+    description: "Adds a Minecache"
+    usage: "/addcache <x> <y> <z> <name>"
+    aliases: [addc, ac]
+    permission: minecaching.addcache
+    permission-message: "You do not have permission to add caches!"
+  findcache:
+    description: "Find a Minecache"
+    usage: "/findcache <id>"
+    aliases: [findc, fc]
+    permission: minecaching.findcache
+    permission-message: "You do not have permission to find caches!"
+  verifycache:
+    description: "[ADMIN] Confirms a cache"
+    usage: "/verifycache <id>"
+    aliases: [vercache, verc, vc]
+    permission: minecaching.admin.confirmcache
+    permission-message: "You do not have permission to confirm caches!"
+  delcache:
+    description: "Deletes a Minecache"
+    usage: "/delcache <id>"
+    aliases: [deletecache, delc, dc]
+    permission: minecaching.delcache
+    permission-message: "You do not have permission to delete caches!"
+  listcaches:
+    description: "Lists all Minecaches"
+    usage: "/listcaches [page]"
+    aliases: [listc, lc]
+    permission: minecaching.command.listcaches
+    permission-message: "You do not have permission to view caches!"
+  mcadmin:
+    description: "[ADMIN] Minecaching Admin Utilities"
+    usage: "/mca <reload|version>"
+    aliases: [mca]
+    permission: minecaching.admin
+    permission-message: "You do not have permission to use the admin utilities"
+permissions:
+  minecaching.addcache:
+    default: true
+  minecaching.findcache:
+    default: true
+  minecaching.admin.verifycache:
+    default: op
+  minecaching.delcache:
+    default: true
+  minecaching.command.listcaches:
+    default: true
+  minecaching.admin:
+    default: op
+  minecaching.admin.reload:
+    default: op

@@ -1,0 +1,111 @@
+package net.realdarkstudios.minecaching.commands;
+
+import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.data.Minecache;
+import net.realdarkstudios.minecaching.data.MinecacheStorage;
+import net.realdarkstudios.minecaching.util.MCPluginMessages;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.CompassMeta;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class FindCacheCommand implements CommandExecutor, TabExecutor {
+    int taskID;
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player plr)) {
+            sender.sendMessage(ChatColor.RED + "You must be a player to find minecaches!");
+            return true;
+        }
+
+
+        if (args.length < 1) {
+            sender.spigot().sendMessage(MCPluginMessages.INCORRECT_USAGE);
+            return false;
+        }
+
+        String id = args[0];
+        Minecache cache = MinecacheStorage.getInstance().getMinecacheByID(id);
+
+        if (cache.equals(Minecache.EMPTY)) {
+            sender.sendMessage(ChatColor.RED + "Did not find minecache with ID " + id);
+            return true;
+        }
+
+        Location cacheLocation = new Location(cache.world(), cache.x(), cache.y(), cache.z());
+        Location cacheLocationC = cacheLocation.clone();
+        cacheLocationC.setY(plr.getLocation().getY());
+        if (plr.getLocation().distance(cacheLocationC) < 100) {
+            plr.sendMessage(ChatColor.AQUA + "You are within 100 blocks of the cache!");
+            return true;
+        }
+
+        Block lastBlock = cacheLocation.getBlock();
+
+        cacheLocation.getBlock().setType(Material.LODESTONE);
+
+        ItemStack compass = new ItemStack(Material.COMPASS);
+        CompassMeta meta = ((CompassMeta) compass.getItemMeta());
+        assert meta != null;
+        meta.setLodestone(cacheLocation);
+        meta.setLodestoneTracked(true);
+        meta.setDisplayName(cache.id() + ": " + cache.name());
+        meta.setLore(List.of("A compass pointing to the location of a cache."));
+        compass.setItemMeta(meta);
+        Minecaching.getInstance().getLogger().info(String.format("Giving %s a compass pointing to (%s) %d, %d, %d", plr.getDisplayName(), meta.getLodestone().getWorld().getName(), meta.getLodestone().getBlockX(), meta.getLodestone().getBlockY(), meta.getLodestone().getBlockZ()));
+
+        int emptySlotCount = 0;
+        ArrayList<Integer> emptySlots = new ArrayList<>();
+        for (int slot = 0; slot < plr.getInventory().getSize() - 5; slot++) {
+            if (plr.getInventory().getItem(slot) == null) {
+                emptySlotCount += 1;
+                emptySlots.add(slot);
+            }
+        }
+
+        if (emptySlotCount == 0) {
+            plr.getWorld().dropItemNaturally(plr.getLocation(), compass);
+        } else {
+            plr.getInventory().setItem(emptySlots.get(0), compass);
+        }
+
+        plr.sendMessage(ChatColor.AQUA + "Here's a compass to " + cache.id() + ": " + cache.name());
+
+        taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Minecaching.getInstance(), () -> {
+            if (plr.getLocation().distance(cacheLocationC) < 100) {
+                cancelTask(cache, cacheLocation, plr);
+            } else cacheLocationC.setY(plr.getLocation().getY());
+        }, 0L, 1L);
+
+        return true;
+    }
+
+    private void cancelTask(Minecache cache, Location cacheLocation, Player plr) {
+        Bukkit.getScheduler().cancelTask(taskID);
+        Block cacheB = cacheLocation.getBlock();
+        cacheB.setType(cache.blockType());
+        for (int slot = 0; slot < plr.getInventory().getSize() - 5; slot++) {
+            ItemStack item = plr.getInventory().getItem(slot);
+            if (item != null && item.getItemMeta().getDisplayName().equals(cache.id() + ": " + cache.name()) && item.getItemMeta().getLore().equals(List.of("A compass pointing to the location of a cache."))) {
+                plr.getInventory().setItem(slot, null);
+            }
+        }
+        plr.sendMessage(ChatColor.AQUA + "You are now within 50 blocks of the cache!");
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        return args.length == 1 ? MinecacheStorage.getInstance().getIDArray() : List.of();
+    }
+}
