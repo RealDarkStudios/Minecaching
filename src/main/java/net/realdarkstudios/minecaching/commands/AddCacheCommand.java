@@ -67,52 +67,55 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                 }
             }
             case "lodecoords" -> {
+                int x, y, z;
                 if (args.length == 1) {
-                    cache.setLocation(plr.getLocation());
-                    plr.sendMessage(String.format("%sSet lodestone coords to [%s](%d, %d, %d)", ChatColor.LIGHT_PURPLE, plr.getLocation().getWorld().getName(), plr.getLocation().getBlockX(), plr.getLocation().getBlockY(), plr.getLocation().getBlockZ()));
+                    x = validateCoordinate(String.valueOf(plr.getLocation().getBlockX()), plr, "lx");
+                    y = validateCoordinate(String.valueOf(plr.getLocation().getBlockY()), plr, "ly");
+                    z = validateCoordinate(String.valueOf(plr.getLocation().getBlockZ()), plr, "lz");
                 } else if (args.length == 4) {
-                    int x = validateCoordinate(args[1], plr, "lx");
-                    int y = validateCoordinate(args[2], plr, "ly");
-                    int z = validateCoordinate(args[3], plr, "lz");
-
-                    Config cfg = Config.getInstance();
-                    if (x > cfg.getMaxX() || y > cfg.getMaxY() || z > cfg.getMaxZ() || x < cfg.getMinX() || y < cfg.getMinY() || z < cfg.getMinZ()) {
-                        plr.sendMessage(ChatColor.RED + "Invalid Coordinates!");
-                        return true;
-                    }
-
-                    cache.setLodeLocation(new Location(plr.getWorld(), x, y, z));
-                    plr.sendMessage(String.format("%sSet lodestone coords to [%s](%d, %d, %d)", ChatColor.LIGHT_PURPLE, plr.getLocation().getWorld().getName(), x, y, z));
-                }
+                    x = validateCoordinate(args[1], plr, "lx");
+                    y = validateCoordinate(args[2], plr, "ly");
+                    z = validateCoordinate(args[3], plr, "lz");}
                 else {
                     plr.sendMessage(ChatColor.RED + "Invalid number of arguments!");
                     plr.sendMessage(ChatColor.RED + "/addcache lodecoords OR /addcache lodecoords <x> <y> <z>");
                     return true;
                 }
+
+                Config cfg = Config.getInstance();
+                if (x > cfg.getMaxX() || y > cfg.getMaxY() || z > cfg.getMaxZ() || x < cfg.getMinX() || y < cfg.getMinY() || z < cfg.getMinZ()) {
+                    plr.sendMessage(ChatColor.RED + "Invalid coordinates!");
+                    return true;
+                }
+
+                cache.setLodeLocation(new Location(plr.getWorld(), x, y, z));
+                plr.sendMessage(String.format("%sSet lodestone coords to [%s](%d, %d, %d)", ChatColor.LIGHT_PURPLE, plr.getLocation().getWorld().getName(), x, y, z));
             }
             case "coords" -> {
+                int x, y, z;
                 if (args.length == 1) {
-                    cache.setLocation(plr.getLocation());
-                    plr.sendMessage(String.format("%sSet cache coords to [%s](%d, %d, %d)", ChatColor.LIGHT_PURPLE, plr.getLocation().getWorld().getName(), plr.getLocation().getBlockX(), plr.getLocation().getBlockY(), plr.getLocation().getBlockZ()));
+                    x = validateCoordinate(String.valueOf(plr.getLocation().getBlockX()), plr, "x");
+                    y = validateCoordinate(String.valueOf(plr.getLocation().getBlockY()), plr, "y");
+                    z = validateCoordinate(String.valueOf(plr.getLocation().getBlockZ()), plr, "z");
                 } else if (args.length == 4) {
-                    int x = validateCoordinate(args[1], plr, "x");
-                    int y = validateCoordinate(args[2], plr, "y");
-                    int z = validateCoordinate(args[3], plr, "z");
-
-                    Config cfg = Config.getInstance();
-                    if (x > cfg.getMaxX() || y > cfg.getMaxY() || z > cfg.getMaxZ() || x < cfg.getMinX() || y < cfg.getMinY() || z < cfg.getMinZ()) {
-                        plr.sendMessage(ChatColor.RED + "Invalid Coordinates!");
-                        return true;
-                    }
-
-                    cache.setLocation(new Location(plr.getWorld(), x, y, z));
-                    plr.sendMessage(String.format("%sSet cache coords to [%s](%d, %d, %d)", ChatColor.LIGHT_PURPLE, plr.getLocation().getWorld().getName(), x, y, z));
-                }
+                    x = validateCoordinate(args[1], plr, "x");
+                    y = validateCoordinate(args[2], plr, "y");
+                    z = validateCoordinate(args[3], plr, "z");}
                 else {
                     plr.sendMessage(ChatColor.RED + "Invalid number of arguments!");
                     plr.sendMessage(ChatColor.RED + "/addcache coords OR /addcache coords <x> <y> <z>");
                     return true;
                 }
+
+                Config cfg = Config.getInstance();
+                if (x > cfg.getMaxX() || y > cfg.getMaxY() || z > cfg.getMaxZ() || x < cfg.getMinX() || y < cfg.getMinY() || z < cfg.getMinZ()) {
+                    plr.sendMessage(ChatColor.RED + "Invalid coordinates!");
+                    return true;
+                }
+
+                cache.setLocation(new Location(plr.getWorld(), x, y, z));
+                plr.sendMessage(String.format("%sSet coords to [%s](%d, %d, %d)", ChatColor.LIGHT_PURPLE, plr.getLocation().getWorld().getName(), x, y, z));
+
             }
             case "save" -> {
                 if (cache.name() == null) {
@@ -129,10 +132,9 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                 } else {
                     cache.setStatus(MinecacheStatus.NEEDS_REVIEWED).setAuthor(plr.getUniqueId()).setType(MinecacheType.TRADITIONAL).setBlockType(cache.lodeLocation().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(Utils.EMPTY_UUID);
                     MinecacheStorage.getInstance().saveMinecache(cache, true);
-                    PlayerStorage.getInstance().setTempMinecache(plr.getUniqueId(), null);
                     plr.sendMessage(ChatColor.LIGHT_PURPLE + "Created " + cache.id() + ": " + cache.name());
                     PlayerStorage.getInstance().setPlayerHides(plr, PlayerStorage.getInstance().getPlayerHides(plr) + 1);
-                    return true;
+                    cache = null;
                 }
             }
             case "data" -> sender.sendMessage(String.format("ID: %s, Name: %s, Lode Coords: (%d, %d, %d), Cache Coords: (%d, %d, %d)", cache.id(), cache.name(), cache.lx(), cache.ly(), cache.lz(), cache.x(), cache.y(), cache.z()));
