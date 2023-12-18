@@ -38,7 +38,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        if (cache == null) {
+        if (cache == null || cache.id().equals("NULL")) {
             plr.sendMessage(ChatColor.RED + "You haven't started making a cache yet!");
             plr.sendMessage(ChatColor.RED + "/addcache");
             return true;
@@ -157,9 +157,10 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
         }
 
         Block target = plr.getTargetBlock(null, 5);
+        PlayerStorageObject plrdata = PlayerStorage.getInstance().getOrCreatePlayerData(plr);
 
         return switch (args.length) {
-            case 1 -> PlayerStorage.getInstance().getPlayerData(plr.getUniqueId()).getCache() == null ? List.of() : Stream.of("cancel", "name", "lodecoords", "coords", "save", "data", "type").filter(s -> s.contains(args[0])).toList();
+            case 1 -> plrdata.getCache() == null && !plrdata.getCache().id().equals("NULL") ? List.of() : Stream.of("cancel", "name", "lodecoords", "coords", "save", "data", "type").filter(s -> s.contains(args[0])).toList();
             case 2 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", "~ ~", "~ ~ ~", target.getX() + "", String.format("%d %d %d", target.getX(), target.getY(), target.getZ())) : args[0].equals("type") ? List.of("Traditional", "Multi", "Mystery") : List.of();
             case 3 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", "~ ~", target.getY() + "", String.format("%d %d", target.getY(), target.getZ())) : List.of();
             case 4 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", target.getZ() + "") : List.of();
