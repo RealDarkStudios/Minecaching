@@ -20,7 +20,7 @@ public final class Minecaching extends JavaPlugin {
         // Plugin startup logic
         getLogger().info(String.format("Minecaching v%s is enabling...", VERSION));
 
-        File playerFolder = new File(getDataFolder() + "player/");
+        File playerFolder = new File(getDataFolder() + "/player/");
         if (!playerFolder.exists()) playerFolder.mkdirs();
 
         getLogger().info("Checking server version...");

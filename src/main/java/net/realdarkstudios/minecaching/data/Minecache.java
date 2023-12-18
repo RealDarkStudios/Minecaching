@@ -240,7 +240,7 @@ public class Minecache {
         yaml.set(key + ".name", name());
         yaml.set(key + ".author", author().toString());
         yaml.set(key + ".ftf", ftf().toString());
-        yaml.set(key + ".world", world().getName());
+        yaml.set(key + ".world", world() != null ? world().getName() : "world");
         yaml.set(key + ".x", x());
         yaml.set(key + ".y", y());
         yaml.set(key + ".z", z());
@@ -249,7 +249,7 @@ public class Minecache {
         yaml.set(key + ".lz", lz());
         yaml.set(key + ".status", status().getId());
         yaml.set(key + ".hidden", hidden().toString());
-        yaml.set(key + ".blocktype", blockType().toString());
+        yaml.set(key + ".blocktype", blockType() != null ? blockType().toString() : "AIR");
         yaml.set(key + ".finds", finds());
     }
 }
