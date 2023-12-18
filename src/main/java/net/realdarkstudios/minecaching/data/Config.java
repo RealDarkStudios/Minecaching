@@ -91,6 +91,10 @@ public class Config {
     public List<?> getEnabledTypes() {
         return yaml.getList("ENABLED_TYPES");
     }
+
+    public int getFindLodestoneDistance() {
+        return yaml.getInt("FIND_LODESTONE_DISTANCE");
+    }
     public static Config getInstance() {
         return INSTANCE;
     }
@@ -110,6 +114,8 @@ public class Config {
             int maxLodestoneDistance = getMaxLodestoneDistance();
             List<?> enabledTypes = getEnabledTypes();
 
+            int findLodestoneDistance = getFindLodestoneDistance();
+
             Minecaching.getInstance().saveResource("config.yml", true);
 
             yaml.set("MINECACHE_VERSION", minecacheVersion);
@@ -122,6 +128,7 @@ public class Config {
             yaml.set("MIN_Z", minZ);
             yaml.set("MAX_LODESTONE_DISTANCE", maxLodestoneDistance);
             yaml.set("ENABLED_TYPES", enabledTypes);
+            yaml.set("FIND_LODESTONE_DISTANCE", findLodestoneDistance);
             yaml.set("CONFIG_VERSION", Minecaching.getInstance().CONFIG_DATA_VERSION);
             Minecaching.getInstance().getLogger().info("Config update succeeded, updated from v" + configVersion + " to v" + getConfigVersion());
         } catch (Exception e) {

@@ -4,25 +4,32 @@
 # +-------------+
 
 # Do not touch!
-CONFIG_VERSION: 2
+CONFIG_VERSION: 3
 MINECACHE_VERSION: 2
 PLAYER_VERSION: 1
 
 # Determines the boundaries for where a Minecache can be placed in the Y direction.
-# Only recommended to change this if you have custom terrain generation or have differing world heights from vanilla
+# Only recommended to change this if you have custom terrain generation or have differing world heights from vanilla.
+# Defaults: 319 for Max, -64 for Min.
 MAX_Y: 319
 MIN_Y: -64
 
-# Determines the boundaries for where a Minecache can be placed in the XZ plane
-# Only recommended to change this if you have custom terrain generation or have differing world heights from vanilla
+# Determines the boundaries for where a Minecache can be placed in the XZ plane.
+# Only recommended to change this if you have custom terrain generation or have differing world heights from vanilla.
+# Defaults: 30000000 for Max, -30000000 for Min.
 MAX_X: 30000000
 MIN_X: -30000000
 MAX_Z: 30000000
 MIN_Z: -30000000
 
+# Determines the maximum distance a cache lodestone can be from the cache.
 MAX_LODESTONE_DISTANCE: 50
 
+# Determines which types are enabled on the server.
 ENABLED_TYPES:
   - TRADITIONAL
   - MYSTERY
   - MULTI
+
+# Determines how far away from a cache lodestone the compass will be removed. Default is 25.
+FIND_LODESTONE_DISTANCE: 25

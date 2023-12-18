@@ -11,7 +11,7 @@ import java.io.File;
 
 public final class Minecaching extends JavaPlugin {
     private final String VERSION = getDescription().getVersion();
-    public int CONFIG_DATA_VERSION = 2;
+    public int CONFIG_DATA_VERSION = 3;
     public int MINECACHE_DATA_VERSION = 2;
     public int PLAYER_DATA_VERSION = 1;
 

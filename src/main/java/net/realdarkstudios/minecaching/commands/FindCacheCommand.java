@@ -1,6 +1,7 @@
 package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.data.Config;
 import net.realdarkstudios.minecaching.data.Minecache;
 import net.realdarkstudios.minecaching.data.MinecacheStorage;
 import net.realdarkstudios.minecaching.util.MCPluginMessages;
@@ -50,8 +51,8 @@ public class FindCacheCommand implements CommandExecutor, TabExecutor {
         Location cacheLocation = new Location(cache.world(), cache.x(), cache.y(), cache.z());
         Location cacheLocationC = cacheLocation.clone();
         cacheLocationC.setY(plr.getLocation().getY());
-        if (plr.getLocation().distance(cacheLocationC) < 100) {
-            plr.sendMessage(ChatColor.AQUA + "You are within 100 blocks of the cache!");
+        if (plr.getLocation().distance(cacheLocationC) < Config.getInstance().getFindLodestoneDistance()) {
+            plr.sendMessage(ChatColor.AQUA + "You are within " + Config.getInstance().getFindLodestoneDistance() + " blocks of the cache!");
             return true;
         }
 
@@ -86,8 +87,9 @@ public class FindCacheCommand implements CommandExecutor, TabExecutor {
 
         plr.sendMessage(ChatColor.AQUA + "Here's a compass to " + cache.id() + ": " + cache.name());
 
+        int dist = Config.getInstance().getFindLodestoneDistance();
         taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Minecaching.getInstance(), () -> {
-            if (plr.getLocation().distance(cacheLocationC) < 100) {
+            if (plr.getLocation().distance(cacheLocationC) < dist) {
                 cancelTask(cache, cacheLocation, plr);
             } else cacheLocationC.setY(plr.getLocation().getY());
         }, 0L, 1L);
@@ -105,7 +107,7 @@ public class FindCacheCommand implements CommandExecutor, TabExecutor {
                 plr.getInventory().setItem(slot, null);
             }
         }
-        plr.sendMessage(ChatColor.AQUA + "You are now within 50 blocks of the cache!");
+        plr.sendMessage(ChatColor.AQUA + "You are now within " + Config.getInstance().getFindLodestoneDistance() + " blocks of the cache!");
     }
 
     @Override
