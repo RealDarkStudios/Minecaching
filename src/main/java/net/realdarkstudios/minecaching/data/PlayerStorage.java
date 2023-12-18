@@ -170,6 +170,9 @@ public class PlayerStorage {
             Minecaching.getInstance().getLogger().info("Player update succeeded, updated from v" + Config.getInstance().getPlayerVersion() + " to v" + Minecaching.getInstance().PLAYER_DATA_VERSION);
 
             Config.getInstance().setPlayerVersion(Minecaching.getInstance().PLAYER_DATA_VERSION);
+            for (PlayerStorageObject plr: playerStorage.values()) {
+                plr.save();
+            }
         } catch (Exception e) {
             Minecaching.getInstance().getLogger().warning("Player update failed!");
         }

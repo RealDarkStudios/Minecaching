@@ -132,6 +132,7 @@ public class Config {
             yaml.set("FIND_LODESTONE_DISTANCE", findLodestoneDistance);
             yaml.set("CONFIG_VERSION", Minecaching.getInstance().CONFIG_DATA_VERSION);
             Minecaching.getInstance().getLogger().info("Config update succeeded, updated from v" + configVersion + " to v" + getConfigVersion());
+            save();
         } catch (Exception e) {
             Minecaching.getInstance().getLogger().warning("Config update failed!");
         }
