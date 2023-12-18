@@ -117,6 +117,7 @@ public class Config {
             int findLodestoneDistance = getFindLodestoneDistance();
 
             Minecaching.getInstance().saveResource("config.yml", true);
+            load();
 
             yaml.set("MINECACHE_VERSION", minecacheVersion);
             yaml.set("PLAYER_VERSION", playerVersion);
