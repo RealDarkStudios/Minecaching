@@ -141,6 +141,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     plr.sendMessage(ChatColor.LIGHT_PURPLE + "Created " + cache.id() + ": " + cache.name());
                     PlayerStorage.getInstance().getPlayerData(plr).addHide(cache.id());
                     cache = Minecache.EMPTY;
+                    PlayerStorage.getInstance().getPlayerData(plr).setCacheId("NULL");
                 }
             }
             case "data" -> sender.sendMessage(String.format("ID: %s, Name: %s, Type: %s, Lode Coords: (%d, %d, %d), Cache Coords: (%d, %d, %d)", cache.id(), cache.name(), cache.type().getId(), cache.lx(), cache.ly(), cache.lz(), cache.x(), cache.y(), cache.z()));
