@@ -52,30 +52,37 @@ public class PlayerStorageObject {
 
     public void addFind(String id) {
         if (!this.finds.contains(id)) this.finds.add(id);
+        saveData();
     }
 
     public void removeFind(String id) {
         this.finds.remove(id);
+        saveData();
     }
 
     public void addHide(String id) {
         if (!this.hides.contains(id)) this.hides.add(id);
+        saveData();
     }
 
     public void removeHide(String id) {
         this.hides.remove(id);
+        saveData();
     }
 
     public void addFTF(String id) {
         if (!this.ftfs.contains(id)) this.ftfs.add(id);
+        saveData();
     }
 
     public void removeFTF(String id) {
         this.ftfs.remove(id);
+        saveData();
     }
 
     public void setCache(Minecache newCache) {
         this.newCache = newCache;
+        saveData();
     }
 
     public void findMinecache(Minecache minecache) {
