@@ -26,13 +26,17 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        Minecache cache = PlayerStorage.getInstance().getTempMinecache(plr.getUniqueId());
+        if (!PlayerStorage.getInstance().hasPlayerData(plr)) {
+            PlayerStorage.getInstance().createPlayerData(plr);
+        }
+
+        Minecache cache = PlayerStorage.getInstance().getPlayerData(plr).getCache();
         if (args.length < 1 && cache != null) {
             plr.sendMessage(ChatColor.RED + "You are already creating a cache!");
             return true;
         } else if (args.length < 1) {
             plr.sendMessage(ChatColor.LIGHT_PURPLE + "Starting creation of new cache...");
-            PlayerStorage.getInstance().setTempMinecache(plr.getUniqueId(), Minecache.EMPTY.setID(Utils.generateID(5)));
+            PlayerStorage.getInstance().getPlayerData(plr).setCache(Minecache.EMPTY.setID(Utils.generateID(5)));
             return true;
         }
 
@@ -47,7 +51,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
 
         switch (subCommand) {
             case "cancel" -> {
-                cache = null;
+                cache = Minecache.EMPTY;
                 plr.sendMessage(ChatColor.RED + "Cancelled the creation of this minecache!");
             }
             case "type" -> {
@@ -135,111 +139,32 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     cache.setStatus(MinecacheStatus.NEEDS_REVIEWED).setAuthor(plr.getUniqueId()).setBlockType(cache.lodeLocation().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(Utils.EMPTY_UUID);
                     MinecacheStorage.getInstance().saveMinecache(cache, true);
                     plr.sendMessage(ChatColor.LIGHT_PURPLE + "Created " + cache.id() + ": " + cache.name());
-                    PlayerStorage.getInstance().setPlayerHides(plr, PlayerStorage.getInstance().getPlayerHides(plr) + 1);
-                    cache = null;
+                    PlayerStorage.getInstance().getPlayerData(plr).addHide(cache.id());
+                    cache = Minecache.EMPTY;
                 }
             }
             case "data" -> sender.sendMessage(String.format("ID: %s, Name: %s, Type: %s, Lode Coords: (%d, %d, %d), Cache Coords: (%d, %d, %d)", cache.id(), cache.name(), cache.type().getId(), cache.lx(), cache.ly(), cache.lz(), cache.x(), cache.y(), cache.z()));
         }
 
-        PlayerStorage.getInstance().setTempMinecache(plr.getUniqueId(), cache);
+        PlayerStorage.getInstance().getPlayerData(plr).setCache(cache);
         return true;
+    }
 
-//        String cID = Utils.generateID(5), cName;
-//        UUID cAuthor = plr.getUniqueId();
-//        int x, y, z;
-//
-//        if (args[0].contains("~")) {
-//            if (args[0].length() == 1) {
-//                x = plr.getLocation().getBlockX();
-//            } else {
-//                try {
-//                    x = plr.getLocation().getBlockX() + Integer.parseInt(args[0].substring(1));
-//                } catch (Exception e) {
-//                    sender.sendMessage(ChatColor.RED + "X coordinate is invalid!");
-//                    return false;
-//                }
-//            }
-//        } else {
-//            try {
-//                x = Integer.parseInt(args[0]);
-//            } catch (NumberFormatException e) {
-//                sender.sendMessage(ChatColor.RED + "X coordinate is invalid!");
-//                return false;
-//            }
-//        }
-//
-//        if (args[1].contains("~")) {
-//            if (args[1].length() == 1) {
-//                y = plr.getLocation().getBlockY();
-//            } else {
-//                try {
-//                    y = plr.getLocation().getBlockY() + Integer.parseInt(args[1].substring(1));
-//                } catch (Exception e) {
-//                    sender.sendMessage(ChatColor.RED + "Y coordinate is invalid!");
-//                    return false;
-//                }
-//            }
-//        } else {
-//            try {
-//                y = Integer.parseInt(args[1]);
-//            } catch (NumberFormatException e) {
-//                sender.sendMessage(ChatColor.RED + "Y coordinate is invalid!");
-//                return false;
-//            }
-//        }
-//
-//        if (args[2].contains("~")) {
-//            if (args[2].length() == 1) {
-//                z = plr.getLocation().getBlockZ();
-//            } else {
-//                try {
-//                    z = plr.getLocation().getBlockZ() + Integer.parseInt(args[2].substring(1));
-//                } catch (Exception e) {
-//                    sender.sendMessage(ChatColor.RED + "Z coordinate is invalid!");
-//                    return false;
-//                }
-//            }
-//        } else {
-//            try {
-//                z = Integer.parseInt(args[2]);
-//            } catch (NumberFormatException e) {
-//                sender.sendMessage(ChatColor.RED + "Z coordinate is invalid!");
-//                return false;
-//            }
-//        }
-//
-//        String stype = args[3];
-//        MinecacheType type = MinecacheType.get(stype.toUpperCase());
-//
-//        Config cfg = Config.getInstance();
-//        if (type.equals(MinecacheType.INVALID)) {
-//            sender.sendMessage(String.format("%s\"%s\" is not a valid type!", ChatColor.RED, stype));
-//            return true;
-//        } else if (!cfg.getEnabledTypes().contains(type.getId())) {
-//            sender.sendMessage(String.format("%sThis server has disabled the %s cache type!", ChatColor.RED, stype));
-//        }
-//
-//        if (x > cfg.getMaxX() || x < cfg.getMinX() || y > cfg.getMaxY() || y < cfg.getMinY() || z > cfg.getMaxZ() || z < cfg.getMinZ()) {
-//            sender.sendMessage(ChatColor.RED + "This minecache is outside the boundaries! Please contact and administrator if you think this is incorrect!");
-//            return true;
-//        }
-//
-//        StringBuilder name = new StringBuilder();
-//        for (int i = 4; i < args.length; i++) {
-//            name.append(args[i]).append(" ");
-//        }
-//
-//        cName = name.toString().trim();
-//
-//        World world = plr.getWorld();
-//        Location cacheLocation = new Location(world, x, y, z);
-//        Material containerType = args[5] == null ? Material.BARREL : Material.getMaterial(args[5]);
-//
-//        sender.sendMessage(String.format("%Created %s Minecache \"%s\" with ID %s at (%d, %d, %d) by %s", ChatColor.GREEN, stype, cName, cID, x, y, z, plr.getDisplayName()));
-//
-//        Minecache newCache = new Minecache(cID, type, cName, cAuthor, world, x, y, z, Optional.empty(), MinecacheStatus.NEEDS_REVIEWED, LocalDateTime.now(), cacheLocation.getBlock().getType(), containerType, 0, false);
-//        MinecacheStorage.getInstance().saveMinecache(newCache, true);
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player plr)) {
+            return new ArrayList<>();
+        }
+
+        Block target = plr.getTargetBlock(null, 5);
+
+        return switch (args.length) {
+            case 1 -> PlayerStorage.getInstance().getPlayerData(plr.getUniqueId()).getCache() == null ? List.of() : Stream.of("cancel", "name", "lodecoords", "coords", "save", "data", "type").filter(s -> s.contains(args[0])).toList();
+            case 2 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", "~ ~", "~ ~ ~", target.getX() + "", String.format("%d %d %d", target.getX(), target.getY(), target.getZ())) : args[0].equals("type") ? List.of("Traditional", "Multi", "Mystery") : List.of();
+            case 3 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", "~ ~", target.getY() + "", String.format("%d %d", target.getY(), target.getZ())) : List.of();
+            case 4 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", target.getZ() + "") : List.of();
+            default -> List.of();
+        };
     }
 
     private boolean validateLocation(Player plr, int x, int y, int z) {
@@ -291,29 +216,5 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                 return (a.equals("X") ? Config.getInstance().getMaxX() : a.equals("Y") ? Config.getInstance().getMaxY() : Config.getInstance().getMaxZ()) + 1;
             }
         }
-    }
-
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player plr)) {
-            return new ArrayList<>();
-        }
-
-        Block target = plr.getTargetBlock(null, 5);
-
-//        if (PlayerStorage.getInstance().getTempMinecache(plr.getUniqueId()) == null && args.length == 0) return List.of();
-//        else if (args.length == 0) return List.of("cancel", "name", "lodecoords", "coords", "save", "data");
-//        else if (args.length == 1 && (args[0].equals("lodecoords") || args[0].equals("coords"))) return List.of("~", "~ ~", "~ ~ ~", target.getX() + "");
-//        else return List.of();
-
-        return switch (args.length) {
-            case 1 -> PlayerStorage.getInstance().getTempMinecache(plr.getUniqueId()) == null ? List.of() : Stream.of("cancel", "name", "lodecoords", "coords", "save", "data", "type").filter(s -> s.contains(args[0])).toList();
-            case 2 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", "~ ~", "~ ~ ~", target.getX() + "", String.format("%d %d %d", target.getX(), target.getY(), target.getZ())) : args[0].equals("type") ? List.of("Traditional", "Multi", "Mystery") : List.of();
-            case 3 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", "~ ~", target.getY() + "", String.format("%d %d", target.getY(), target.getZ())) : List.of();
-            case 4 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", target.getZ() + "") : List.of();
-            // case 4 -> args[0].equals("lodecoords") || args[0].equals("coords") ? Stream.of("Traditional", "Multi", "Mystery").filter((s -> s.contains(args[3]))).toList();
-            // case 5 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("BARREL", "SHULKER_BOX");
-            default -> List.of();
-        };
     }
 }

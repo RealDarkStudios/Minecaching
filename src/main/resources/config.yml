@@ -3,6 +3,11 @@
 # |    Config   |
 # +-------------+
 
+# Do not touch!
+CONFIG_VERSION: 2
+MINECACHE_VERSION: 2
+PLAYER_VERSION: 1
+
 # Determines the boundaries for where a Minecache can be placed in the Y direction.
 # Only recommended to change this if you have custom terrain generation or have differing world heights from vanilla
 MAX_Y: 319
@@ -17,4 +22,7 @@ MIN_Z: -30000000
 
 MAX_LODESTONE_DISTANCE: 50
 
-ENABLED_TYPES: [TRADITIONAL, MYSTERY, MULTI]
+ENABLED_TYPES:
+  - TRADITIONAL
+  - MYSTERY
+  - MULTI

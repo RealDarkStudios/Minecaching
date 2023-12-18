@@ -40,6 +40,26 @@ public class Config {
         }
     }
 
+    public int getConfigVersion() {
+        return yaml.getInt("CONFIG_VERSION");
+    }
+
+    public int getMinecacheVersion() {
+        return yaml.getInt("MINECACHE_VERSION");
+    }
+
+    public void setMinecacheVersion(int version) {
+        yaml.set("MINECACHE_VERSION", version);
+    }
+
+    public int getPlayerVersion() {
+        return yaml.getInt("PLAYER_VERSION");
+    }
+
+    public void setPlayerVersion(int version) {
+        yaml.set("PLAYER_VERSION", version);
+    }
+
     public int getMaxX() {
         return yaml.getInt("MAX_X");
     }
@@ -73,5 +93,39 @@ public class Config {
     }
     public static Config getInstance() {
         return INSTANCE;
+    }
+
+    public void attemptUpdate() {
+        try {
+            int configVersion = getConfigVersion();
+            int minecacheVersion = getMinecacheVersion();
+            int playerVersion = getPlayerVersion();
+            int maxY = getMaxY();
+            int minY = getMinY();
+            int maxX = getMaxX();
+            int minX = getMinX();
+            int maxZ = getMaxZ();
+            int minZ = getMinZ();
+
+            int maxLodestoneDistance = getMaxLodestoneDistance();
+            List<?> enabledTypes = getEnabledTypes();
+
+            Minecaching.getInstance().saveResource("config.yml", true);
+
+            yaml.set("MINECACHE_VERSION", minecacheVersion);
+            yaml.set("PLAYER_VERSION", playerVersion);
+            yaml.set("MAX_Y", maxY);
+            yaml.set("MIN_Y", minY);
+            yaml.set("MAX_X", maxX);
+            yaml.set("MIN_X", minX);
+            yaml.set("MAX_Z", maxZ);
+            yaml.set("MIN_Z", minZ);
+            yaml.set("MAX_LODESTONE_DISTANCE", maxLodestoneDistance);
+            yaml.set("ENABLED_TYPES", enabledTypes);
+            yaml.set("CONFIG_VERSION", Minecaching.getInstance().CONFIG_DATA_VERSION);
+            Minecaching.getInstance().getLogger().info("Config update succeeded, updated from v" + configVersion + "to v" + getConfigVersion());
+        } catch (Exception e) {
+            Minecaching.getInstance().getLogger().warning("Config update failed!");
+        }
     }
 }

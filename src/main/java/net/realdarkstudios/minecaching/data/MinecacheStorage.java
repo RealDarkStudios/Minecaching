@@ -2,13 +2,13 @@ package net.realdarkstudios.minecaching.data;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.Utils;
-import org.bukkit.*;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class MinecacheStorage {
     private final static MinecacheStorage INSTANCE = new MinecacheStorage();
@@ -47,53 +47,11 @@ public class MinecacheStorage {
         HashMap<Location, Minecache> locationMap = new HashMap<>(yaml.getKeys(false).size());
 
         for (String key : yaml.getKeys(false)) {
-            String cName = yaml.getString(key + ".name");
-            String type = yaml.getString(key + ".type");
-            String author = yaml.getString(key + ".author");
-            UUID cAuthor;
-            String world = yaml.getString(key + ".world");
-            World cWorld;
-            String FTF = yaml.getString(key + ".ftf");
-            UUID cFTF;
-            int cX = yaml.getInt(key + ".x");
-            int cY = yaml.getInt(key + ".y");
-            int cZ = yaml.getInt(key + ".z");
-            int cLX = yaml.getInt(key + ".lx");
-            int cLY = yaml.getInt(key + ".ly");
-            int cLZ = yaml.getInt(key + ".lz");
-            String status = yaml.getString(key + ".status");
-            LocalDateTime cHidden;
-            String blockType = yaml.getString(key + ".blocktype");
-            Material cBlockType;
-            int cFinds = yaml.getInt(key + ".finds");
-            boolean isInvalidated = false;
-
-            MinecacheType cType;
-            if (type == null) { cType = MinecacheType.TRADITIONAL; } else { cType = MinecacheType.get(type); }
-            MinecacheStatus cStatus;
-            if (status == null) { cStatus = MinecacheStatus.NEEDS_REVIEWED; } else { cStatus = MinecacheStatus.get(status); }
-            try { cHidden = LocalDateTime.parse(yaml.getString(key + ".hidden")); } catch (Exception e) { cHidden = LocalDateTime.now(); isInvalidated = true; }
-            try { cAuthor = UUID.fromString(author); } catch (Exception e) { cAuthor = Utils.EMPTY_UUID; isInvalidated = true; }
-            try { cFTF = UUID.fromString(FTF); } catch (Exception e) { cFTF = Utils.EMPTY_UUID; isInvalidated = true; }
-            try { cWorld = Bukkit.createWorld(new WorldCreator(world)); } catch (Exception e) { cWorld = null; isInvalidated = true; }
-            try { cBlockType = Material.getMaterial(blockType); } catch (Exception e) { cBlockType = Material.AIR; isInvalidated = true; }
-            if (cName == null || !key.startsWith("MC-") || key.length() < 8 || cFinds < 0) { isInvalidated = true; }
-            Config cfg = Config.getInstance();
-            if (cX > cfg.getMaxX() || cX < cfg.getMinX() || cY > cfg.getMaxY() || cY < cfg.getMinY() || cZ > cfg.getMaxZ() || cZ < cfg.getMinZ()
-                || cLX > cfg.getMaxX() || cLX < cfg.getMinX() || cLY > cfg.getMaxY() || cLY < cfg.getMinY() || cLZ > cfg.getMaxZ() || cLZ < cfg.getMinZ()) {
-                Minecaching.getInstance().getLogger().warning(String.format("%s is outside of the boundaries set in the config! The cache has been invalidated!", key));
-                isInvalidated = true;
-            }
-            if (new Location(cWorld, cLX, cLY, cLZ).distance(new Location(cWorld, cX, cY, cZ)) > Config.getInstance().getMaxLodestoneDistance()) {
-                Minecaching.getInstance().getLogger().warning("The lodestone coordinates are too far away! The cache has been invalidated");
-                isInvalidated = true;
-            }
-
-            Minecache cache = new Minecache(key, cType, cName, cAuthor, cWorld, cX, cY, cZ, cLX, cLY, cLZ, cFTF, cStatus, cHidden, cBlockType, cFinds, isInvalidated);
+            Minecache cache = Minecache.fromYaml(yaml, key);
 
             caches.add(cache);
             idMap.put(key, cache);
-            locationMap.put(new Location(cWorld, cX, cY, cZ), cache);
+            locationMap.put(new Location(cache.world(), cache.x(), cache.y(), cache.z()), cache);
         }
 
         caches.sort(this::compare);
@@ -123,31 +81,16 @@ public class MinecacheStorage {
             tries++;
         }
 
-        String key = minecache.id();
-        yaml.set(key + ".type", minecache.type().toString());
-        yaml.set(key + ".name", minecache.name());
-        yaml.set(key + ".author", minecache.author().toString());
-        yaml.set(key + ".ftf", minecache.ftf().toString());
-        yaml.set(key + ".world", minecache.world().getName());
-        yaml.set(key + ".x", minecache.x());
-        yaml.set(key + ".y", minecache.y());
-        yaml.set(key + ".z", minecache.z());
-        yaml.set(key + ".lx", minecache.lx());
-        yaml.set(key + ".ly", minecache.ly());
-        yaml.set(key + ".lz", minecache.lz());
-        yaml.set(key + ".status", minecache.status().getId());
-        yaml.set(key + ".hidden", minecache.hidden().toString());
-        yaml.set(key + ".blocktype", minecache.blockType().toString());
-        yaml.set(key + ".finds", minecache.finds());
+        minecache.toYaml(yaml, minecache.id());
 
-        updateMaps();
         save();
+        updateMaps();
     }
 
     public void deleteMinecache(Minecache minecache) {
         yaml.set(minecache.id(), null);
-        updateMaps();
         save();
+        updateMaps();
     }
 
     public Minecache getMinecacheByID(String id) {
@@ -176,16 +119,37 @@ public class MinecacheStorage {
         return INSTANCE;
     }
 
-    public boolean playerFindMinecache(Player plr, Minecache minecache) {
+    public boolean playerFindMinecache(UUID plr, Minecache minecache) {
         boolean isFTF = false;
         if (minecache.ftf().equals(Utils.EMPTY_UUID)) {
-            minecache.setFTF(plr.getUniqueId());
+            minecache.setFTF(plr);
             isFTF = true;
         }
 
-        updateMaps();
         save();
+        updateMaps();
 
         return isFTF;
+    }
+
+    public void attemptUpdate() {
+        try {
+            updateMaps();
+
+            Minecaching.getInstance().saveResource("minecaches.yml", false);
+
+            for (Minecache cache : minecaches) {
+                cache.toYaml(yaml, cache.id());
+            }
+
+            Minecaching.getInstance().getLogger().info("Minecache update succeeded, updated from v" + Config.getInstance().getMinecacheVersion() + "to v" + Minecaching.getInstance().MINECACHE_DATA_VERSION);
+
+            Config.getInstance().setMinecacheVersion(Minecaching.getInstance().MINECACHE_DATA_VERSION);
+
+            save();
+            updateMaps();
+        } catch (Exception e) {
+            Minecaching.getInstance().getLogger().warning("Minecache update failed!");
+        }
     }
 }

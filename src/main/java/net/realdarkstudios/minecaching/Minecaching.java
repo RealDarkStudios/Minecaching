@@ -9,6 +9,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Minecaching extends JavaPlugin {
     private final String VERSION = getDescription().getVersion();
+    public int CONFIG_DATA_VERSION = 1;
+    public int MINECACHE_DATA_VERSION = 2;
+    public int PLAYER_DATA_VERSION = 2;
 
     @Override
     public void onEnable() {
@@ -18,8 +21,8 @@ public final class Minecaching extends JavaPlugin {
         getLogger().info("Checking server version...");
         getLogger().info("Server Version: " + Bukkit.getBukkitVersion());
         String[] serverVersion = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-        if (!(Integer.parseInt(serverVersion[1]) > 19 || (Integer.parseInt(serverVersion[1]) >= 19 && Integer.parseInt(serverVersion[2]) >= 4))) {
-            getLogger().info("This plugin requires you to be on 1.19.4 or above!");
+        if (!(Integer.parseInt(serverVersion[1]) >= 16)) {
+            getLogger().info("This plugin requires you to be on 1.16 or above!");
             // Load Config and MCStorage so there's no warning about this.yaml not existing
             Config.getInstance().load();
             MinecacheStorage.getInstance().load();
@@ -36,10 +39,22 @@ public final class Minecaching extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new MCEventHandler(), this);
             getLogger().info("Loading config...");
             Config.getInstance().load();
-            getLogger().info("Loading player data...");
-            PlayerStorage.getInstance().load();
+            if (Config.getInstance().getConfigVersion() < CONFIG_DATA_VERSION) {
+                getLogger().warning("Config Version out of date!");
+                Config.getInstance().attemptUpdate();
+            }
             getLogger().info("Loading minecaches...");
             MinecacheStorage.getInstance().load();
+            if (Config.getInstance().getMinecacheVersion() < MINECACHE_DATA_VERSION) {
+                getLogger().warning("Minecache Version out of date!");
+                MinecacheStorage.getInstance().attemptUpdate();
+            }
+            getLogger().info("Loading player data...");
+            PlayerStorage.getInstance().load();
+            if (Config.getInstance().getPlayerVersion() < PLAYER_DATA_VERSION) {
+                getLogger().warning("Player Version out of date!");
+                PlayerStorage.getInstance().attemptUpdate();
+            }
             getLogger().info("Minecaching has been enabled!");
         }
     }

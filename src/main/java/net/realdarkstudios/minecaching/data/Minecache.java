@@ -1,14 +1,15 @@
 package net.realdarkstudios.minecaching.data;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.Utils;
+import org.bukkit.*;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Minecache {
-    public static final Minecache EMPTY = new Minecache(null, MinecacheType.INVALID, null, null, null, 0, 0, 0, 0, 0, 0, null, MinecacheStatus.INVALID, null, null, 0, false);
+    public static final Minecache EMPTY = new Minecache(null, MinecacheType.TRADITIONAL, null, null, null, 0, 0, 0, 0, 0, 0, null, MinecacheStatus.INVALID, null, null, 0, false);
 
     private String id, name;
     private MinecacheType type;
@@ -39,6 +40,8 @@ public class Minecache {
         this.finds = finds;
         this.invalidated = invalidated;
     }
+
+
 
     public Minecache setID(String newID) {
         this.id = newID;
@@ -183,5 +186,69 @@ public class Minecache {
 
     public boolean invalidated() {
         return invalidated;
+    }
+
+    public static Minecache fromYaml(YamlConfiguration yaml, String key) {
+        String cName = yaml.getString(key + ".name");
+        String type = yaml.getString(key + ".type");
+        String author = yaml.getString(key + ".author");
+        UUID cAuthor;
+        String world = yaml.getString(key + ".world");
+        World cWorld;
+        String FTF = yaml.getString(key + ".ftf");
+        UUID cFTF;
+        int cX = yaml.getInt(key + ".x");
+        int cY = yaml.getInt(key + ".y");
+        int cZ = yaml.getInt(key + ".z");
+        int cLX = yaml.getInt(key + ".lx");
+        int cLY = yaml.getInt(key + ".ly");
+        int cLZ = yaml.getInt(key + ".lz");
+        String status = yaml.getString(key + ".status");
+        LocalDateTime cHidden;
+        String blockType = yaml.getString(key + ".blocktype");
+        Material cBlockType;
+        int cFinds = yaml.getInt(key + ".finds");
+        boolean isInvalidated = false;
+
+        MinecacheType cType;
+        if (type == null) { cType = MinecacheType.TRADITIONAL; } else { cType = MinecacheType.get(type); }
+        MinecacheStatus cStatus;
+        if (status == null) { cStatus = MinecacheStatus.NEEDS_REVIEWED; } else { cStatus = MinecacheStatus.get(status); }
+        try { cHidden = LocalDateTime.parse(yaml.getString(key + ".hidden")); } catch (Exception e) { cHidden = LocalDateTime.now(); isInvalidated = true; }
+        try { cAuthor = UUID.fromString(author); } catch (Exception e) { cAuthor = Utils.EMPTY_UUID; isInvalidated = true; }
+        try { cFTF = UUID.fromString(FTF); } catch (Exception e) { cFTF = Utils.EMPTY_UUID; isInvalidated = true; }
+        try { cWorld = Bukkit.createWorld(new WorldCreator(world)); } catch (Exception e) { cWorld = null; isInvalidated = true; }
+        try { cBlockType = Material.getMaterial(blockType); } catch (Exception e) { cBlockType = Material.AIR; isInvalidated = true; }
+        if (cName == null || !key.startsWith("MC-") || key.length() < 8 || cFinds < 0) { isInvalidated = true; }
+        Config cfg = Config.getInstance();
+        if (cX > cfg.getMaxX() || cX < cfg.getMinX() || cY > cfg.getMaxY() || cY < cfg.getMinY() || cZ > cfg.getMaxZ() || cZ < cfg.getMinZ()
+                || cLX > cfg.getMaxX() || cLX < cfg.getMinX() || cLY > cfg.getMaxY() || cLY < cfg.getMinY() || cLZ > cfg.getMaxZ() || cLZ < cfg.getMinZ()) {
+            Minecaching.getInstance().getLogger().warning(String.format("%s is outside of the boundaries set in the config! The cache has been invalidated!", key));
+            isInvalidated = true;
+        }
+        if (new Location(cWorld, cLX, cLY, cLZ).distance(new Location(cWorld, cX, cY, cZ)) > Config.getInstance().getMaxLodestoneDistance()) {
+            Minecaching.getInstance().getLogger().warning("The lodestone coordinates are too far away! The cache has been invalidated");
+            isInvalidated = true;
+        }
+
+        return new Minecache(key, cType, cName, cAuthor, cWorld, cX, cY, cZ, cLX, cLY, cLZ, cFTF, cStatus, cHidden, cBlockType, cFinds, isInvalidated);
+    }
+
+    public void toYaml(YamlConfiguration yaml, String key) {
+        yaml.set(key + ".type", type().toString());
+        yaml.set(key + ".name", name());
+        yaml.set(key + ".author", author().toString());
+        yaml.set(key + ".ftf", ftf().toString());
+        yaml.set(key + ".world", world().getName());
+        yaml.set(key + ".x", x());
+        yaml.set(key + ".y", y());
+        yaml.set(key + ".z", z());
+        yaml.set(key + ".lx", lx());
+        yaml.set(key + ".ly", ly());
+        yaml.set(key + ".lz", lz());
+        yaml.set(key + ".status", status().getId());
+        yaml.set(key + ".hidden", hidden().toString());
+        yaml.set(key + ".blocktype", blockType().toString());
+        yaml.set(key + ".finds", finds());
     }
 }
