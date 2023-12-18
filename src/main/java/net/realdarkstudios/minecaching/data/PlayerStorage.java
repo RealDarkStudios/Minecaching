@@ -82,7 +82,7 @@ public class PlayerStorage {
                 plrFile = baseFile;
             }
 
-            PlayerStorageObject plr = new PlayerStorageObject(uuid, fileYaml, plrFile);
+            PlayerStorageObject plr = new PlayerStorageObject(uuid, fileYaml, plrFile, true);
 
             plr.load();
 
@@ -142,7 +142,7 @@ public class PlayerStorage {
                 plr.attemptUpdate();
             }
 
-            Minecaching.getInstance().getLogger().info("Player update succeeded, updated from v" + Config.getInstance().getPlayerVersion() + "to v" + Minecaching.getInstance().PLAYER_DATA_VERSION);
+            Minecaching.getInstance().getLogger().info("Player update succeeded, updated from v" + Config.getInstance().getPlayerVersion() + " to v" + Minecaching.getInstance().PLAYER_DATA_VERSION);
 
             Config.getInstance().setPlayerVersion(Minecaching.getInstance().PLAYER_DATA_VERSION);
         } catch (Exception e) {

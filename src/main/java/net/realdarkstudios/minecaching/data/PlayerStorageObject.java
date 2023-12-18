@@ -15,13 +15,13 @@ public class PlayerStorageObject {
     private final YamlConfiguration yaml;
     private final File file;
 
-    public PlayerStorageObject(UUID uniqueID, YamlConfiguration yaml, File file) {
+    public PlayerStorageObject(UUID uniqueID, YamlConfiguration yaml, File file, boolean useEmptyMinecache) {
         this.uniqueID = uniqueID;
         this.banned = yaml.getBoolean("banned");
         this.ftfs = (List<String>) yaml.getList("ftfs");
         this.hides = (List<String>) yaml.getList("hides");
         this.finds = (List<String>) yaml.getList("finds");
-        this.newCache = Minecache.fromYaml(yaml, "cache");
+        this.newCache = useEmptyMinecache ? Minecache.EMPTY : Minecache.fromYaml(yaml, "cache");
         this.yaml = yaml;
         this.file = file;
     }

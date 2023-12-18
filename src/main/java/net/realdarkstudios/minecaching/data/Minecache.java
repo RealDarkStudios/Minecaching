@@ -220,6 +220,7 @@ public class Minecache {
         try { cWorld = Bukkit.createWorld(new WorldCreator(world)); } catch (Exception e) { cWorld = null; isInvalidated = true; }
         try { cBlockType = Material.getMaterial(blockType); } catch (Exception e) { cBlockType = Material.AIR; isInvalidated = true; }
         if (cName == null || !key.startsWith("MC-") || key.length() < 8 || cFinds < 0) { isInvalidated = true; }
+        if (cWorld == null) { isInvalidated = true; }
         Config cfg = Config.getInstance();
         if (cX > cfg.getMaxX() || cX < cfg.getMinX() || cY > cfg.getMaxY() || cY < cfg.getMinY() || cZ > cfg.getMaxZ() || cZ < cfg.getMinZ()
                 || cLX > cfg.getMaxX() || cLX < cfg.getMinX() || cLY > cfg.getMaxY() || cLY < cfg.getMinY() || cLZ > cfg.getMaxZ() || cLZ < cfg.getMinZ()) {

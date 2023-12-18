@@ -123,7 +123,7 @@ public class Config {
             yaml.set("MAX_LODESTONE_DISTANCE", maxLodestoneDistance);
             yaml.set("ENABLED_TYPES", enabledTypes);
             yaml.set("CONFIG_VERSION", Minecaching.getInstance().CONFIG_DATA_VERSION);
-            Minecaching.getInstance().getLogger().info("Config update succeeded, updated from v" + configVersion + "to v" + getConfigVersion());
+            Minecaching.getInstance().getLogger().info("Config update succeeded, updated from v" + configVersion + " to v" + getConfigVersion());
         } catch (Exception e) {
             Minecaching.getInstance().getLogger().warning("Config update failed!");
         }
