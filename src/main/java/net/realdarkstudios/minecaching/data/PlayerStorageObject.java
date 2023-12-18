@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -93,9 +94,15 @@ public class PlayerStorageObject {
     }
 
     private void update() {
-        this.ftfs = yaml.getList("ftfs") != null ? (ArrayList<String>) yaml.getList("ftfs") : new ArrayList<>();
-        this.hides = yaml.getList("hides") != null ? (ArrayList<String>) yaml.getList("hides") : new ArrayList<>();
-        this.finds = yaml.getList("finds") != null ? (ArrayList<String>) yaml.getList("finds") : new ArrayList<>();
+        ArrayList<String> yFtfs = new ArrayList<>(), yHides = new ArrayList<>(), yFinds = new ArrayList<>();
+
+        if (yaml.getList("ftfs") != null) yFtfs.addAll((Collection<? extends String>) yaml.getList("ftfs"));
+        if (yaml.getList("hides") != null) yHides.addAll((Collection<? extends String>) yaml.getList("hides"));
+        if (yaml.getList("finds") != null) yFinds.addAll((Collection<? extends String>) yaml.getList("finds"));
+
+        this.ftfs = yFtfs;
+        this.hides = yHides;
+        this.finds = yFinds;
         this.newCache = Minecache.fromYaml(yaml, "cache");
 
         newCache.setID(yaml.getString("cache_id") == null ? "NULL" : yaml.getString("cache_id"));
