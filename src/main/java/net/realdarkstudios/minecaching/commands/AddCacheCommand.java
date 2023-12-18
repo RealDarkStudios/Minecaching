@@ -26,17 +26,15 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        if (!PlayerStorage.getInstance().hasPlayerData(plr)) {
-            PlayerStorage.getInstance().createPlayerData(plr);
-        }
+        PlayerStorageObject plrdata = PlayerStorage.getInstance().getOrCreatePlayerData(plr);
 
-        Minecache cache = PlayerStorage.getInstance().getPlayerData(plr).getCache();
+        Minecache cache = plrdata.getCache();
         if (args.length < 1 && (cache != null && !cache.id().equals("NULL"))) {
             plr.sendMessage(ChatColor.RED + "You are already creating a cache!");
             return true;
         } else if (args.length < 1) {
             plr.sendMessage(ChatColor.LIGHT_PURPLE + "Starting creation of new cache...");
-            PlayerStorage.getInstance().getPlayerData(plr).setCache(Minecache.EMPTY.setID(Utils.generateID(5)));
+            plrdata.setCache(Minecache.EMPTY.setID(Utils.generateID(5)));
             return true;
         }
 
@@ -52,6 +50,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
         switch (subCommand) {
             case "cancel" -> {
                 cache = Minecache.EMPTY;
+                cache.setID("NULL");
                 plr.sendMessage(ChatColor.RED + "Cancelled the creation of this minecache!");
             }
             case "type" -> {
@@ -139,15 +138,15 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     cache.setStatus(MinecacheStatus.NEEDS_REVIEWED).setAuthor(plr.getUniqueId()).setBlockType(cache.lodeLocation().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(Utils.EMPTY_UUID);
                     MinecacheStorage.getInstance().saveMinecache(cache, true);
                     plr.sendMessage(ChatColor.LIGHT_PURPLE + "Created " + cache.id() + ": " + cache.name());
-                    PlayerStorage.getInstance().getPlayerData(plr).addHide(cache.id());
+                    plrdata.addHide(cache.id());
                     cache = Minecache.EMPTY;
-                    PlayerStorage.getInstance().getPlayerData(plr).setCacheId("NULL");
+                    cache.setID("NULL");
                 }
             }
             case "data" -> sender.sendMessage(String.format("ID: %s, Name: %s, Type: %s, Lode Coords: (%d, %d, %d), Cache Coords: (%d, %d, %d)", cache.id(), cache.name(), cache.type().getId(), cache.lx(), cache.ly(), cache.lz(), cache.x(), cache.y(), cache.z()));
         }
 
-        PlayerStorage.getInstance().getPlayerData(plr).setCache(cache);
+        plrdata.setCache(cache);
         return true;
     }
 

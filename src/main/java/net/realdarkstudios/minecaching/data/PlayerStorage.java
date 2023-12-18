@@ -101,16 +101,42 @@ public class PlayerStorage {
         updateMaps();
     }
 
-    public void createPlayerData(Player plr) {
+    public void deletePlayerData(UUID uuid) {
         List<String> plrs = (List<String>) yaml.get("PLAYERS");
-        plrs.add(plr.getUniqueId().toString());
+        plrs.removeAll(Collections.singleton(uuid.toString()));
+
+        yaml.set("PLAYERS", plrs);
 
         save();
         updateMaps();
     }
 
+    public PlayerStorageObject createPlayerData(Player plr) {
+        List<String> plrs = (List<String>) yaml.get("PLAYERS");
+        plrs.add(plr.getUniqueId().toString());
+
+        save();
+        updateMaps();
+
+        return getPlayerData(plr);
+    }
+
+    public PlayerStorageObject createPlayerData(UUID uuid) {
+        List<String> plrs = (List<String>) yaml.get("PLAYERS");
+        plrs.add(uuid.toString());
+
+        save();
+        updateMaps();
+
+        return getPlayerData(uuid);
+    }
+
     public boolean hasPlayerData(Player plr) {
         return playerStorage.containsKey(plr.getUniqueId());
+    }
+
+    public boolean hasPlayerData(UUID uuid) {
+        return playerStorage.containsKey(uuid);
     }
 
     public PlayerStorageObject getPlayerData(Player plr) {
@@ -119,6 +145,16 @@ public class PlayerStorage {
 
     public PlayerStorageObject getPlayerData(UUID uuid) {
         return playerStorage.get(uuid);
+    }
+
+    public PlayerStorageObject getOrCreatePlayerData(Player plr) {
+        if (hasPlayerData(plr)) return getPlayerData(plr);
+        else return createPlayerData(plr);
+    }
+
+    public PlayerStorageObject getOrCreatePlayerData(UUID uuid) {
+        if (hasPlayerData(uuid)) return getPlayerData(uuid);
+        else return createPlayerData(uuid);
     }
 
     public static PlayerStorage getInstance() {
