@@ -13,7 +13,7 @@ public class PlayerStorageObject {
     private List<String> finds, ftfs, hides;
     private Minecache newCache;
     private YamlConfiguration yaml;
-    private final File file;
+    private File file;
 
     public PlayerStorageObject(UUID uniqueID, YamlConfiguration yaml, File file, boolean useEmptyMinecache) {
         this.uniqueID = uniqueID;
@@ -108,16 +108,16 @@ public class PlayerStorageObject {
         yaml = new YamlConfiguration();
         yaml.options().parseComments(true);
 
-        File plrFile = new File(Minecaching.getInstance().getDataFolder() + "/player/" + uniqueID + ".yml");
-        if (plrFile.exists()) {
+        if (file.exists()) {
             Minecaching.getInstance().saveResource("player/base.yml", false);
             File baseFile = new File(Minecaching.getInstance().getDataFolder() + "/player/base.yml");
-            boolean success = baseFile.renameTo(plrFile);
+            boolean success = baseFile.renameTo(file);
             if (!success) {
                 Minecaching.getInstance().getLogger().warning("Failed to make per-player file " + uniqueID + ".yml");
                 return;
             }
-            plrFile = baseFile;
+
+            file = baseFile;
         }
 
         try {
