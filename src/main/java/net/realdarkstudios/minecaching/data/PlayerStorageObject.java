@@ -85,9 +85,9 @@ public class PlayerStorageObject {
     }
 
     private void update() {
-        this.ftfs = yaml.getList("ftfs").isEmpty() ? (List<String>) yaml.getList("ftfs") : List.of();
-        this.hides = yaml.getList("hides").isEmpty() ? (List<String>) yaml.getList("hides") : List.of();
-        this.finds = yaml.getList("finds").isEmpty() ? (List<String>) yaml.getList("finds") : List.of();
+        this.ftfs = yaml.getList("ftfs") != null ? (List<String>) yaml.getList("ftfs") : List.of();
+        this.hides = yaml.getList("hides") != null ? (List<String>) yaml.getList("hides") : List.of();
+        this.finds = yaml.getList("finds") != null ? (List<String>) yaml.getList("finds") : List.of();
         this.newCache = Minecache.fromYaml(yaml, "cache");
 
         newCache.setID(yaml.getString("cache_id") == null ? "NULL" : yaml.getString("cache_id"));
