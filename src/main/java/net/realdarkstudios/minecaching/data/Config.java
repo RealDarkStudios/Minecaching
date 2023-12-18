@@ -114,7 +114,8 @@ public class Config {
             int maxLodestoneDistance = getMaxLodestoneDistance();
             List<?> enabledTypes = getEnabledTypes();
 
-            int findLodestoneDistance = getFindLodestoneDistance();
+            int findLodestoneDistance = 25;
+            if (configVersion >= 3) findLodestoneDistance = getFindLodestoneDistance();
 
             Minecaching.getInstance().saveResource("config.yml", true);
             load();
