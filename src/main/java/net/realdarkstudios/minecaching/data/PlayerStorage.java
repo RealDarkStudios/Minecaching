@@ -70,10 +70,10 @@ public class PlayerStorage {
             YamlConfiguration fileYaml = new YamlConfiguration();
             fileYaml.options().parseComments(true);
 
-            File plrFile = new File(Minecaching.getInstance().getDataFolder() + "player/" + key + ".yml");
+            File plrFile = new File(Minecaching.getInstance().getDataFolder() + "/player/" + key + ".yml");
             if (plrFile.exists()) {
                 Minecaching.getInstance().saveResource("player/base.yml", false);
-                File baseFile = new File(Minecaching.getInstance().getDataFolder() + "player/base.yml");
+                File baseFile = new File(Minecaching.getInstance().getDataFolder() + "/player/base.yml");
                 boolean success = baseFile.renameTo(plrFile);
                 if (!success) {
                     Minecaching.getInstance().getLogger().warning("Failed to make per-player file " + key + ".yml");
