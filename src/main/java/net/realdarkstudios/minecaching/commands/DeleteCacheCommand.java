@@ -1,10 +1,8 @@
 package net.realdarkstudios.minecaching.commands;
 
-import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.data.Minecache;
 import net.realdarkstudios.minecaching.data.MinecacheStorage;
 import org.bukkit.ChatColor;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,7 +18,7 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length != 1) {
-            sender.sendMessage("Incorrect Usage (Wrong amount of arguments!)");
+            sender.sendMessage("Incorrect Usage!");
             return false;
         }
 

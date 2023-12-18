@@ -23,7 +23,7 @@ public class VerifyCacheCommand implements CommandExecutor, TabExecutor {
         } else if (!minecache.status().equals(MinecacheStatus.NEEDS_REVIEWED)) {
             sender.sendMessage(ChatColor.RED + "This cache can't be verified because it already is or is disabled/archived");
         } else {
-            minecache.setStatus(MinecacheStatus.ACTIVE);
+            minecache.setStatus(MinecacheStatus.VERIFIED);
             MinecacheStorage.getInstance().saveMinecache(minecache, false);
             sender.sendMessage(ChatColor.GREEN + "Success! Verified " + args[0]);
         }

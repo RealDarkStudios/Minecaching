@@ -56,7 +56,7 @@ public class ListCachesCommand implements CommandExecutor, TabExecutor {
 
                 ChatColor typeColor = cache.invalidated() ? MinecacheType.INVALID.getColor() : cache.type().getColor();
                 ChatColor statusColor = cache.invalidated() ? MinecacheStatus.INVALID.getColor() : cache.status().getColor();
-                ChatColor primaryColor = cache.status().equals(MinecacheStatus.ACTIVE) || cache.status().equals(MinecacheStatus.NEEDS_REVIEWED) || cache.type().equals(MinecacheType.INVALID) ? typeColor : statusColor;
+                ChatColor primaryColor = cache.status().equals(MinecacheStatus.VERIFIED) || cache.status().equals(MinecacheStatus.NEEDS_REVIEWED) || cache.type().equals(MinecacheType.INVALID) ? typeColor : statusColor;
                 TextComponent entry = new TextComponentBuilder(String.format("%s%d. [%s] [%s%s%s] %s: \"%s\" (Finds: %s) ", primaryColor, (page * 10) + i + 1, cache.invalidated() ? MinecacheType.INVALID : cache.type().toString(), statusColor, cache.invalidated() ? MinecacheStatus.INVALID : cache.status(), primaryColor, cache.id(), cache.name(), cache.finds())).build();
                 TextComponent findEntry = new TextComponentBuilder("Find\n").color(ChatColor.AQUA.asBungee()).underline().clickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/findcache " + cache.id()).build();
                 msg.addExtra(entry);

@@ -13,7 +13,7 @@ public class PlayerStorageObject {
     private final UUID uniqueID;
     private boolean banned;
     private ArrayList<String> finds, ftfs, hides;
-    private Minecache newCache;
+    private Minecache newCache, editingCache;
     private YamlConfiguration yaml;
     private File file;
 
@@ -30,6 +30,7 @@ public class PlayerStorageObject {
         this.hides = yHides;
         this.finds = yFinds;
         this.newCache = useEmptyMinecache ? Minecache.EMPTY : Minecache.fromYaml(yaml, "cache");
+        this.editingCache = useEmptyMinecache ? Minecache.EMPTY : Minecache.fromYaml(yaml, "editing");
         this.yaml = yaml;
         this.file = file;
     }
@@ -52,6 +53,9 @@ public class PlayerStorageObject {
 
     public Minecache getCache() {
         return newCache;
+    }
+    public Minecache getEditingCache() {
+        return editingCache;
     }
 
     public YamlConfiguration getYaml() {
@@ -93,8 +97,8 @@ public class PlayerStorageObject {
         saveData();
     }
 
-    public void setCacheId(String newID) {
-        this.newCache.setID(newID);
+    public void setEditingCache(Minecache editingCache) {
+        this.editingCache = editingCache;
         saveData();
     }
 
@@ -115,8 +119,10 @@ public class PlayerStorageObject {
         this.hides = yHides;
         this.finds = yFinds;
         this.newCache = Minecache.fromYaml(yaml, "cache");
+        this.editingCache = Minecache.fromYaml(yaml, "editing");
 
         newCache.setID(yaml.getString("cache_id") == null ? "NULL" : yaml.getString("cache_id"));
+        editingCache.setID(yaml.getString("editing_id") == null ? "NULL" : yaml.getString("editing_id"));
     }
 
     public void saveData() {
@@ -125,6 +131,8 @@ public class PlayerStorageObject {
         yaml.set("finds", this.finds);
         yaml.set("cache_id", this.newCache.id());
         newCache.toYaml(yaml, "cache");
+        yaml.set("editing_id", this.editingCache.id());
+        editingCache.toYaml(yaml, "editing");
 
         save();
         update();
@@ -175,15 +183,16 @@ public class PlayerStorageObject {
         if (!plrFile.exists()) {
             try {
                 plrFile.createNewFile();
+
+                yaml.set("ftfs", List.of());
+                yaml.set("hides", List.of());
+                yaml.set("finds", List.of());
+                Minecache.EMPTY.toYaml(yaml, "cache");
+                Minecache.EMPTY.toYaml(yaml, "editing");
             } catch (Exception e) {
                 Minecaching.getInstance().getLogger().warning("Failed to make per-player file " + uuid + ".yml");
             }
         }
-
-        yaml.set("ftfs", List.of());
-        yaml.set("hides", List.of());
-        yaml.set("finds", List.of());
-        Minecache.EMPTY.toYaml(yaml, "cache");
 
         return new PlayerStorageObject(uuid, yaml, plrFile, useEmptyMinecache);
     }

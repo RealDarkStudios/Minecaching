@@ -52,7 +52,7 @@ public class FindCacheCommand implements CommandExecutor, TabExecutor {
         Location cacheLocationC = cacheLocation.clone();
         cacheLocationC.setY(plr.getLocation().getY());
         if (plr.getLocation().distance(cacheLocationC) < Config.getInstance().getFindLodestoneDistance()) {
-            plr.sendMessage(ChatColor.AQUA + "You are within " + Config.getInstance().getFindLodestoneDistance() + " blocks of the cache!");
+            plr.sendMessage(ChatColor.AQUA + "You are within ~" + Config.getInstance().getMaxLodestoneDistance() + " blocks of the cache!");
             return true;
         }
 
@@ -107,7 +107,7 @@ public class FindCacheCommand implements CommandExecutor, TabExecutor {
                 plr.getInventory().setItem(slot, null);
             }
         }
-        plr.sendMessage(ChatColor.AQUA + "You are now within " + Config.getInstance().getFindLodestoneDistance() + " blocks of the cache!");
+        plr.sendMessage(ChatColor.AQUA + "You are now within ~" + Config.getInstance().getMaxLodestoneDistance() + " blocks of the cache!");
     }
 
     @Override

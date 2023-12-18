@@ -1,6 +1,10 @@
 package net.realdarkstudios.minecaching;
 
+import net.realdarkstudios.minecaching.data.Config;
 import net.realdarkstudios.minecaching.data.Minecache;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
@@ -51,5 +55,66 @@ public class Utils {
             temp.put(aa.getKey(), aa.getValue());
         }
         return temp;
+    }
+
+    public static boolean validateLocation(CommandSender sender, int x, int y, int z) {
+        Config cfg = Config.getInstance();
+        if (x > cfg.getMaxX()) {
+            sender.sendMessage(ChatColor.RED + "X coordinate is above the allowed limit of " + cfg.getMaxX());
+            return false;
+        }
+        if (x < cfg.getMinX()) {
+            sender.sendMessage(ChatColor.RED + "X coordinate is below the allowed limit of " + cfg.getMinX());
+            return false;
+        }
+        if (y > cfg.getMaxY()) {
+            sender.sendMessage(ChatColor.RED + "Y coordinate is above the allowed limit of " + cfg.getMaxY());
+            return false;
+        }
+        if (y < cfg.getMinY()) {
+            sender.sendMessage(ChatColor.RED + "Y coordinate is below the allowed limit of " + cfg.getMinY());
+            return false;
+        }
+        if (z > cfg.getMaxZ()) {
+            sender.sendMessage(ChatColor.RED + "Z coordinate is above the allowed limit of " + cfg.getMaxZ());
+            return false;
+        }
+        if (z < cfg.getMinZ()) {
+            sender.sendMessage(ChatColor.RED + "Z coordinate is below the allowed limit of " + cfg.getMinZ());
+            return false;
+        }
+        return true;
+    }
+
+    public static int validateCoordinate(String coord, Player plr, String axis) {
+        String a = axis.toUpperCase();
+
+        if (coord.contains("~")) {
+            if (coord.length() == 1) {
+                return plr.getLocation().getBlockZ();
+            } else {
+                try {
+                    return plr.getLocation().getBlockZ() + Integer.parseInt(coord.substring(1));
+                } catch (Exception e) {
+                    return (a.equals("X") ? Config.getInstance().getMaxX() : a.equals("Y") ? Config.getInstance().getMaxY() : Config.getInstance().getMaxZ()) + 1;
+                }
+            }
+        } else {
+            try {
+                return Integer.parseInt(coord);
+            } catch (NumberFormatException e) {
+                return (a.equals("X") ? Config.getInstance().getMaxX() : a.equals("Y") ? Config.getInstance().getMaxY() : Config.getInstance().getMaxZ()) + 1;
+            }
+        }
+    }
+
+    public static int validateCoordinate(String coord, String axis) {
+        String a = axis.toUpperCase();
+
+        try {
+            return Integer.parseInt(coord);
+        } catch (NumberFormatException e) {
+            return (a.equals("X") ? Config.getInstance().getMaxX() : a.equals("Y") ? Config.getInstance().getMaxY() : Config.getInstance().getMaxZ()) + 1;
+        }
     }
 }

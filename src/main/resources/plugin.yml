@@ -9,10 +9,16 @@ description: Bring Geocaching to your Minecraft server!
 commands:
   addcache:
     description: "Adds a Minecache"
-    usage: "/addcache <x> <y> <z> <name>"
+    usage: "/addcache <cancel|coords|data|lodecoords|name|save|type>"
     aliases: [addc, ac]
     permission: minecaching.addcache
     permission-message: "You do not have permission to add caches!"
+  editcache:
+    description: "Edits a Minecache"
+    usage: "/editcache <id>"
+    aliases: [editc, ec]
+    permission: minecaching.editcache
+    permission-message: "You do not have permission to edit caches!"
   findcache:
     description: "Find a Minecache"
     usage: "/findcache <id>"
@@ -45,6 +51,8 @@ commands:
     permission-message: "You do not have permission to use the admin utilities"
 permissions:
   minecaching.addcache:
+    default: true
+  minecaching.editcache:
     default: true
   minecaching.findcache:
     default: true
