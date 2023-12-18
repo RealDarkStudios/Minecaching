@@ -39,14 +39,18 @@ public class PlayerStorage {
 
         updateMaps();
 
-        for (PlayerStorageObject plr: playerStorage.values()) {
-            plr.load();
+        if (playerStorage != null) {
+            for (PlayerStorageObject plr : playerStorage.values()) {
+                plr.load();
+            }
         }
     }
 
     public void save() {
-        for (PlayerStorageObject plr: playerStorage.values()) {
-            plr.save();
+        if (playerStorage != null) {
+            for (PlayerStorageObject plr : playerStorage.values()) {
+                plr.save();
+            }
         }
 
         try {

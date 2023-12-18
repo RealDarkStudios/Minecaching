@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Minecache {
-    public static final Minecache EMPTY = new Minecache(null, MinecacheType.TRADITIONAL, null, null, null, 0, 0, 0, 0, 0, 0, null, MinecacheStatus.INVALID, null, null, 0, false);
+    public static final Minecache EMPTY = new Minecache(null, MinecacheType.TRADITIONAL, null, Utils.EMPTY_UUID, null, 0, 0, 0, 0, 0, 0, Utils.EMPTY_UUID, MinecacheStatus.INVALID, null, null, 0, false);
 
     private String id, name;
     private MinecacheType type;

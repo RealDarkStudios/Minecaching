@@ -143,7 +143,7 @@ public class PlayerStorageObject {
     }
 
     public static PlayerStorageObject get(UUID uuid, boolean useEmptyMinecache) {
-        File plrFile = new File(Minecaching.getInstance().getDataFolder() + "player/" + uuid + ".yml");
+        File plrFile = new File(Minecaching.getInstance().getDataFolder() + "/player/" + uuid + ".yml");
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(plrFile);
 
         if (!plrFile.exists()) {
