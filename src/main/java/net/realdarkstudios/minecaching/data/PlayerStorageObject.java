@@ -4,13 +4,14 @@ import net.realdarkstudios.minecaching.Minecaching;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class PlayerStorageObject {
     private final UUID uniqueID;
     private boolean banned;
-    private List<String> finds, ftfs, hides;
+    private ArrayList<String> finds, ftfs, hides;
     private Minecache newCache;
     private YamlConfiguration yaml;
     private File file;
@@ -18,9 +19,9 @@ public class PlayerStorageObject {
     public PlayerStorageObject(UUID uniqueID, YamlConfiguration yaml, File file, boolean useEmptyMinecache) {
         this.uniqueID = uniqueID;
         this.banned = yaml.getBoolean("banned");
-        this.ftfs = (List<String>) yaml.getList("ftfs");
-        this.hides = (List<String>) yaml.getList("hides");
-        this.finds = (List<String>) yaml.getList("finds");
+        this.ftfs = (ArrayList<String>) yaml.getList("ftfs");
+        this.hides = (ArrayList<String>) yaml.getList("hides");
+        this.finds = (ArrayList<String>) yaml.getList("finds");
         this.newCache = useEmptyMinecache ? Minecache.EMPTY : Minecache.fromYaml(yaml, "cache");
         this.yaml = yaml;
         this.file = file;
@@ -92,9 +93,9 @@ public class PlayerStorageObject {
     }
 
     private void update() {
-        this.ftfs = yaml.getList("ftfs") != null ? (List<String>) yaml.getList("ftfs") : List.of();
-        this.hides = yaml.getList("hides") != null ? (List<String>) yaml.getList("hides") : List.of();
-        this.finds = yaml.getList("finds") != null ? (List<String>) yaml.getList("finds") : List.of();
+        this.ftfs = yaml.getList("ftfs") != null ? (ArrayList<String>) yaml.getList("ftfs") : new ArrayList<>();
+        this.hides = yaml.getList("hides") != null ? (ArrayList<String>) yaml.getList("hides") : new ArrayList<>();
+        this.finds = yaml.getList("finds") != null ? (ArrayList<String>) yaml.getList("finds") : new ArrayList<>();
         this.newCache = Minecache.fromYaml(yaml, "cache");
 
         newCache.setID(yaml.getString("cache_id") == null ? "NULL" : yaml.getString("cache_id"));
