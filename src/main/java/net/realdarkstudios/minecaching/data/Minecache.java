@@ -248,7 +248,7 @@ public class Minecache {
         yaml.set(key + ".ly", ly());
         yaml.set(key + ".lz", lz());
         yaml.set(key + ".status", status().getId());
-        yaml.set(key + ".hidden", hidden().toString());
+        yaml.set(key + ".hidden", hidden() != null ? hidden().toString() : LocalDateTime.now().toString());
         yaml.set(key + ".blocktype", blockType() != null ? blockType().toString() : "AIR");
         yaml.set(key + ".finds", finds());
     }
