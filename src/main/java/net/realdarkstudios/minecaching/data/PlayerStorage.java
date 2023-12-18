@@ -38,6 +38,7 @@ public class PlayerStorage {
         }
 
         updateMaps();
+
         for (PlayerStorageObject plr: playerStorage.values()) {
             plr.load();
         }
@@ -67,25 +68,9 @@ public class PlayerStorage {
                 continue;
             }
 
-            YamlConfiguration fileYaml = new YamlConfiguration();
-            fileYaml.options().parseComments(true);
-
-            File plrFile = new File(Minecaching.getInstance().getDataFolder() + "/player/" + key + ".yml");
-            if (plrFile.exists()) {
-                Minecaching.getInstance().saveResource("player/base.yml", false);
-                File baseFile = new File(Minecaching.getInstance().getDataFolder() + "/player/base.yml");
-                boolean success = baseFile.renameTo(plrFile);
-                if (!success) {
-                    Minecaching.getInstance().getLogger().warning("Failed to make per-player file " + key + ".yml");
-                    continue;
-                }
-                plrFile = baseFile;
-            }
-
-            PlayerStorageObject plr = new PlayerStorageObject(uuid, fileYaml, plrFile, true);
+            PlayerStorageObject plr = PlayerStorageObject.get(uuid);
 
             plr.load();
-
             players.put(uuid, plr);
         }
 

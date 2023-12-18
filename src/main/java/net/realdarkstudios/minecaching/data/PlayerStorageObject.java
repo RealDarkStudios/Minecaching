@@ -90,7 +90,7 @@ public class PlayerStorageObject {
         this.finds = (List<String>) yaml.getList("finds");
         this.newCache = Minecache.fromYaml(yaml, "cache");
 
-        newCache.setID(yaml.getString("cache_id"));
+        newCache.setID(yaml.getString("cache_id") == null ? "NULL" : yaml.getString("cache_id"));
     }
 
     public void saveData() {
@@ -100,25 +100,15 @@ public class PlayerStorageObject {
         yaml.set("cache_id", this.newCache.id());
         newCache.toYaml(yaml, "cache");
 
-        update();
         save();
+        update();
     }
 
     public void load() {
-        yaml = new YamlConfiguration();
+        yaml = YamlConfiguration.loadConfiguration(file);
         yaml.options().parseComments(true);
 
-        if (file.exists()) {
-            Minecaching.getInstance().saveResource("player/base.yml", false);
-            File baseFile = new File(Minecaching.getInstance().getDataFolder() + "/player/base.yml");
-            boolean success = baseFile.renameTo(file);
-            if (!success) {
-                Minecaching.getInstance().getLogger().warning("Failed to make per-player file " + uniqueID + ".yml");
-                return;
-            }
-
-            file = baseFile;
-        }
+        get(uniqueID);
 
         try {
             yaml.load(file);
@@ -142,17 +132,33 @@ public class PlayerStorageObject {
     public boolean attemptUpdate() {
         update();
 
-        File plrFile = new File(Minecaching.getInstance().getDataFolder() + "player/" + getUniqueID() + ".yml");
-        Minecaching.getInstance().saveResource("player/base.yml", true);
-        File baseFile = new File(Minecaching.getInstance().getDataFolder() + "player/base.yml");
-        boolean success = baseFile.renameTo(plrFile);
-        if (!success) {
-            Minecaching.getInstance().getLogger().warning("Failed to make per-player file " + getUniqueID() + ".yml");
-            return false;
-        }
-        plrFile = baseFile;
+        get(uniqueID);
 
         saveData();
         return true;
+    }
+
+    public static PlayerStorageObject get(UUID uuid) {
+        return get(uuid, false);
+    }
+
+    public static PlayerStorageObject get(UUID uuid, boolean useEmptyMinecache) {
+        File plrFile = new File(Minecaching.getInstance().getDataFolder() + "player/" + uuid + ".yml");
+        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(plrFile);
+
+        if (!plrFile.exists()) {
+            try {
+                plrFile.createNewFile();
+            } catch (Exception e) {
+                Minecaching.getInstance().getLogger().warning("Failed to make per-player file " + uuid + ".yml");
+            }
+        }
+
+        yaml.set("ftfs", List.of());
+        yaml.set("hides", List.of());
+        yaml.set("finds", List.of());
+        Minecache.EMPTY.toYaml(yaml, "cache");
+
+        return new PlayerStorageObject(uuid, yaml, plrFile, useEmptyMinecache);
     }
 }
