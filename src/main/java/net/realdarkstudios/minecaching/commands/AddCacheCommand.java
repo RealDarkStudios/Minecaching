@@ -31,7 +31,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
         }
 
         Minecache cache = PlayerStorage.getInstance().getPlayerData(plr).getCache();
-        if (args.length < 1 && cache != null) {
+        if (args.length < 1 && (cache != null && !cache.id().equals("NULL"))) {
             plr.sendMessage(ChatColor.RED + "You are already creating a cache!");
             return true;
         } else if (args.length < 1) {
