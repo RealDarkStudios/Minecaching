@@ -143,6 +143,9 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     plr.sendMessage(ChatColor.RED + "/addcache lodecoords");
                 } else if (cache.lodeLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
                     plr.sendMessage(ChatColor.RED + "The lodestone coordinates are too far away! They must be under " + Config.getInstance().getMaxLodestoneDistance() + " blocks away!");
+                } else if (cache.code() == null) {
+                    plr.sendMessage(ChatColor.RED + "You must set a code!");
+                    plr.sendMessage(ChatColor.RED + "/addcache code");
                 } else {
                     cache.setStatus(MinecacheStatus.NEEDS_REVIEWED).setAuthor(plr.getUniqueId()).setBlockType(cache.lodeLocation().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(Utils.EMPTY_UUID);
                     MinecacheStorage.getInstance().saveMinecache(cache, true);

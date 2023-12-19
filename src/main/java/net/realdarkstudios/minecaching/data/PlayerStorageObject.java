@@ -102,10 +102,11 @@ public class PlayerStorageObject {
         saveData();
     }
 
-    public void findMinecache(Minecache minecache) {
+    public boolean findMinecache(Minecache minecache) {
         boolean newFtf = MinecacheStorage.getInstance().playerFindMinecache(uniqueID, minecache);
         addFind(minecache.id());
         if (newFtf) addFTF(minecache.id());
+        return newFtf;
     }
 
     private void update() {

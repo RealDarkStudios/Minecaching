@@ -10,37 +10,43 @@ commands:
   addcache:
     description: "Adds a Minecache"
     usage: "/addcache <cancel|coords|data|lodecoords|name|save|type>"
-    aliases: [addc, ac]
+    aliases: [addc, ac, add]
     permission: minecaching.addcache
     permission-message: "You do not have permission to add caches!"
   editcache:
     description: "Edits a Minecache"
     usage: "/editcache <id>"
-    aliases: [editc, ec]
+    aliases: [editc, ec, edit]
     permission: minecaching.editcache
     permission-message: "You do not have permission to edit caches!"
-  findcache:
+  locatecache:
     description: "Find a Minecache"
-    usage: "/findcache <id>"
-    aliases: [findc, fc]
+    usage: "/locatecache <id>"
+    aliases: [locatec, locate, loc]
+    permission: minecaching.locatecache
+    permission-message: "You do not have permission to locate caches!"
+  findcache:
+    description: "Check if you have found a Minecache"
+    usage: "/findcache <id> <code>"
+    aliases: [findc, find]
     permission: minecaching.findcache
-    permission-message: "You do not have permission to find caches!"
+    permission-message: "You do not have permission to find caches..."
   verifycache:
     description: "[ADMIN] Confirms a cache"
     usage: "/verifycache <id>"
-    aliases: [vercache, verc, vc]
+    aliases: [vercache, verc, vc, verify]
     permission: minecaching.admin.confirmcache
     permission-message: "You do not have permission to confirm caches!"
   delcache:
     description: "Deletes a Minecache"
     usage: "/delcache <id>"
-    aliases: [deletecache, delc, dc]
+    aliases: [deletecache, delc, dc, delete]
     permission: minecaching.delcache
     permission-message: "You do not have permission to delete caches!"
   listcaches:
     description: "Lists all Minecaches"
     usage: "/listcaches [page]"
-    aliases: [listc, lc]
+    aliases: [listc, lc, list]
     permission: minecaching.command.listcaches
     permission-message: "You do not have permission to view caches!"
   mcadmin:
@@ -53,6 +59,8 @@ permissions:
   minecaching.addcache:
     default: true
   minecaching.editcache:
+    default: true
+  minecaching.locatecache:
     default: true
   minecaching.findcache:
     default: true

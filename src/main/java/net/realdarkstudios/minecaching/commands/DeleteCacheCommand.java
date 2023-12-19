@@ -23,7 +23,7 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
             return false;
         }
 
-        String id = args[0];
+        String id = args[0].trim();
         if (MinecacheStorage.getInstance().getMinecacheByID(id).equals(Minecache.EMPTY)) {
             sender.sendMessage(ChatColor.RED + "Did not find minecache with ID " + id);
             return true;
@@ -34,8 +34,8 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        MinecacheStorage.getInstance().deleteMinecache(MinecacheStorage.getInstance().getMinecacheByID(id));
         PlayerStorage.getInstance().getOrCreatePlayerData(MinecacheStorage.getInstance().getMinecacheByID(id).author()).removeHide(id);
+        MinecacheStorage.getInstance().deleteMinecache(MinecacheStorage.getInstance().getMinecacheByID(id));
         sender.sendMessage(String.format("%sSuccess! Deleted Minecache with ID %s", ChatColor.GREEN, id));
         return true;
     }

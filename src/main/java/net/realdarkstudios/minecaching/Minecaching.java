@@ -41,6 +41,7 @@ public final class Minecaching extends JavaPlugin {
             getCommand("delcache").setExecutor(new DeleteCacheCommand());
             getCommand("mcadmin").setExecutor(new MCAdminCommand());
             getCommand("verifycache").setExecutor(new VerifyCacheCommand());
+            getCommand("locatecache").setExecutor(new LocateCacheCommand());
             getCommand("findcache").setExecutor(new FindCacheCommand());
             getServer().getPluginManager().registerEvents(new MCEventHandler(), this);
             getLogger().info("Loading config...");

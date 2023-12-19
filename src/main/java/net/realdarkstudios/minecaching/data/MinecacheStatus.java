@@ -7,6 +7,7 @@ public enum MinecacheStatus {
     DISABLED("DISABLED", "D", ChatColor.RED),
     ARCHIVED("ARCHIVED", "A", ChatColor.GRAY),
     NEEDS_REVIEWED("NEEDS_REVIEWED", "N", ChatColor.YELLOW),
+    NEEDS_MAINTENANCE("NEEDS_MAINTENANCE", "M", ChatColor.LIGHT_PURPLE),
     INVALID("INVALID", "I", ChatColor.DARK_RED);
 
     private final String id, strForm;
