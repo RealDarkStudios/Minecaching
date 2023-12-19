@@ -4,6 +4,7 @@ import net.realdarkstudios.minecaching.Utils;
 import net.realdarkstudios.minecaching.data.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public class EditCacheCommand implements CommandExecutor, TabExecutor {
     @Override
@@ -30,20 +32,21 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
         if (args.length < 1) {
             sender.sendMessage(ChatColor.RED + "Incorrect Usage!");
             sender.sendMessage(ChatColor.RED + "/editcache <id>");
-            return false;
+            return true;
         } else if (args.length == 1 && (cache == null || cache.id().equals("NULL"))) {
             String id = args[0];
-            sender.sendMessage(ChatColor.LIGHT_PURPLE + "Editing " + id);
 
             if (MinecacheStorage.getInstance().getMinecacheByID(id).equals(Minecache.EMPTY)) {
                 sender.sendMessage(ChatColor.RED + "Did not find minecache with ID " + id);
                 return true;
             }
-            
+
+            sender.sendMessage(ChatColor.LIGHT_PURPLE + "Editing " + id);
             plrdata.setEditingCache(MinecacheStorage.getInstance().getMinecacheByID(id));
             return true;
-        } else if (args.length == 1) {
+        } else if (args.length == 1 && !cache.id().equals("NULL")) {
             sender.sendMessage(ChatColor.RED + "You are already editing " + plrdata.getEditingCache().id());
+            return true;
         }
         
         String subCommand = args[0];
@@ -156,16 +159,29 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
         PlayerStorageObject plrdata = PlayerStorage.getInstance().getOrCreatePlayerData(uuid);
 
         if (args.length == 0 && (plrdata.getEditingCache() == null || plrdata.getEditingCache().id().equals("NULL"))) return MinecacheStorage.getInstance().getIDArray();
-        else if (args.length > 1) return List.of();
+        else if (args.length == 1 && (plrdata.getEditingCache() == null || plrdata.getEditingCache().id().equals("NULL"))) {
 
-        ArrayList<String> toReturn = new ArrayList<>();
+            ArrayList<String> toReturn = new ArrayList<>();
 
-        for (String id: MinecacheStorage.getInstance().getIDArray()) {
-            if ((plrdata.getEditingCache() != null || !plrdata.getEditingCache().id().equals("NULL")) && id.contains(args[0]) && (sender.isOp() || (sender instanceof Player plr && MinecacheStorage.getInstance().getMinecacheByID(id).author().equals(plr.getUniqueId())))) {
-                toReturn.add(id);
+            for (String id : MinecacheStorage.getInstance().getIDArray()) {
+                if ((plrdata.getEditingCache() != null || !plrdata.getEditingCache().id().equals("NULL")) && id.contains(args[0]) && (sender.isOp() || (sender instanceof Player plr && MinecacheStorage.getInstance().getMinecacheByID(id).author().equals(plr.getUniqueId())))) {
+                    toReturn.add(id);
+                }
             }
-        }
 
-        return toReturn;
+            return toReturn;
+        } else {
+            boolean isPlr = sender instanceof Player;
+
+            Block target = isPlr ? ((Player) sender).getTargetBlock(null, 5) : null;
+
+            return switch (args.length) {
+                case 1 -> plrdata.getCache() == null || plrdata.getCache().id().equals("NULL") ? List.of() : Stream.of("cancel", "name", "lodecoords", "coords", "save").filter(s -> s.contains(args[0])).toList();
+                case 2 -> args[0].equals("lodecoords") || args[0].equals("coords") && isPlr ? List.of("~", "~ ~", "~ ~ ~", target.getX() + "", String.format("%d %d %d", target.getX(), target.getY(), target.getZ())) : List.of();
+                case 3 -> args[0].equals("lodecoords") || args[0].equals("coords") && isPlr ? List.of("~", "~ ~", target.getY() + "", String.format("%d %d", target.getY(), target.getZ())) : List.of();
+                case 4 -> args[0].equals("lodecoords") || args[0].equals("coords") && isPlr ? List.of("~", target.getZ() + "") : List.of();
+                default -> List.of();
+            };
+        }
     }
 }

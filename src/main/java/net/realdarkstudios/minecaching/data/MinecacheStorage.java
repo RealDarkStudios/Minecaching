@@ -145,6 +145,7 @@ public class MinecacheStorage {
             Minecaching.getInstance().getLogger().info("Minecache update succeeded, updated from v" + Config.getInstance().getMinecacheVersion() + " to v" + Minecaching.getInstance().MINECACHE_DATA_VERSION);
 
             Config.getInstance().setMinecacheVersion(Minecaching.getInstance().MINECACHE_DATA_VERSION);
+            Config.getInstance().save();
 
             save();
             updateMaps();
