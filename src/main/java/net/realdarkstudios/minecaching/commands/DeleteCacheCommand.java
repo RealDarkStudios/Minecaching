@@ -24,18 +24,19 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
         }
 
         String id = args[0].trim();
-        if (MinecacheStorage.getInstance().getMinecacheByID(id).equals(Minecache.EMPTY)) {
+        Minecache cache = MinecacheStorage.getInstance().getMinecacheByID(id);
+        if (cache.equals(Minecache.EMPTY)) {
             sender.sendMessage(ChatColor.RED + "Did not find minecache with ID " + id);
             return true;
         }
 
-        if ((sender instanceof Player plr && !plr.getUniqueId().equals(MinecacheStorage.getInstance().getMinecacheByID(id).author())) && !sender.isOp()) {
+        if ((sender instanceof Player plr && !plr.getUniqueId().equals(cache.author())) && !sender.isOp()) {
             sender.sendMessage(ChatColor.RED + "You can't delete other player's Minecaches!");
             return true;
         }
 
-        PlayerStorage.getInstance().getOrCreatePlayerData(MinecacheStorage.getInstance().getMinecacheByID(id).author()).removeHide(id);
-        MinecacheStorage.getInstance().deleteMinecache(MinecacheStorage.getInstance().getMinecacheByID(id));
+        PlayerStorage.getInstance().deleteMinecache(cache);
+        MinecacheStorage.getInstance().deleteMinecache(cache);
         sender.sendMessage(String.format("%sSuccess! Deleted Minecache with ID %s", ChatColor.GREEN, id));
         return true;
     }

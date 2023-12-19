@@ -157,23 +157,37 @@ public class PlayerStorage {
         else return createPlayerData(uuid);
     }
 
+    public void deleteMinecache(Minecache cache) {
+        if (playerStorage != null) {
+            for (PlayerStorageObject plr : playerStorage.values()) {
+                plr.removeHide(cache.id());
+                plr.removeFind(cache.id());
+                plr.removeFTF(cache.id());
+            }
+        }
+    }
+
     public static PlayerStorage getInstance() {
         return INSTANCE;
     }
 
     public void attemptUpdate() {
         try {
-            for (PlayerStorageObject plr : playerStorage.values()) {
-                plr.attemptUpdate();
+            if (playerStorage != null) {
+                for (PlayerStorageObject plr : playerStorage.values()) {
+                    plr.attemptUpdate();
+                }
             }
 
             Minecaching.getInstance().getLogger().info("Player update succeeded, updated from v" + Config.getInstance().getPlayerVersion() + " to v" + Minecaching.getInstance().PLAYER_DATA_VERSION);
 
             Config.getInstance().setPlayerVersion(Minecaching.getInstance().PLAYER_DATA_VERSION);
-            for (PlayerStorageObject plr: playerStorage.values()) {
-                plr.save();
-                Config.getInstance().save();
+            if (playerStorage != null) {
+                for (PlayerStorageObject plr : playerStorage.values()) {
+                    plr.save();
+                }
             }
+            Config.getInstance().save();
         } catch (Exception e) {
             Minecaching.getInstance().getLogger().warning("Player update failed!");
         }

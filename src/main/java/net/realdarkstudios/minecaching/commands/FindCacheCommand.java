@@ -55,9 +55,12 @@ public class FindCacheCommand implements CommandExecutor, TabExecutor {
                     PlayerStorageObject plrdata = PlayerStorage.getInstance().getOrCreatePlayerData(plr);
                     boolean isFtf = plrdata.findMinecache(cache);
                     plr.sendMessage(ChatColor.GREEN + "Congratulations! You found " + cache.id() + ": " + cache.name());
-                    if (isFtf)
-                        plr.sendMessage(ChatColor.GREEN + "You were also the first one to find this cache. Your new FTF total is" + plrdata.getFTFs().size());
-                    plr.sendMessage(ChatColor.GREEN + "You now have " + plrdata.getFinds() + " finds");
+                    if (isFtf) {
+                        plr.sendMessage(ChatColor.GREEN + "You were also the first one to find this cache. Your new FTF total is " + plrdata.getFTFs().size());
+                        MinecacheStorage.getInstance().saveMinecache(cache.setFTF(plr.getUniqueId()), false);
+                    }
+                    plr.sendMessage(ChatColor.GREEN + "You now have " + plrdata.getFinds().size() + " finds");
+
                 } else {
                     plr.sendMessage(ChatColor.RED + "You must be within 25 blocks of the cache!");
                 }
