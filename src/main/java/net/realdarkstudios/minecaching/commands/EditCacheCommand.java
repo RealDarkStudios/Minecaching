@@ -60,7 +60,7 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
             case "name" -> {
                 if (args.length < 2) {
                     sender.sendMessage(ChatColor.RED + "Incorrect Usage!");
-                    sender.sendMessage(ChatColor.RED + "/addcache name <name>");
+                    sender.sendMessage(ChatColor.RED + "/editcache name <name>");
                     return true;
                 } else {
                     StringBuilder name = new StringBuilder();
@@ -87,7 +87,7 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                     z = Utils.validateCoordinate(args[3], "lz");
                 } else {
                     sender.sendMessage(ChatColor.RED + "Invalid number of arguments!");
-                    sender.sendMessage(ChatColor.RED + "/addcache lodecoords OR /addcache lodecoords <x> <y> <z>");
+                    sender.sendMessage(ChatColor.RED + "/editcache lodecoords OR /editcache lodecoords <x> <y> <z>");
                     return true;
                 }
 
@@ -112,7 +112,7 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                     z = Utils.validateCoordinate(args[3], "z");
                 } else {
                     sender.sendMessage(ChatColor.RED + "Invalid number of arguments!");
-                    sender.sendMessage(ChatColor.RED + "/addcache coords OR /addcache coords <x> <y> <z>");
+                    sender.sendMessage(ChatColor.RED + "/editcache coords OR /editcache coords <x> <y> <z>");
                     return true;
                 }
 
@@ -122,10 +122,20 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                 sender.sendMessage(String.format("%sSet coords to [%s](%d, %d, %d)", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z));
 
             }
+            case "code" -> {
+                if (args.length < 2) {
+                    sender.sendMessage(ChatColor.RED + "Incorrect Usage!");
+                    sender.sendMessage(ChatColor.RED + "/editcache code <code>");
+                    return true;
+                } else {
+                    cache.setCode(args[1].trim());
+                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Set code to \"" + cache.code() + "\"");
+                }
+            }
             case "save" -> {
                 if (cache.name() == null) {
                     sender.sendMessage(ChatColor.RED + "This cache doesn't have a name!");
-                    sender.sendMessage(ChatColor.RED + "/addcache name");
+                    sender.sendMessage(ChatColor.RED + "/editcache name");
                 } else if (cache.x() == 0 && cache.y() == 0 && cache.z() == 0) {
                     sender.sendMessage(ChatColor.RED + "This cache doesn't have the coordinates!");
                     sender.sendMessage(ChatColor.RED + "/addcache coords");
@@ -176,7 +186,7 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
             Block target = isPlr ? ((Player) sender).getTargetBlock(null, 5) : null;
 
             return switch (args.length) {
-                case 1 -> plrdata.getEditingCache() == null || plrdata.getEditingCache().id().equals("NULL") ? List.of() : Stream.of("cancel", "name", "lodecoords", "coords", "save").filter(s -> s.contains(args[0])).toList();
+                case 1 -> plrdata.getEditingCache() == null || plrdata.getEditingCache().id().equals("NULL") ? List.of() : Stream.of("cancel", "code", "name", "lodecoords", "coords", "save").filter(s -> s.contains(args[0])).toList();
                 case 2 -> args[0].equals("lodecoords") || args[0].equals("coords") && isPlr ? List.of("~", "~ ~", "~ ~ ~", target.getX() + "", String.format("%d %d %d", target.getX(), target.getY(), target.getZ())) : List.of();
                 case 3 -> args[0].equals("lodecoords") || args[0].equals("coords") && isPlr ? List.of("~", "~ ~", target.getY() + "", String.format("%d %d", target.getY(), target.getZ())) : List.of();
                 case 4 -> args[0].equals("lodecoords") || args[0].equals("coords") && isPlr ? List.of("~", target.getZ() + "") : List.of();
