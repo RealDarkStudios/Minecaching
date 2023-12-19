@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Minecache {
-    public static final Minecache EMPTY = new Minecache(null, MinecacheType.TRADITIONAL, null, Utils.EMPTY_UUID, null, 0, 0, 0, 0, 0, 0, Utils.EMPTY_UUID, MinecacheStatus.INVALID, null, null, 0, false);
+    public static final Minecache EMPTY = new Minecache(null, MinecacheType.TRADITIONAL, null, Utils.EMPTY_UUID, null, 0, 0, 0, 0, 0, 0, Utils.EMPTY_UUID, MinecacheStatus.INVALID, null, null, 0, false, null);
 
-    private String id, name;
+    private String id, name, code;
     private MinecacheType type;
     private UUID author, maintainer, ftf;
     private World world;
@@ -21,7 +21,7 @@ public class Minecache {
     private Material blockType;
     private boolean invalidated;
 
-    public Minecache(String id, MinecacheType type, String name, UUID author, World world, int x, int y, int z, int lx, int ly, int lz, UUID ftf, MinecacheStatus status, LocalDateTime hidden, Material blockType, int finds, boolean invalidated) {
+    public Minecache(String id, MinecacheType type, String name, UUID author, World world, int x, int y, int z, int lx, int ly, int lz, UUID ftf, MinecacheStatus status, LocalDateTime hidden, Material blockType, int finds, boolean invalidated, String code) {
         this.id = id;
         this.type = type;
         this.name = name;
@@ -39,9 +39,8 @@ public class Minecache {
         this.blockType = blockType;
         this.finds = finds;
         this.invalidated = invalidated;
+        this.code = code;
     }
-
-
 
     public Minecache setID(String newID) {
         this.id = newID;
@@ -110,6 +109,11 @@ public class Minecache {
 
     public Minecache setInvalidated(boolean invalidate) {
         this.invalidated = invalidate;
+        return this;
+    }
+
+    public Minecache setCode(String code) {
+        this.code = code;
         return this;
     }
 
@@ -188,6 +192,10 @@ public class Minecache {
         return invalidated;
     }
 
+    public String code() {
+        return code;
+    }
+
     public static Minecache fromYaml(YamlConfiguration yaml, String key) {
         String cName = yaml.getString(key + ".name");
         String type = yaml.getString(key + ".type");
@@ -209,6 +217,7 @@ public class Minecache {
         Material cBlockType;
         int cFinds = yaml.getInt(key + ".finds");
         boolean isInvalidated = false;
+        String cCode = yaml.getString(key + ".code");
 
         MinecacheType cType;
         if (type == null) { cType = MinecacheType.TRADITIONAL; } else { cType = MinecacheType.get(type); }
@@ -220,6 +229,7 @@ public class Minecache {
         try { cWorld = Bukkit.createWorld(new WorldCreator(world)); } catch (Exception e) { cWorld = null; isInvalidated = true; }
         try { cBlockType = Material.getMaterial(blockType); } catch (Exception e) { cBlockType = Material.AIR; isInvalidated = true; }
         if (cName == null || !key.startsWith("MC-") || key.length() < 8 || cFinds < 0) { isInvalidated = true; }
+        if (cCode == null) { cCode = ""; isInvalidated = true; }
         if (cWorld == null) { cWorld = Bukkit.getWorlds().get(0); isInvalidated = true; }
         Config cfg = Config.getInstance();
         if (cX > cfg.getMaxX() || cX < cfg.getMinX() || cY > cfg.getMaxY() || cY < cfg.getMinY() || cZ > cfg.getMaxZ() || cZ < cfg.getMinZ()
@@ -232,7 +242,7 @@ public class Minecache {
             isInvalidated = true;
         }
 
-        return new Minecache(key, cType, cName, cAuthor, cWorld, cX, cY, cZ, cLX, cLY, cLZ, cFTF, cStatus, cHidden, cBlockType, cFinds, isInvalidated);
+        return new Minecache(key, cType, cName, cAuthor, cWorld, cX, cY, cZ, cLX, cLY, cLZ, cFTF, cStatus, cHidden, cBlockType, cFinds, isInvalidated, cCode);
     }
 
     public void toYaml(YamlConfiguration yaml, String key) {
@@ -251,5 +261,6 @@ public class Minecache {
         yaml.set(key + ".hidden", hidden() != null ? hidden().toString() : LocalDateTime.now().toString());
         yaml.set(key + ".blocktype", blockType() != null ? blockType().toString() : "AIR");
         yaml.set(key + ".finds", finds());
+        yaml.set(key + ".code", code());
     }
 }

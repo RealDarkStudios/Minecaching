@@ -48,22 +48,20 @@ public class FindCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        Location cacheLocation = new Location(cache.world(), cache.x(), cache.y(), cache.z());
-        Location cacheLocationC = cacheLocation.clone();
+        Location lodeLocation = cache.lodeLocation();
+        Location cacheLocationC = lodeLocation.clone();
         cacheLocationC.setY(plr.getLocation().getY());
         if (plr.getLocation().distance(cacheLocationC) < Config.getInstance().getFindLodestoneDistance()) {
             plr.sendMessage(ChatColor.AQUA + "You are within ~" + Config.getInstance().getMaxLodestoneDistance() + " blocks of the cache!");
             return true;
         }
 
-        Block lastBlock = cacheLocation.getBlock();
-
-        cacheLocation.getBlock().setType(Material.LODESTONE);
+        lodeLocation.getBlock().setType(Material.LODESTONE);
 
         ItemStack compass = new ItemStack(Material.COMPASS);
         CompassMeta meta = ((CompassMeta) compass.getItemMeta());
         assert meta != null;
-        meta.setLodestone(cacheLocation);
+        meta.setLodestone(lodeLocation);
         meta.setLodestoneTracked(true);
         meta.setDisplayName(cache.id() + ": " + cache.name());
         meta.setLore(List.of("A compass pointing to the location of a cache."));
@@ -90,7 +88,7 @@ public class FindCacheCommand implements CommandExecutor, TabExecutor {
         int dist = Config.getInstance().getFindLodestoneDistance();
         taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Minecaching.getInstance(), () -> {
             if (plr.getLocation().distance(cacheLocationC) < dist) {
-                cancelTask(cache, cacheLocation, plr);
+                cancelTask(cache, lodeLocation, plr);
             } else cacheLocationC.setY(plr.getLocation().getY());
         }, 0L, 1L);
 
@@ -112,6 +110,6 @@ public class FindCacheCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? MinecacheStorage.getInstance().getIDArray() : List.of();
+        return args.length == 0 ? MinecacheStorage.getInstance().getIDArray() : args.length == 1 ? MinecacheStorage.getInstance().getIDArray().stream().filter(s -> s.contains(args[0])).toList() : List.of();
     }
 }

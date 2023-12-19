@@ -19,7 +19,6 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
             sender.spigot().sendMessage(MCPluginMessages.INCORRECT_USAGE);
-
             return false;
         }
 
@@ -43,6 +42,11 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
             Minecaching.getInstance().getLogger().info("Reloaded");
             sender.sendMessage("Reloaded Minecaching");
         } else if (subcommand.equals("version")) {
+            if (!sender.hasPermission("minecaching.admin.version")) {
+                sender.spigot().sendMessage(MCPluginMessages.NO_PERMISSION);
+                return true;
+            }
+
             sender.sendMessage("Minecaching Version: " + Minecaching.getInstance().getDescription().getVersion());
             sender.sendMessage("Config Version: " + Config.getInstance().getConfigVersion());
             sender.sendMessage("Minecache Data Version: " + Config.getInstance().getMinecacheVersion());

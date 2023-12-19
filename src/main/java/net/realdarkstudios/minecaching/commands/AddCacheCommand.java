@@ -121,6 +121,15 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                 plr.sendMessage(String.format("%sSet coords to [%s](%d, %d, %d)", ChatColor.LIGHT_PURPLE, plr.getLocation().getWorld().getName(), x, y, z));
 
             }
+            case "code" -> {
+                if (args.length < 2) {
+                    plr.sendMessage(ChatColor.RED + "Incorrect Usage!");
+                    plr.sendMessage(ChatColor.RED + "/addcache code <code>");
+                    return true;
+                } else {
+                    cache.setCode(args[1].trim());
+                }
+            }
             case "save" -> {
                 if (cache.name() == null) {
                     plr.sendMessage(ChatColor.RED + "No name has been given to this cache!");

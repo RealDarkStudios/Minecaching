@@ -2,6 +2,7 @@ package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.data.Minecache;
 import net.realdarkstudios.minecaching.data.MinecacheStorage;
+import net.realdarkstudios.minecaching.data.PlayerStorage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,16 +29,14 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        if (sender instanceof Player plr && !plr.isOp() && plr.getUniqueId().equals(MinecacheStorage.getInstance().getMinecacheByID(id).author())) {
-            MinecacheStorage.getInstance().deleteMinecache(MinecacheStorage.getInstance().getMinecacheByID(id));
-            sender.sendMessage(String.format("%sSuccess! Deleted Minecache with ID %s", ChatColor.GREEN, id));
-        } else if (sender.isOp()) {
-            MinecacheStorage.getInstance().deleteMinecache(MinecacheStorage.getInstance().getMinecacheByID(id));
-            sender.sendMessage(String.format("%sSuccess! Deleted Minecache with ID %s", ChatColor.GREEN, id));
-        }else {
+        if ((sender instanceof Player plr && !plr.getUniqueId().equals(MinecacheStorage.getInstance().getMinecacheByID(id).author())) && !sender.isOp()) {
             sender.sendMessage(ChatColor.RED + "You can't delete other player's Minecaches!");
+            return true;
         }
 
+        MinecacheStorage.getInstance().deleteMinecache(MinecacheStorage.getInstance().getMinecacheByID(id));
+        PlayerStorage.getInstance().getOrCreatePlayerData(MinecacheStorage.getInstance().getMinecacheByID(id).author()).removeHide(id);
+        sender.sendMessage(String.format("%sSuccess! Deleted Minecache with ID %s", ChatColor.GREEN, id));
         return true;
     }
 
