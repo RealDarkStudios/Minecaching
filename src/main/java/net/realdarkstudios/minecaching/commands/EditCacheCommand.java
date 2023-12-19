@@ -44,7 +44,7 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
             sender.sendMessage(ChatColor.LIGHT_PURPLE + "Editing " + id);
             plrdata.setEditingCache(MinecacheStorage.getInstance().getMinecacheByID(id));
             return true;
-        } else if (args.length == 1 && !cache.id().equals("NULL")) {
+        } else if (args.length == 1 && args[0].startsWith("MC-") && !cache.id().equals("NULL")) {
             sender.sendMessage(ChatColor.RED + "You are already editing " + plrdata.getEditingCache().id());
             return true;
         }
