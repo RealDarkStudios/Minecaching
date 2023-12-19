@@ -136,7 +136,7 @@ public class MinecacheStorage {
         try {
             updateMaps();
 
-            Minecaching.getInstance().saveResource("minecaches.yml", false);
+            Minecaching.getInstance().saveResource("minecaches.yml", true);
 
             for (Minecache cache : minecaches) {
                 cache.toYaml(yaml, cache.id());
