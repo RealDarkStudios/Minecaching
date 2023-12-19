@@ -176,7 +176,7 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
             Block target = isPlr ? ((Player) sender).getTargetBlock(null, 5) : null;
 
             return switch (args.length) {
-                case 1 -> plrdata.getCache() == null || plrdata.getCache().id().equals("NULL") ? List.of() : Stream.of("cancel", "name", "lodecoords", "coords", "save").filter(s -> s.contains(args[0])).toList();
+                case 1 -> plrdata.getEditingCache() == null || plrdata.getEditingCache().id().equals("NULL") ? List.of() : Stream.of("cancel", "name", "lodecoords", "coords", "save").filter(s -> s.contains(args[0])).toList();
                 case 2 -> args[0].equals("lodecoords") || args[0].equals("coords") && isPlr ? List.of("~", "~ ~", "~ ~ ~", target.getX() + "", String.format("%d %d %d", target.getX(), target.getY(), target.getZ())) : List.of();
                 case 3 -> args[0].equals("lodecoords") || args[0].equals("coords") && isPlr ? List.of("~", "~ ~", target.getY() + "", String.format("%d %d", target.getY(), target.getZ())) : List.of();
                 case 4 -> args[0].equals("lodecoords") || args[0].equals("coords") && isPlr ? List.of("~", target.getZ() + "") : List.of();
