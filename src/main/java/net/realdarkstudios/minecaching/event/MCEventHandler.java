@@ -37,4 +37,10 @@ public class MCEventHandler implements Listener {
         MinecachingAPI.get().update();
         event.getAuthor().sendMessage("player create minecache, " + event.getAuthor().getDisplayName(), event.getType().toString());
     }
+
+    @EventHandler
+    public void onMinecacheDeleted(MinecacheDeletedEvent event) {
+        MinecachingAPI.get().deleteMinecache(event.getCache());
+        event.getAuthor().sendMessage("player delete minecache, " + event.getCache().id());
+    }
 }

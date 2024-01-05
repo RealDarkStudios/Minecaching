@@ -2,6 +2,8 @@ package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.api.Minecache;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.event.MinecacheDeletedEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -34,8 +36,14 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        MinecachingAPI.get().deleteMinecache(cache);
-        sender.sendMessage(String.format("%sSuccess! Deleted Minecache with ID %s", ChatColor.GREEN, id));
+        MinecacheDeletedEvent event = new MinecacheDeletedEvent(cache, Bukkit.getPlayer(cache.author()));
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (!event.isCancelled()) {
+            sender.sendMessage(String.format("%sSuccess! Deleted Minecache with ID %s", ChatColor.GREEN, id));
+        } else {
+            sender.sendMessage(ChatColor.RED + "The cache could not be deleted for some reason!");
+        }
         return true;
     }
 
