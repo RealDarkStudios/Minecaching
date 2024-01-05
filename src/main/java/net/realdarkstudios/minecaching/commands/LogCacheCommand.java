@@ -64,6 +64,8 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
                     MinecacheFoundEvent event = new MinecacheFoundEvent(plr, cache, plrdata.isFTF(cache));
                     Bukkit.getPluginManager().callEvent(event);
 
+                    if (event.isCancelled()) return true;
+
                     plr.sendMessage(ChatColor.GREEN + "Congratulations! You found " + cache.id() + ": " + cache.name());
                     if (isFTF) {
                         plr.sendMessage(ChatColor.GREEN + "You were also the first one to find this cache. Your new FTF total is " + plrdata.getFTFs().size());

@@ -2,6 +2,8 @@ package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Utils;
 import net.realdarkstudios.minecaching.api.*;
+import net.realdarkstudios.minecaching.event.MinecacheCreatedEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -148,11 +150,15 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     plr.sendMessage(ChatColor.RED + "/addcache code");
                 } else {
                     cache.setStatus(MinecacheStatus.NEEDS_REVIEWED).setAuthor(plr.getUniqueId()).setBlockType(cache.lodeLocation().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(Utils.EMPTY_UUID);
-                    MinecachingAPI.get().saveMinecache(cache, true);
-                    plr.sendMessage(ChatColor.LIGHT_PURPLE + "Created " + cache.id() + ": " + cache.name());
-                    plrdata.addHide(cache.id());
-                    cache = Minecache.EMPTY;
-                    cache.setID("NULL");
+
+                    MinecacheCreatedEvent event = new MinecacheCreatedEvent(cache, plr);
+                    Bukkit.getPluginManager().callEvent(event);
+
+                    if (event.isCancelled()) {
+                        plr.sendMessage(ChatColor.RED + "The cache could not be created for some reason!");
+                    } else plr.sendMessage(ChatColor.LIGHT_PURPLE + "Created " + event.getCache().id() + ": " + event.getCache().name());
+
+                    return true;
                 }
             }
             case "data" -> sender.sendMessage(String.format("ID: %s, Name: %s, Type: %s, Lode Coords: (%d, %d, %d), Cache Coords: (%d, %d, %d)", cache.id(), cache.name(), cache.type().getId(), cache.lx(), cache.ly(), cache.lz(), cache.x(), cache.y(), cache.z()));
