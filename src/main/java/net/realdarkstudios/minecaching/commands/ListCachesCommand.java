@@ -2,10 +2,10 @@ package net.realdarkstudios.minecaching.commands;
 
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.realdarkstudios.minecaching.data.Minecache;
-import net.realdarkstudios.minecaching.data.MinecacheStatus;
-import net.realdarkstudios.minecaching.data.MinecacheStorage;
-import net.realdarkstudios.minecaching.data.MinecacheType;
+import net.realdarkstudios.minecaching.api.Minecache;
+import net.realdarkstudios.minecaching.api.MinecacheStatus;
+import net.realdarkstudios.minecaching.api.MinecacheType;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.util.TextComponentBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -30,8 +30,7 @@ public class ListCachesCommand implements CommandExecutor, TabExecutor {
             return false;
         }
 
-        MinecacheStorage storage = MinecacheStorage.getInstance();
-        List<Minecache> caches = storage.getMinecaches().stream().filter(m -> !(sender instanceof Player plr) || m.world().equals(plr.getWorld())).toList();
+        List<Minecache> caches = MinecachingAPI.get().getFilteredCaches(m -> !(sender instanceof Player plr) || m.world().equals(plr.getWorld()));
         int numCaches = caches.size();
 
         while (numCaches < page * 10 + 1) {

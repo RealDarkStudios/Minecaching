@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.data;
+package net.realdarkstudios.minecaching.api;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,7 +16,7 @@ public class PlayerStorage {
 
     private File file;
     private YamlConfiguration yaml;
-    private HashMap<UUID, PlayerStorageObject> playerStorage;
+    private HashMap<UUID, PlayerDataObject> playerStorage;
 
     private PlayerStorage() {
     }
@@ -40,7 +40,7 @@ public class PlayerStorage {
         updateMaps();
 
         if (playerStorage != null) {
-            for (PlayerStorageObject plr : playerStorage.values()) {
+            for (PlayerDataObject plr : playerStorage.values()) {
                 plr.load();
             }
         }
@@ -48,7 +48,7 @@ public class PlayerStorage {
 
     public void save() {
         if (playerStorage != null) {
-            for (PlayerStorageObject plr : playerStorage.values()) {
+            for (PlayerDataObject plr : playerStorage.values()) {
                 plr.save();
             }
         }
@@ -60,8 +60,8 @@ public class PlayerStorage {
         }
     }
 
-    public void updateMaps() {
-        HashMap<UUID, PlayerStorageObject> players = new HashMap<>();
+    void updateMaps() {
+        HashMap<UUID, PlayerDataObject> players = new HashMap<>();
 
         for (String key: (List<String>) yaml.getList("PLAYERS")) {
             UUID uuid;
@@ -72,7 +72,7 @@ public class PlayerStorage {
                 continue;
             }
 
-            PlayerStorageObject plr = PlayerStorageObject.get(uuid);
+            PlayerDataObject plr = PlayerDataObject.get(uuid);
 
             plr.load();
             players.put(uuid, plr);
@@ -81,7 +81,7 @@ public class PlayerStorage {
         this.playerStorage = players;
     }
 
-    public void deletePlayerData(PlayerStorageObject plr) {
+    void deletePlayerData(PlayerDataObject plr) {
         List<String> plrs = (List<String>) yaml.get("PLAYERS");
         plrs.removeAll(Collections.singleton(plr.getUniqueID().toString()));
 
@@ -91,7 +91,7 @@ public class PlayerStorage {
         updateMaps();
     }
 
-    public void deletePlayerData(Player plr) {
+    void deletePlayerData(Player plr) {
         List<String> plrs = (List<String>) yaml.get("PLAYERS");
         plrs.removeAll(Collections.singleton(plr.getUniqueId().toString()));
 
@@ -101,7 +101,7 @@ public class PlayerStorage {
         updateMaps();
     }
 
-    public void deletePlayerData(UUID uuid) {
+    void deletePlayerData(UUID uuid) {
         List<String> plrs = (List<String>) yaml.get("PLAYERS");
         plrs.removeAll(Collections.singleton(uuid.toString()));
 
@@ -111,7 +111,7 @@ public class PlayerStorage {
         updateMaps();
     }
 
-    public PlayerStorageObject createPlayerData(Player plr) {
+    PlayerDataObject createPlayerData(Player plr) {
         List<String> plrs = (List<String>) yaml.get("PLAYERS");
         plrs.add(plr.getUniqueId().toString());
 
@@ -121,7 +121,7 @@ public class PlayerStorage {
         return getPlayerData(plr);
     }
 
-    public PlayerStorageObject createPlayerData(UUID uuid) {
+    PlayerDataObject createPlayerData(UUID uuid) {
         List<String> plrs = (List<String>) yaml.get("PLAYERS");
         plrs.add(uuid.toString());
 
@@ -131,39 +131,45 @@ public class PlayerStorage {
         return getPlayerData(uuid);
     }
 
-    public boolean hasPlayerData(Player plr) {
+    boolean hasPlayerData(Player plr) {
         return playerStorage.containsKey(plr.getUniqueId());
     }
 
-    public boolean hasPlayerData(UUID uuid) {
+    boolean hasPlayerData(UUID uuid) {
         return playerStorage.containsKey(uuid);
     }
 
-    public PlayerStorageObject getPlayerData(Player plr) {
+    PlayerDataObject getPlayerData(Player plr) {
         return playerStorage.get(plr.getUniqueId());
     }
 
-    public PlayerStorageObject getPlayerData(UUID uuid) {
+    PlayerDataObject getPlayerData(UUID uuid) {
         return playerStorage.get(uuid);
     }
 
-    public PlayerStorageObject getOrCreatePlayerData(Player plr) {
+    PlayerDataObject getOrCreatePlayerData(Player plr) {
         if (hasPlayerData(plr)) return getPlayerData(plr);
         else return createPlayerData(plr);
     }
 
-    public PlayerStorageObject getOrCreatePlayerData(UUID uuid) {
+    PlayerDataObject getOrCreatePlayerData(UUID uuid) {
         if (hasPlayerData(uuid)) return getPlayerData(uuid);
         else return createPlayerData(uuid);
     }
 
-    public void deleteMinecache(Minecache cache) {
-        if (playerStorage != null) {
-            for (PlayerStorageObject plr : playerStorage.values()) {
-                plr.removeHide(cache.id());
-                plr.removeFind(cache.id());
-                plr.removeFTF(cache.id());
+    boolean deleteMinecache(Minecache cache) {
+        try {
+            if (playerStorage != null) {
+                for (PlayerDataObject plr : playerStorage.values()) {
+                    plr.removeHide(cache.id());
+                    plr.removeFind(cache.id());
+                    plr.removeFTF(cache.id());
+                }
             }
+
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
@@ -174,22 +180,22 @@ public class PlayerStorage {
     public void attemptUpdate() {
         try {
             if (playerStorage != null) {
-                for (PlayerStorageObject plr : playerStorage.values()) {
+                for (PlayerDataObject plr : playerStorage.values()) {
                     plr.attemptUpdate();
                 }
             }
 
-            Minecaching.getInstance().getLogger().info("Player update succeeded, updated from v" + Config.getInstance().getPlayerVersion() + " to v" + Minecaching.getInstance().PLAYER_DATA_VERSION);
+            Minecaching.getInstance().getLogger().info("Player data update succeeded, updated from v" + Config.getInstance().getPlayerDataVersion() + " to v" + Minecaching.getInstance().PLAYER_DATA_VERSION);
 
-            Config.getInstance().setPlayerVersion(Minecaching.getInstance().PLAYER_DATA_VERSION);
+            Config.getInstance().setPlayerDataVersion(Minecaching.getInstance().PLAYER_DATA_VERSION);
             if (playerStorage != null) {
-                for (PlayerStorageObject plr : playerStorage.values()) {
+                for (PlayerDataObject plr : playerStorage.values()) {
                     plr.save();
                 }
             }
             Config.getInstance().save();
         } catch (Exception e) {
-            Minecaching.getInstance().getLogger().warning("Player update failed!");
+            Minecaching.getInstance().getLogger().warning("Player data update failed!");
         }
     }
 }

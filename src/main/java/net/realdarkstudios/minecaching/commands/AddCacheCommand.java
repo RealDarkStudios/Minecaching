@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Utils;
-import net.realdarkstudios.minecaching.data.*;
+import net.realdarkstudios.minecaching.api.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -26,7 +26,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        PlayerStorageObject plrdata = PlayerStorage.getInstance().getOrCreatePlayerData(plr);
+        PlayerDataObject plrdata = MinecachingAPI.get().getPlayerData(plr);
 
         Minecache cache = plrdata.getCache();
         if (args.length < 1 && (cache != null && !cache.id().equals("NULL"))) {
@@ -148,7 +148,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     plr.sendMessage(ChatColor.RED + "/addcache code");
                 } else {
                     cache.setStatus(MinecacheStatus.NEEDS_REVIEWED).setAuthor(plr.getUniqueId()).setBlockType(cache.lodeLocation().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(Utils.EMPTY_UUID);
-                    MinecacheStorage.getInstance().saveMinecache(cache, true);
+                    MinecachingAPI.get().saveMinecache(cache, true);
                     plr.sendMessage(ChatColor.LIGHT_PURPLE + "Created " + cache.id() + ": " + cache.name());
                     plrdata.addHide(cache.id());
                     cache = Minecache.EMPTY;
@@ -169,7 +169,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
         }
 
         Block target = plr.getTargetBlock(null, 5);
-        PlayerStorageObject plrdata = PlayerStorage.getInstance().getOrCreatePlayerData(plr);
+        PlayerDataObject plrdata = MinecachingAPI.get().getPlayerData(plr);
 
         return switch (args.length) {
             case 1 -> plrdata.getCache() == null || plrdata.getCache().id().equals("NULL") ? List.of() : Stream.of("cancel", "code", "name", "lodecoords", "coords", "save", "data", "type").filter(s -> s.contains(args[0])).toList();

@@ -1,6 +1,11 @@
 package net.realdarkstudios.minecaching.commands;
 
-import net.realdarkstudios.minecaching.data.*;
+import net.realdarkstudios.minecaching.api.Minecache;
+import net.realdarkstudios.minecaching.api.MinecacheType;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.PlayerDataObject;
+import net.realdarkstudios.minecaching.event.MinecacheFoundEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,7 +15,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class FindCacheCommand implements CommandExecutor, TabExecutor {
+public class LogCacheCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player plr)) {
@@ -27,7 +32,7 @@ public class FindCacheCommand implements CommandExecutor, TabExecutor {
         String id = args[0];
         String code = args[1];
 
-        Minecache cache = MinecacheStorage.getInstance().getMinecacheByID(id);
+        Minecache cache = MinecachingAPI.get().getMinecache(id);
 
         switch (cache.status()) {
             case NEEDS_REVIEWED -> {
@@ -52,15 +57,19 @@ public class FindCacheCommand implements CommandExecutor, TabExecutor {
         if (cache.type().equals(MinecacheType.TRADITIONAL) || cache.type().equals(MinecacheType.MYSTERY)) {
             if (cache.code().equals(code)) {
                 if (plr.getLocation().distance(cache.location()) < 25) {
-                    PlayerStorageObject plrdata = PlayerStorage.getInstance().getOrCreatePlayerData(plr);
-                    boolean isFtf = plrdata.findMinecache(cache);
+                    PlayerDataObject plrdata = MinecachingAPI.get().getPlayerData(plr);
+                    boolean isFTF = plrdata.isFTF(cache);
+
+                    // Emit MinecacheFoundEvent
+                    MinecacheFoundEvent event = new MinecacheFoundEvent(plr, cache, plrdata.isFTF(cache));
+                    Bukkit.getPluginManager().callEvent(event);
+
                     plr.sendMessage(ChatColor.GREEN + "Congratulations! You found " + cache.id() + ": " + cache.name());
-                    if (isFtf) {
+                    if (isFTF) {
                         plr.sendMessage(ChatColor.GREEN + "You were also the first one to find this cache. Your new FTF total is " + plrdata.getFTFs().size());
-                        MinecacheStorage.getInstance().saveMinecache(cache.setFTF(plr.getUniqueId()), false);
+                        MinecachingAPI.get().saveMinecache(cache.setFTF(plr.getUniqueId()), false);
                     }
                     plr.sendMessage(ChatColor.GREEN + "You now have " + plrdata.getFinds().size() + " finds");
-
                 } else {
                     plr.sendMessage(ChatColor.RED + "You must be within 25 blocks of the cache!");
                 }
@@ -75,7 +84,7 @@ public class FindCacheCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 0 ? MinecacheStorage.getInstance().getIDArray() : args.length == 1 ? MinecacheStorage.getInstance().getIDArray().stream().filter(s -> s.contains(args[0])).toList() : List.of();
+        return args.length == 0 ? MinecachingAPI.get().getAllKnownCacheIDs() : args.length == 1 ? MinecachingAPI.get().getFilteredCacheIDs(s -> s.contains(args[0])) : List.of();
 
     }
 }

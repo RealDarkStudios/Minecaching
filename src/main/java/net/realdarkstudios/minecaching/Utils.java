@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching;
 
-import net.realdarkstudios.minecaching.data.Config;
-import net.realdarkstudios.minecaching.data.Minecache;
+import net.realdarkstudios.minecaching.api.Config;
+import net.realdarkstudios.minecaching.api.Minecache;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -43,11 +43,10 @@ public class Utils {
     public static HashMap<String, Minecache> sortByMinecache(HashMap<String, Minecache> hm)
     {
         // Create a list from elements of HashMap
-        List<Map.Entry<String, Minecache> > list =
-                new LinkedList<>(hm.entrySet());
+        List<Map.Entry<String, Minecache> > list = new LinkedList<>(hm.entrySet());
 
         // Sort the list
-        Collections.sort(list, Comparator.comparing(m -> (m.getValue().hidden())));
+        list.sort(Comparator.comparing(m -> (m.getValue().hidden())));
 
         // put data from sorted list to hashmap
         HashMap<String, Minecache> temp = new LinkedHashMap<>();

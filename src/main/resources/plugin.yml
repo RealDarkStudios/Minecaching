@@ -25,12 +25,12 @@ commands:
     aliases: [locatec, locate, loc]
     permission: minecaching.locatecache
     permission-message: "You do not have permission to locate caches!"
-  findcache:
+  logcache:
     description: "Check if you have found a Minecache"
-    usage: "/findcache <id> <code>"
-    aliases: [findc, find]
+    usage: "/logcache <get|found|dnf> <id> <code> [message]"
+    aliases: [logc, log]
     permission: minecaching.findcache
-    permission-message: "You do not have permission to find caches..."
+    permission-message: "You do not have permission to log caches..."
   verifycache:
     description: "[ADMIN] Confirms a cache"
     usage: "/verifycache <id>"

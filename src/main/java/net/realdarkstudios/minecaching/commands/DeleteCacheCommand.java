@@ -1,8 +1,7 @@
 package net.realdarkstudios.minecaching.commands;
 
-import net.realdarkstudios.minecaching.data.Minecache;
-import net.realdarkstudios.minecaching.data.MinecacheStorage;
-import net.realdarkstudios.minecaching.data.PlayerStorage;
+import net.realdarkstudios.minecaching.api.Minecache;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,7 +23,7 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
         }
 
         String id = args[0].trim();
-        Minecache cache = MinecacheStorage.getInstance().getMinecacheByID(id);
+        Minecache cache = MinecachingAPI.get().getMinecache(id);
         if (cache.equals(Minecache.EMPTY)) {
             sender.sendMessage(ChatColor.RED + "Did not find minecache with ID " + id);
             return true;
@@ -35,21 +34,20 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        PlayerStorage.getInstance().deleteMinecache(cache);
-        MinecacheStorage.getInstance().deleteMinecache(cache);
+        MinecachingAPI.get().deleteMinecache(cache);
         sender.sendMessage(String.format("%sSuccess! Deleted Minecache with ID %s", ChatColor.GREEN, id));
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 0) return MinecacheStorage.getInstance().getIDArray();
+        if (args.length == 0) return MinecachingAPI.get().getAllKnownCacheIDs();
         else if (args.length > 1) return List.of();
 
         ArrayList<String> toReturn = new ArrayList<>();
 
-        for (String id: MinecacheStorage.getInstance().getIDArray()) {
-            if (id.contains(args[0]) && (sender.isOp() || (sender instanceof Player plr && MinecacheStorage.getInstance().getMinecacheByID(id).author().equals(plr.getUniqueId())))) {
+        for (String id: MinecachingAPI.get().getAllKnownCacheIDs()) {
+            if (id.contains(args[0]) && (sender.isOp() || (sender instanceof Player plr && MinecachingAPI.get().getMinecache(id).author().equals(plr.getUniqueId())))) {
                 toReturn.add(id);
             }
         }

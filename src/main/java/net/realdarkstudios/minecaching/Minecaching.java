@@ -1,9 +1,11 @@
 package net.realdarkstudios.minecaching;
 
 import net.realdarkstudios.minecaching.commands.*;
-import net.realdarkstudios.minecaching.data.Config;
-import net.realdarkstudios.minecaching.data.MinecacheStorage;
-import net.realdarkstudios.minecaching.data.PlayerStorage;
+import net.realdarkstudios.minecaching.api.Config;
+import net.realdarkstudios.minecaching.api.LogbookStorage;
+import net.realdarkstudios.minecaching.api.MinecacheStorage;
+import net.realdarkstudios.minecaching.api.PlayerStorage;
+import net.realdarkstudios.minecaching.event.MCEventHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -11,17 +13,22 @@ import java.io.File;
 
 public final class Minecaching extends JavaPlugin {
     private final String VERSION = getDescription().getVersion();
-    public int CONFIG_DATA_VERSION = 3;
+    public int CONFIG_DATA_VERSION = 4;
     public int MINECACHE_DATA_VERSION = 3;
     public int PLAYER_DATA_VERSION = 2;
+    public int LOGBOOK_DATA_VERSION = 1;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         getLogger().info(String.format("Minecaching v%s is enabling...", VERSION));
+        getServer().getPluginManager().registerEvents(new MCEventHandler(), this);
 
         File playerFolder = new File(getDataFolder() + "/player/");
         if (!playerFolder.exists()) playerFolder.mkdirs();
+
+        File logFolder = new File(getDataFolder() + "/logs/");
+        if (!logFolder.exists()) logFolder.mkdirs();
 
         getLogger().info("Checking server version...");
         getLogger().info("Server Version: " + Bukkit.getBukkitVersion());
@@ -32,8 +39,37 @@ public final class Minecaching extends JavaPlugin {
             Config.getInstance().load();
             MinecacheStorage.getInstance().load();
             PlayerStorage.getInstance().load();
+            LogbookStorage.getInstance().load();
             onDisable();
         } else {
+            getLogger().info("Loading config...");
+            Config.getInstance().load();
+            if (Config.getInstance().getConfigVersion() < CONFIG_DATA_VERSION) {
+                getLogger().warning("Config Version out of date!");
+                Config.getInstance().attemptUpdate();
+            }
+
+            getLogger().info("Loading minecaches...");
+            MinecacheStorage.getInstance().load();
+            if (Config.getInstance().getMinecacheDataVersion() < MINECACHE_DATA_VERSION) {
+                getLogger().warning("Minecache Data Version out of date!");
+                MinecacheStorage.getInstance().attemptUpdate();
+            }
+
+            getLogger().info("Loading player data...");
+            PlayerStorage.getInstance().load();
+            if (Config.getInstance().getPlayerDataVersion() < PLAYER_DATA_VERSION) {
+                getLogger().warning("Player Data Version out of date!");
+                PlayerStorage.getInstance().attemptUpdate();
+            }
+
+            getLogger().info("Loading logbook data...");
+            LogbookStorage.getInstance().load();
+            if (Config.getInstance().getLogbookDataVersion() < LOGBOOK_DATA_VERSION) {
+                getLogger().warning("Logbook Data Version out of date!");
+                LogbookStorage.getInstance().attemptUpdate();
+            }
+
             getLogger().info("Registering commands...");
             getCommand("addcache").setExecutor(new AddCacheCommand());
             getCommand("editcache").setExecutor(new EditCacheCommand());
@@ -42,26 +78,8 @@ public final class Minecaching extends JavaPlugin {
             getCommand("mcadmin").setExecutor(new MCAdminCommand());
             getCommand("verifycache").setExecutor(new VerifyCacheCommand());
             getCommand("locatecache").setExecutor(new LocateCacheCommand());
-            getCommand("findcache").setExecutor(new FindCacheCommand());
-            getServer().getPluginManager().registerEvents(new MCEventHandler(), this);
-            getLogger().info("Loading config...");
-            Config.getInstance().load();
-            if (Config.getInstance().getConfigVersion() < CONFIG_DATA_VERSION) {
-                getLogger().warning("Config Version out of date!");
-                Config.getInstance().attemptUpdate();
-            }
-            getLogger().info("Loading minecaches...");
-            MinecacheStorage.getInstance().load();
-            if (Config.getInstance().getMinecacheVersion() < MINECACHE_DATA_VERSION) {
-                getLogger().warning("Minecache Version out of date!");
-                MinecacheStorage.getInstance().attemptUpdate();
-            }
-            getLogger().info("Loading player data...");
-            PlayerStorage.getInstance().load();
-            if (Config.getInstance().getPlayerVersion() < PLAYER_DATA_VERSION) {
-                getLogger().warning("Player Version out of date!");
-                PlayerStorage.getInstance().attemptUpdate();
-            }
+            getCommand("logcache").setExecutor(new LogCacheCommand());
+
             getLogger().info("Minecaching has been enabled!");
         }
     }
@@ -72,10 +90,12 @@ public final class Minecaching extends JavaPlugin {
         getLogger().info("Minecaching is disabling...");
         getLogger().info("Saving config...");
         Config.getInstance().save();
-        getLogger().info("Saving minecaches...");
+        getLogger().info("Saving minecache data...");
         MinecacheStorage.getInstance().save();
         getLogger().info("Saving player data...");
         PlayerStorage.getInstance().save();
+        getLogger().info("Saving logbook data...");
+        LogbookStorage.getInstance().save();
         getLogger().info("Minecaching has been disabled");
     }
 

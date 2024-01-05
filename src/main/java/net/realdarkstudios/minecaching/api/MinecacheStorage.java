@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.data;
+package net.realdarkstudios.minecaching.api;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.Utils;
@@ -41,7 +41,7 @@ public class MinecacheStorage {
         updateMaps();
     }
 
-    private void updateMaps() {
+    void updateMaps() {
         ArrayList<Minecache> caches = new ArrayList<>(yaml.getKeys(false).size());
         HashMap<String, Minecache> idMap = new HashMap(yaml.getKeys(false).size());
         HashMap<Location, Minecache> locationMap = new HashMap<>(yaml.getKeys(false).size());
@@ -54,17 +54,12 @@ public class MinecacheStorage {
             locationMap.put(new Location(cache.world(), cache.x(), cache.y(), cache.z()), cache);
         }
 
-        caches.sort(this::compare);
+        caches.sort(Minecache::compareByTime);
 
         this.minecaches = caches;
         this.idToMinecache = Utils.sortByMinecache(idMap);
         this.mcLocations = locationMap;
     }
-
-    public int compare(Minecache m1, Minecache m2) {
-        return m1.hidden().compareTo(m2.hidden());
-    }
-
     public void save() {
         try {
             yaml.save(file);
@@ -73,35 +68,47 @@ public class MinecacheStorage {
         }
     }
 
-    public void saveMinecache(Minecache minecache, boolean isNewCache) {
-        int tries = 0;
+    boolean saveMinecache(Minecache minecache, boolean isNewCache) {
+        try {
+            int tries = 0;
 
-        while (idToMinecache.containsKey(minecache.id()) && isNewCache) {
-            minecache.setID(Utils.generateID((int) (Math.floor((double) tries / 50) + 5)));
-            tries++;
+            while (idToMinecache.containsKey(minecache.id()) && isNewCache) {
+                minecache.setID(Utils.generateID((int) (Math.floor((double) tries / 50) + 5)));
+                tries++;
+            }
+
+            minecache.toYaml(yaml, minecache.id());
+
+            save();
+            updateMaps();
+
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-
-        minecache.toYaml(yaml, minecache.id());
-
-        save();
-        updateMaps();
     }
 
-    public void deleteMinecache(Minecache minecache) {
-        yaml.set(minecache.id(), null);
-        save();
-        updateMaps();
+    boolean deleteMinecache(Minecache minecache) {
+        try {
+            yaml.set(minecache.id(), null);
+            save();
+            updateMaps();
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    public Minecache getMinecacheByID(String id) {
+    Minecache getMinecacheByID(String id) {
         return idToMinecache.get(id) != null ? idToMinecache.get(id) : Minecache.EMPTY;
     }
 
-    public ArrayList<Minecache> getMinecaches() {
+    ArrayList<Minecache> getMinecaches() {
         return minecaches;
     }
 
-    public ArrayList<String> getIDArray() {
+    ArrayList<String> getIDArray() {
         ArrayList<String> ids = new ArrayList<>();
 
         for (Minecache minecache: minecaches) {
@@ -111,7 +118,7 @@ public class MinecacheStorage {
         return ids;
     }
 
-    public HashMap<Location, Minecache> getLocations() {
+    HashMap<Location, Minecache> getLocations() {
         return mcLocations;
     }
 
@@ -119,17 +126,8 @@ public class MinecacheStorage {
         return INSTANCE;
     }
 
-    public boolean playerFindMinecache(UUID plr, Minecache minecache) {
-        boolean isFTF = false;
-        if (minecache.ftf().equals(Utils.EMPTY_UUID)) {
-            minecache.setFTF(plr);
-            isFTF = true;
-        }
-
-        save();
-        updateMaps();
-
-        return isFTF;
+    boolean isFTF(UUID plr, Minecache minecache) {
+        return minecache.ftf().equals(Utils.EMPTY_UUID);
     }
 
     public void attemptUpdate() {
@@ -142,15 +140,15 @@ public class MinecacheStorage {
                 cache.toYaml(yaml, cache.id());
             }
 
-            Minecaching.getInstance().getLogger().info("Minecache update succeeded, updated from v" + Config.getInstance().getMinecacheVersion() + " to v" + Minecaching.getInstance().MINECACHE_DATA_VERSION);
+            Minecaching.getInstance().getLogger().info("Minecache data update succeeded, updated from v" + Config.getInstance().getMinecacheDataVersion() + " to v" + Minecaching.getInstance().MINECACHE_DATA_VERSION);
 
-            Config.getInstance().setMinecacheVersion(Minecaching.getInstance().MINECACHE_DATA_VERSION);
+            Config.getInstance().setMinecacheDataVersion(Minecaching.getInstance().MINECACHE_DATA_VERSION);
             Config.getInstance().save();
 
             save();
             updateMaps();
         } catch (Exception e) {
-            Minecaching.getInstance().getLogger().warning("Minecache update failed!");
+            Minecaching.getInstance().getLogger().warning("Minecache data update failed!");
         }
     }
 }

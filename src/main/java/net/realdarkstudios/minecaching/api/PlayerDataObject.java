@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.data;
+package net.realdarkstudios.minecaching.api;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-public class PlayerStorageObject {
+public class PlayerDataObject {
     private final UUID uniqueID;
     private boolean banned;
     private ArrayList<String> finds, ftfs, hides;
@@ -17,7 +17,7 @@ public class PlayerStorageObject {
     private YamlConfiguration yaml;
     private File file;
 
-    public PlayerStorageObject(UUID uniqueID, YamlConfiguration yaml, File file, boolean useEmptyMinecache) {
+    public PlayerDataObject(UUID uniqueID, YamlConfiguration yaml, File file, boolean useEmptyMinecache) {
         this.uniqueID = uniqueID;
         this.banned = yaml.getBoolean("banned");
         ArrayList<String> yFtfs = new ArrayList<>(), yHides = new ArrayList<>(), yFinds = new ArrayList<>();
@@ -102,11 +102,8 @@ public class PlayerStorageObject {
         saveData();
     }
 
-    public boolean findMinecache(Minecache minecache) {
-        boolean newFtf = MinecacheStorage.getInstance().playerFindMinecache(uniqueID, minecache);
-        addFind(minecache.id());
-        if (newFtf) addFTF(minecache.id());
-        return newFtf;
+    public boolean isFTF(Minecache minecache) {
+        return MinecacheStorage.getInstance().isFTF(uniqueID, minecache);
     }
 
     private void update() {
@@ -173,11 +170,11 @@ public class PlayerStorageObject {
         return true;
     }
 
-    public static PlayerStorageObject get(UUID uuid) {
+    public static PlayerDataObject get(UUID uuid) {
         return get(uuid, false);
     }
 
-    public static PlayerStorageObject get(UUID uuid, boolean useEmptyMinecache) {
+    public static PlayerDataObject get(UUID uuid, boolean useEmptyMinecache) {
         File plrFile = new File(Minecaching.getInstance().getDataFolder() + "/player/" + uuid + ".yml");
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(plrFile);
 
@@ -195,6 +192,6 @@ public class PlayerStorageObject {
             }
         }
 
-        return new PlayerStorageObject(uuid, yaml, plrFile, useEmptyMinecache);
+        return new PlayerDataObject(uuid, yaml, plrFile, useEmptyMinecache);
     }
 }

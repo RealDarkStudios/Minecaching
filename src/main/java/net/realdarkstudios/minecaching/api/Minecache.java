@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.data;
+package net.realdarkstudios.minecaching.api;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.Utils;
@@ -262,5 +262,9 @@ public class Minecache {
         yaml.set(key + ".blocktype", blockType() != null ? blockType().toString() : "AIR");
         yaml.set(key + ".finds", finds());
         yaml.set(key + ".code", code());
+    }
+
+    public static int compareByTime(Minecache m1, Minecache m2) {
+        return m1.hidden().compareTo(m2.hidden());
     }
 }

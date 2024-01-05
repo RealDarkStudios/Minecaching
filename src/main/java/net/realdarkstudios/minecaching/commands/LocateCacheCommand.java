@@ -1,9 +1,9 @@
 package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Minecaching;
-import net.realdarkstudios.minecaching.data.Config;
-import net.realdarkstudios.minecaching.data.Minecache;
-import net.realdarkstudios.minecaching.data.MinecacheStorage;
+import net.realdarkstudios.minecaching.api.Config;
+import net.realdarkstudios.minecaching.api.Minecache;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.util.MCPluginMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -36,7 +36,7 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
         }
 
         String id = args[0];
-        Minecache cache = MinecacheStorage.getInstance().getMinecacheByID(id);
+        Minecache cache = MinecachingAPI.get().getMinecache(id);
 
         if (cache.equals(Minecache.EMPTY)) {
             sender.sendMessage(ChatColor.RED + "Did not find minecache with ID " + id);
@@ -110,6 +110,6 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 0 ? MinecacheStorage.getInstance().getIDArray() : args.length == 1 ? MinecacheStorage.getInstance().getIDArray().stream().filter(s -> s.contains(args[0])).toList() : List.of();
+        return args.length == 0 ? MinecachingAPI.get().getAllKnownCacheIDs() : args.length == 1 ? MinecachingAPI.get().getFilteredCacheIDs(s -> s.contains(args[0])) : List.of();
     }
 }

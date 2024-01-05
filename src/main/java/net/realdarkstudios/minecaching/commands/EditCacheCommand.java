@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Utils;
-import net.realdarkstudios.minecaching.data.*;
+import net.realdarkstudios.minecaching.api.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -26,7 +26,7 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
             uuid = plr.getUniqueId();
         }
 
-        PlayerStorageObject plrdata = PlayerStorage.getInstance().getOrCreatePlayerData(uuid);
+        PlayerDataObject plrdata = MinecachingAPI.get().getPlayerData(uuid);
 
         Minecache cache = plrdata.getEditingCache();
         if (args.length < 1) {
@@ -36,13 +36,13 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
         } else if (args.length == 1 && (cache == null || cache.id().equals("NULL"))) {
             String id = args[0];
 
-            if (MinecacheStorage.getInstance().getMinecacheByID(id).equals(Minecache.EMPTY)) {
+            if (MinecachingAPI.get().getMinecache(id).equals(Minecache.EMPTY)) {
                 sender.sendMessage(ChatColor.RED + "Did not find minecache with ID " + id);
                 return true;
             }
 
             sender.sendMessage(ChatColor.LIGHT_PURPLE + "Editing " + id);
-            plrdata.setEditingCache(MinecacheStorage.getInstance().getMinecacheByID(id));
+            plrdata.setEditingCache(MinecachingAPI.get().getMinecache(id));
             return true;
         } else if (args.length == 1 && args[0].startsWith("MC-") && !cache.id().equals("NULL")) {
             sender.sendMessage(ChatColor.RED + "You are already editing " + plrdata.getEditingCache().id());
@@ -148,7 +148,7 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                     sender.sendMessage(ChatColor.RED + "You must set a code!");
                     sender.sendMessage(ChatColor.RED + "/editcache code");
                 }  else {
-                    MinecacheStorage.getInstance().saveMinecache(cache, false);
+                    MinecachingAPI.get().saveMinecache(cache, false);
                     sender.sendMessage(ChatColor.LIGHT_PURPLE + "Saved " + cache.id() + ": " + cache.name());
                     cache = Minecache.EMPTY;
                     cache.setID("NULL");
@@ -169,15 +169,15 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
             uuid = plr.getUniqueId();
         }
 
-        PlayerStorageObject plrdata = PlayerStorage.getInstance().getOrCreatePlayerData(uuid);
+        PlayerDataObject plrdata = MinecachingAPI.get().getPlayerData(uuid);
 
-        if (args.length == 0 && (plrdata.getEditingCache() == null || plrdata.getEditingCache().id().equals("NULL"))) return MinecacheStorage.getInstance().getIDArray();
+        if (args.length == 0 && (plrdata.getEditingCache() == null || plrdata.getEditingCache().id().equals("NULL"))) return MinecachingAPI.get().getAllKnownCacheIDs();
         else if (args.length == 1 && (plrdata.getEditingCache() == null || plrdata.getEditingCache().id().equals("NULL"))) {
 
             ArrayList<String> toReturn = new ArrayList<>();
 
-            for (String id : MinecacheStorage.getInstance().getIDArray()) {
-                if ((plrdata.getEditingCache() != null || !plrdata.getEditingCache().id().equals("NULL")) && id.contains(args[0]) && (sender.isOp() || (sender instanceof Player plr && MinecacheStorage.getInstance().getMinecacheByID(id).author().equals(plr.getUniqueId())))) {
+            for (String id : MinecachingAPI.get().getAllKnownCacheIDs()) {
+                if ((plrdata.getEditingCache() != null || !plrdata.getEditingCache().id().equals("NULL")) && id.contains(args[0]) && (sender.isOp() || (sender instanceof Player plr && MinecachingAPI.get().getMinecache(id).author().equals(plr.getUniqueId())))) {
                     toReturn.add(id);
                 }
             }

@@ -1,8 +1,8 @@
 package net.realdarkstudios.minecaching.commands;
 
-import net.realdarkstudios.minecaching.data.Minecache;
-import net.realdarkstudios.minecaching.data.MinecacheStatus;
-import net.realdarkstudios.minecaching.data.MinecacheStorage;
+import net.realdarkstudios.minecaching.api.Minecache;
+import net.realdarkstudios.minecaching.api.MinecacheStatus;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,7 +15,7 @@ import java.util.List;
 public class VerifyCacheCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        Minecache minecache = MinecacheStorage.getInstance().getMinecacheByID(args[0]);
+        Minecache minecache = MinecachingAPI.get().getMinecache(args[0]);
 
         if (minecache.equals(Minecache.EMPTY)) {
             sender.sendMessage(ChatColor.RED + "Please input a valid Minecache!");
@@ -24,7 +24,7 @@ public class VerifyCacheCommand implements CommandExecutor, TabExecutor {
             sender.sendMessage(ChatColor.RED + "This cache can't be verified because it already is or is disabled/archived");
         } else {
             minecache.setStatus(MinecacheStatus.VERIFIED);
-            MinecacheStorage.getInstance().saveMinecache(minecache, false);
+            MinecachingAPI.get().saveMinecache(minecache, false);
             sender.sendMessage(ChatColor.GREEN + "Success! Verified " + args[0]);
         }
 
@@ -33,7 +33,7 @@ public class VerifyCacheCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        List<Minecache> fMinecaches = MinecacheStorage.getInstance().getMinecaches().stream().filter(m -> m.status().equals(MinecacheStatus.NEEDS_REVIEWED)).toList();
+        List<Minecache> fMinecaches = MinecachingAPI.get().getFilteredCaches(m -> m.status().equals(MinecacheStatus.NEEDS_REVIEWED));
         ArrayList<String> mcIDs = new ArrayList<>();
 
         for (Minecache m : fMinecaches) {

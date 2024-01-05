@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.data;
+package net.realdarkstudios.minecaching.api;
 
 import org.bukkit.ChatColor;
 

@@ -1,9 +1,10 @@
 package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Minecaching;
-import net.realdarkstudios.minecaching.data.Config;
-import net.realdarkstudios.minecaching.data.MinecacheStorage;
-import net.realdarkstudios.minecaching.data.PlayerStorage;
+import net.realdarkstudios.minecaching.api.Config;
+import net.realdarkstudios.minecaching.api.LogbookStorage;
+import net.realdarkstudios.minecaching.api.MinecacheStorage;
+import net.realdarkstudios.minecaching.api.PlayerStorage;
 import net.realdarkstudios.minecaching.util.MCPluginMessages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -37,8 +38,9 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
 
             Minecaching.getInstance().getLogger().info("Reloading...");
             Config.getInstance().load();
-            PlayerStorage.getInstance().load();
             MinecacheStorage.getInstance().load();
+            PlayerStorage.getInstance().load();
+            LogbookStorage.getInstance().load();
             Minecaching.getInstance().getLogger().info("Reloaded");
             sender.sendMessage("Reloaded Minecaching");
         } else if (subcommand.equals("version")) {
@@ -49,8 +51,9 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
 
             sender.sendMessage("Minecaching Version: " + Minecaching.getInstance().getDescription().getVersion());
             sender.sendMessage("Config Version: " + Config.getInstance().getConfigVersion());
-            sender.sendMessage("Minecache Data Version: " + Config.getInstance().getMinecacheVersion());
-            sender.sendMessage("Player Data Version: " + Config.getInstance().getPlayerVersion());
+            sender.sendMessage("Minecache Data Version: " + Config.getInstance().getMinecacheDataVersion());
+            sender.sendMessage("Player Data Version: " + Config.getInstance().getPlayerDataVersion());
+            sender.sendMessage("Logbook Data Version: " + Config.getInstance().getLogbookDataVersion());
         } else return false;
 
         return true;

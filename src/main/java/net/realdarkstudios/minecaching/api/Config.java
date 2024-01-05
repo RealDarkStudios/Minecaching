@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.data;
+package net.realdarkstudios.minecaching.api;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -44,20 +44,28 @@ public class Config {
         return yaml.getInt("CONFIG_VERSION");
     }
 
-    public int getMinecacheVersion() {
-        return yaml.getInt("MINECACHE_VERSION");
+    public int getMinecacheDataVersion() {
+        return yaml.getInt("MINECACHE_DATA_VERSION");
     }
 
-    public void setMinecacheVersion(int version) {
-        yaml.set("MINECACHE_VERSION", version);
+    public void setMinecacheDataVersion(int version) {
+        yaml.set("MINECACHE_DATA_VERSION", version);
     }
 
-    public int getPlayerVersion() {
-        return yaml.getInt("PLAYER_VERSION");
+    public int getPlayerDataVersion() {
+        return yaml.getInt("PLAYER_DATA_VERSION");
     }
 
-    public void setPlayerVersion(int version) {
-        yaml.set("PLAYER_VERSION", version);
+    public void setPlayerDataVersion(int version) {
+        yaml.set("PLAYER_DATA_VERSION", version);
+    }
+
+    public int getLogbookDataVersion() {
+        return yaml.getInt("LOGBOOK_DATA_VERSION");
+    }
+
+    public void setLogbookDataVersion(int version) {
+        yaml.set("LOGBOOK_DATA_VERSION", version);
     }
 
     public int getMaxX() {
@@ -102,8 +110,9 @@ public class Config {
     public void attemptUpdate() {
         try {
             int configVersion = getConfigVersion();
-            int minecacheVersion = getMinecacheVersion();
-            int playerVersion = getPlayerVersion();
+            int minecacheDataVersion = configVersion < 4 ? yaml.getInt("MINECACHE_VERSION") : getMinecacheDataVersion();
+            int playerDataVersion = configVersion < 4 ? yaml.getInt("PLAYER_VERSION") : getPlayerDataVersion();
+            int logbookDataVersion = configVersion < 4 ? 0 : getLogbookDataVersion();
             int maxY = getMaxY();
             int minY = getMinY();
             int maxX = getMaxX();
@@ -114,14 +123,14 @@ public class Config {
             int maxLodestoneDistance = getMaxLodestoneDistance();
             List<?> enabledTypes = getEnabledTypes();
 
-            int findLodestoneDistance = 25;
-            if (configVersion >= 3) findLodestoneDistance = getFindLodestoneDistance();
+            int findLodestoneDistance = configVersion < 3 ? 25 : getFindLodestoneDistance();
 
             Minecaching.getInstance().saveResource("config.yml", true);
             load();
 
-            yaml.set("MINECACHE_VERSION", minecacheVersion);
-            yaml.set("PLAYER_VERSION", playerVersion);
+            yaml.set("MINECACHE_DATA_VERSION", minecacheDataVersion);
+            yaml.set("PLAYER_DATA_VERSION", playerDataVersion);
+            yaml.set("LOGBOOK_DATA_VERSION", logbookDataVersion);
             yaml.set("MAX_Y", maxY);
             yaml.set("MIN_Y", minY);
             yaml.set("MAX_X", maxX);
