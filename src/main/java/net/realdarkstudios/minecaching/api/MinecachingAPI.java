@@ -130,6 +130,12 @@ public class MinecachingAPI {
         return (PlayerStorage.getInstance().deleteMinecache(minecache) && MinecacheStorage.getInstance().deleteMinecache(minecache));
     }
 
+    /**
+     * Verifies a cache
+     * @param minecache The cache to verify
+     * @return {@code true} if the cache was successfully verified
+     * @since 2.0.0.5
+     */
     public boolean verifyMinecache(Minecache minecache) {
         minecache.setStatus(MinecacheStatus.VERIFIED);
         return saveMinecache(minecache, false);
