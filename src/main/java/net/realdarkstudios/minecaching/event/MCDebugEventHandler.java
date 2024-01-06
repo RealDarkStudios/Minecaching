@@ -1,8 +1,8 @@
 package net.realdarkstudios.minecaching.event;
 
 import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.Utils;
 import net.realdarkstudios.minecaching.api.Config;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -18,13 +18,18 @@ public class MCDebugEventHandler implements Listener {
     }
 
     @EventHandler
+    public void onMinecacheEdited(MinecacheEditedEvent event) {
+        sendDebugMessage("Minecache " + event.getCache().id() + " was edited", "cacheId - " + event.getCache().id() + ", editor - " + Utils.commandSenderName(event.getEditor()), "");
+    }
+
+    @EventHandler
     public void onMinecacheDeleted(MinecacheDeletedEvent event) {
         sendDebugMessage("Minecache " + event.getCache().id() + " was deleted", "cacheId - " + event.getCache().id(), "cacheAuthor - " + event.getAuthor().getDisplayName());
     }
 
     @EventHandler
     public void onMinecacheVerified(MinecacheVerifiedEvent event) {
-        sendDebugMessage("Minecache " + event.getCache().id() + " was verified", "cacheId - " + event.getCache().id() + ", verifier - " + (event.getVerifier() instanceof Player plr ? plr.getDisplayName() : "CONSOLE"), "");
+        sendDebugMessage("Minecache " + event.getCache().id() + " was verified", "cacheId - " + event.getCache().id() + ", verifier - " + Utils.commandSenderName(event.getVerifier()), "");
     }
 
     @EventHandler

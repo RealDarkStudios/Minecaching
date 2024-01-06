@@ -28,7 +28,12 @@ public class VerifyCacheCommand implements CommandExecutor, TabExecutor {
             MinecacheVerifiedEvent event = new MinecacheVerifiedEvent(minecache, sender);
             Bukkit.getPluginManager().callEvent(event);
 
-            if (!event.isCancelled()) MinecachingAPI.get().verifyMinecache(minecache);
+            if (event.isCancelled()) {
+                sender.sendMessage(ChatColor.RED + args[0] + " could not be verified for some reason!");
+                return true;
+            }
+
+            MinecachingAPI.get().verifyMinecache(minecache);
             sender.sendMessage(ChatColor.GREEN + "Success! Verified " + args[0]);
         }
 

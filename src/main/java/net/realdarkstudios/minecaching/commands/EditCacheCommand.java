@@ -2,6 +2,8 @@ package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Utils;
 import net.realdarkstudios.minecaching.api.*;
+import net.realdarkstudios.minecaching.event.MinecacheEditedEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -148,6 +150,14 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                     sender.sendMessage(ChatColor.RED + "You must set a code!");
                     sender.sendMessage(ChatColor.RED + "/editcache code");
                 }  else {
+                    MinecacheEditedEvent event = new MinecacheEditedEvent(cache, sender);
+                    Bukkit.getPluginManager().callEvent(event);
+
+                    if (event.isCancelled()) {
+                        sender.sendMessage(ChatColor.RED + cache.id() + " could not be saved for some reason!");
+                        return true;
+                    }
+
                     MinecachingAPI.get().saveMinecache(cache, false);
                     sender.sendMessage(ChatColor.LIGHT_PURPLE + "Saved " + cache.id() + ": " + cache.name());
                     cache = Minecache.EMPTY;

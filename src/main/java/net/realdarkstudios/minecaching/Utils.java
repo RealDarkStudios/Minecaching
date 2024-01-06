@@ -116,4 +116,8 @@ public class Utils {
             return (a.equals("X") ? Config.getInstance().getMaxX() : a.equals("Y") ? Config.getInstance().getMaxY() : Config.getInstance().getMaxZ()) + 1;
         }
     }
+
+    public static String commandSenderName(CommandSender commandSender) {
+        return commandSender instanceof Player plr ? plr.getDisplayName() : "CONSOLE";
+    }
 }
