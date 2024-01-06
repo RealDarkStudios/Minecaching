@@ -1,20 +1,24 @@
 package net.realdarkstudios.minecaching.api;
 
+import org.bukkit.ChatColor;
+
 public enum LogType  {
-    FOUND("found", "Found on"),
-    DNF("dnf", "Did not find on"),
-    NOTE("note", "Added note on"),
-    REQUEST_REVIEW("request_review", "Requested owner attention on"),
-    MAINTENANCE("maintenance", "Did maintenance on"),
-    DISABLE("disable", "Disabled on"),
-    ARCHIVE("archive", "Archived on"),
-    INVALID("invalid", "Did something on");
+    FOUND("found", "Found on", ChatColor.YELLOW),
+    DNF("dnf", "Did not find on", ChatColor.BLUE),
+    NOTE("note", "Added note on", ChatColor.GRAY),
+    REQUEST_REVIEW("request_review", "Requested owner attention on", ChatColor.RED),
+    MAINTENANCE("maintenance", "Did maintenance on", ChatColor.GREEN),
+    DISABLE("disable", "Disabled on", ChatColor.DARK_RED),
+    ARCHIVE("archive", "Archived on", ChatColor.GRAY),
+    INVALID("invalid", "Did something on", ChatColor.DARK_RED);
 
-    private String id, msg;
+    private final String id, msg;
+    private final ChatColor color;
 
-    LogType(String id, String msg) {
+    LogType(String id, String msg, ChatColor color) {
         this.id = id;
         this.msg = msg;
+        this.color = color;
     }
 
     public static LogType get(String type) {
@@ -38,9 +42,12 @@ public enum LogType  {
         return msg;
     }
 
-    @Override
-    public String toString() {
-        return id;
+    public ChatColor getColor() {
+        return color;
     }
 
+    @Override
+    public String toString() {
+        return color + id + ChatColor.RESET;
+    }
 }

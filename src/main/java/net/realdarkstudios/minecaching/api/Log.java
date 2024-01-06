@@ -7,11 +7,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Log {
-    private String cacheID, logID, log;
-    private UUID author;
-    private LogType type;
-    private LocalDateTime time;
-    private boolean invalidated;
+    private final String cacheID, logID;
+    private String log;
+    private final UUID author;
+    private final LogType type;
+    private final LocalDateTime time;
+    private final boolean invalidated;
 
     public Log(String cacheID, String logID, UUID author, LogType type, LocalDateTime time, String log, boolean invalidated) {
         this.cacheID = cacheID;
@@ -36,7 +37,7 @@ public class Log {
     }
 
     public LogType type() {
-        return type;
+        return invalidated ? LogType.INVALID : type;
     }
 
     public LocalDateTime time() {
@@ -45,6 +46,10 @@ public class Log {
 
     public String log() {
         return log;
+    }
+
+    public void setLog(String log) {
+        this.log = log;
     }
 
     public static Log fromYaml(YamlConfiguration yaml, String key, String cacheID) {
@@ -63,6 +68,9 @@ public class Log {
     }
 
     public void toYaml(YamlConfiguration yaml, String key) {
-
+        yaml.set(key + ".author", author);
+        yaml.set(key + ".type", type.getId());
+        yaml.set(key + ".log", log);
+        yaml.set(key + ".time", time);
     }
 }
