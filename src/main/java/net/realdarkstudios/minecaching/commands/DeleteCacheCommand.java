@@ -39,11 +39,14 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
         MinecacheDeletedEvent event = new MinecacheDeletedEvent(cache, Bukkit.getPlayer(cache.author()));
         Bukkit.getPluginManager().callEvent(event);
 
-        if (!event.isCancelled()) {
-            sender.sendMessage(String.format("%sSuccess! Deleted Minecache with ID %s", ChatColor.GREEN, id));
-        } else {
+        if (event.isCancelled()) {
             sender.sendMessage(ChatColor.RED + "The cache could not be deleted for some reason!");
+            return true;
         }
+
+        MinecachingAPI.get().deleteMinecache(cache);
+        sender.sendMessage(String.format("%sSuccess! Deleted Minecache with ID %s", ChatColor.GREEN, id));
+
         return true;
     }
 

@@ -54,6 +54,7 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
             sender.sendMessage("Minecache Data Version: " + Config.getInstance().getMinecacheDataVersion());
             sender.sendMessage("Player Data Version: " + Config.getInstance().getPlayerDataVersion());
             sender.sendMessage("Logbook Data Version: " + Config.getInstance().getLogbookDataVersion());
+            sender.sendMessage("Debug Events: " + Config.getInstance().getDebugEvents() + " (Level: " + Config.getInstance().getDebugEventsLevel() + ")");
         } else return false;
 
         return true;

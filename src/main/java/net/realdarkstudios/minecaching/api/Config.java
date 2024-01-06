@@ -2,6 +2,7 @@ package net.realdarkstudios.minecaching.api;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.joml.Math;
 
 import java.io.File;
 import java.util.List;
@@ -68,6 +69,14 @@ public class Config {
         yaml.set("LOGBOOK_DATA_VERSION", version);
     }
 
+    public boolean getDebugEvents() {
+        return yaml.getBoolean("DEBUG_EVENTS");
+    }
+
+    public int getDebugEventsLevel() {
+        return Math.clamp(0, 2, yaml.getInt("DEBUG_EVENTS_LEVEL"));
+    }
+
     public int getMaxX() {
         return yaml.getInt("MAX_X");
     }
@@ -113,6 +122,9 @@ public class Config {
             int minecacheDataVersion = configVersion < 4 ? yaml.getInt("MINECACHE_VERSION") : getMinecacheDataVersion();
             int playerDataVersion = configVersion < 4 ? yaml.getInt("PLAYER_VERSION") : getPlayerDataVersion();
             int logbookDataVersion = configVersion < 4 ? 0 : getLogbookDataVersion();
+
+            boolean verboseEvents = configVersion >= 5 && getDebugEvents();
+            int verboseLevel = configVersion < 5 ? 0 : getDebugEventsLevel();
             int maxY = getMaxY();
             int minY = getMinY();
             int maxX = getMaxX();
@@ -131,6 +143,8 @@ public class Config {
             yaml.set("MINECACHE_DATA_VERSION", minecacheDataVersion);
             yaml.set("PLAYER_DATA_VERSION", playerDataVersion);
             yaml.set("LOGBOOK_DATA_VERSION", logbookDataVersion);
+            yaml.set("VERBOSE_EVENTS", verboseEvents);
+            yaml.set("VERBOSE_LEVEL", verboseLevel);
             yaml.set("MAX_Y", maxY);
             yaml.set("MIN_Y", minY);
             yaml.set("MAX_X", maxX);

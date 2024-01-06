@@ -1,11 +1,11 @@
 package net.realdarkstudios.minecaching;
 
-import net.realdarkstudios.minecaching.commands.*;
 import net.realdarkstudios.minecaching.api.Config;
 import net.realdarkstudios.minecaching.api.LogbookStorage;
 import net.realdarkstudios.minecaching.api.MinecacheStorage;
 import net.realdarkstudios.minecaching.api.PlayerStorage;
-import net.realdarkstudios.minecaching.event.MCEventHandler;
+import net.realdarkstudios.minecaching.commands.*;
+import net.realdarkstudios.minecaching.event.MCDebugEventHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -13,7 +13,7 @@ import java.io.File;
 
 public final class Minecaching extends JavaPlugin {
     private final String VERSION = getDescription().getVersion();
-    public int CONFIG_DATA_VERSION = 4;
+    public int CONFIG_DATA_VERSION = 5;
     public int MINECACHE_DATA_VERSION = 3;
     public int PLAYER_DATA_VERSION = 2;
     public int LOGBOOK_DATA_VERSION = 1;
@@ -22,7 +22,6 @@ public final class Minecaching extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         getLogger().info(String.format("Minecaching v%s is enabling...", VERSION));
-        getServer().getPluginManager().registerEvents(new MCEventHandler(), this);
 
         File playerFolder = new File(getDataFolder() + "/player/");
         if (!playerFolder.exists()) playerFolder.mkdirs();
@@ -79,6 +78,14 @@ public final class Minecaching extends JavaPlugin {
             getCommand("verifycache").setExecutor(new VerifyCacheCommand());
             getCommand("locatecache").setExecutor(new LocateCacheCommand());
             getCommand("logcache").setExecutor(new LogCacheCommand());
+
+            if (Config.getInstance().getDebugEvents()) {
+                getLogger().info("Debug Events Enabled! (Level: " + Config.getInstance().getDebugEventsLevel() + ")");
+            }
+
+            // Must register regardless of if Verbose Events are enabled, in case someone decides to enable it while running.
+            // A check is performed in MCVerboseEventHandler#sendVerboseMessage
+            getServer().getPluginManager().registerEvents(new MCDebugEventHandler(), this);
 
             getLogger().info("Minecaching has been enabled!");
         }

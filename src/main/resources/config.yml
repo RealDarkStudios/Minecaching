@@ -4,10 +4,20 @@
 # +-------------+
 
 # Do not touch!
-CONFIG_VERSION: 4
+CONFIG_VERSION: 5
 MINECACHE_DATA_VERSION: 3
 PLAYER_DATA_VERSION: 2
 LOGBOOK_DATA_VERSION: 1
+
+# Determines whether or not event messages are logged.
+# Defaults: false
+DEBUG_EVENTS: false
+# Defines the amount of information being outputted.
+# 0 provides a basic overview of the event
+# 1 provides the basic overview along with the most important event data
+# 2 provides the basic overview along with all event data.
+# Defaults: 0
+DEBUG_EVENTS_LEVEL: 0
 
 # Determines the boundaries for where a Minecache can be placed in the Y direction.
 # Only recommended to change this if you have custom terrain generation or have differing world heights from vanilla.

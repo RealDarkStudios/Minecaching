@@ -1,9 +1,6 @@
 package net.realdarkstudios.minecaching.commands;
 
-import net.realdarkstudios.minecaching.api.Minecache;
-import net.realdarkstudios.minecaching.api.MinecacheType;
-import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.PlayerDataObject;
+import net.realdarkstudios.minecaching.api.*;
 import net.realdarkstudios.minecaching.event.MinecacheFoundEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -57,21 +54,35 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
         if (cache.type().equals(MinecacheType.TRADITIONAL) || cache.type().equals(MinecacheType.MYSTERY)) {
             if (cache.code().equals(code)) {
                 if (plr.getLocation().distance(cache.location()) < 25) {
-                    PlayerDataObject plrdata = MinecachingAPI.get().getPlayerData(plr);
-                    boolean isFTF = plrdata.isFTF(cache);
+                    PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(plr);
+                    boolean isFTF = pdo.isFTF(cache);
 
                     // Emit MinecacheFoundEvent
-                    MinecacheFoundEvent event = new MinecacheFoundEvent(plr, cache, plrdata.isFTF(cache));
+                    MinecacheFoundEvent event = new MinecacheFoundEvent(plr, cache, pdo.isFTF(cache));
                     Bukkit.getPluginManager().callEvent(event);
 
-                    if (event.isCancelled()) return true;
+                    if (event.isCancelled()) {
+                        plr.sendMessage(ChatColor.RED + "Could not log this minecache!");
+                        return true;
+                    }
+
+                    pdo.addFind(cache.id());
+                    if (isFTF) {
+                        pdo.addFTF(cache.id());
+                        MinecachingAPI.get().saveMinecache(cache.setFTF(plr.getUniqueId()), false);
+                    }
+
+                    MinecachingAPI.get().saveMinecache(cache.setFTF(plr.getUniqueId()), false);
+
+                    pdo.save();
+                    MinecacheStorage.getInstance().save();
+                    MinecachingAPI.get().update();
 
                     plr.sendMessage(ChatColor.GREEN + "Congratulations! You found " + cache.id() + ": " + cache.name());
                     if (isFTF) {
-                        plr.sendMessage(ChatColor.GREEN + "You were also the first one to find this cache. Your new FTF total is " + plrdata.getFTFs().size());
-                        MinecachingAPI.get().saveMinecache(cache.setFTF(plr.getUniqueId()), false);
+                        plr.sendMessage(ChatColor.GREEN + "You were also the first one to find this cache. Your new FTF total is " + pdo.getFTFs().size());
                     }
-                    plr.sendMessage(ChatColor.GREEN + "You now have " + plrdata.getFinds().size() + " finds");
+                    plr.sendMessage(ChatColor.GREEN + "You now have " + pdo.getFinds().size() + " finds");
                 } else {
                     plr.sendMessage(ChatColor.RED + "You must be within 25 blocks of the cache!");
                 }

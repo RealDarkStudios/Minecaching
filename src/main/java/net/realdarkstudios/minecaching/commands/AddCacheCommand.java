@@ -28,15 +28,15 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        PlayerDataObject plrdata = MinecachingAPI.get().getPlayerData(plr);
+        PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(plr);
 
-        Minecache cache = plrdata.getCache();
+        Minecache cache = pdo.getCache();
         if (args.length < 1 && (cache != null && !cache.id().equals("NULL"))) {
             plr.sendMessage(ChatColor.RED + "You are already creating a cache!");
             return true;
         } else if (args.length < 1) {
             plr.sendMessage(ChatColor.LIGHT_PURPLE + "Starting creation of new cache...");
-            plrdata.setCache(Minecache.EMPTY.setID(Utils.generateID(5)));
+            pdo.setCache(Minecache.EMPTY.setID(Utils.generateID(5)));
             return true;
         }
 
@@ -156,15 +156,26 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
 
                     if (event.isCancelled()) {
                         plr.sendMessage(ChatColor.RED + "The cache could not be created for some reason!");
-                    } else plr.sendMessage(ChatColor.LIGHT_PURPLE + "Created " + event.getCache().id() + ": " + event.getCache().name());
+                    }
+
+                    MinecachingAPI.get().saveMinecache(cache, true);
+
+                    pdo.addHide(cache.id());
+                    pdo.setCache(Minecache.EMPTY.setID("NULL"));
+
+                    pdo.save();
+                    MinecacheStorage.getInstance().save();
+                    MinecachingAPI.get().update();
+
+                    plr.sendMessage(ChatColor.LIGHT_PURPLE + "Created " + cache.id() + ": " + cache.name());
 
                     return true;
                 }
             }
-            case "data" -> sender.sendMessage(String.format("ID: %s, Name: %s, Type: %s, Lode Coords: (%d, %d, %d), Cache Coords: (%d, %d, %d)", cache.id(), cache.name(), cache.type().getId(), cache.lx(), cache.ly(), cache.lz(), cache.x(), cache.y(), cache.z()));
+            case "data" -> sender.sendMessage(String.format("ID: %s, Name: %s, Type: %s, Lode Coords: (%d, %d, %d), Cache Coords: (%d, %d, %d), Code: %s", cache.id(), cache.name(), cache.type().getId(), cache.lx(), cache.ly(), cache.lz(), cache.x(), cache.y(), cache.z(), cache.code()));
         }
 
-        plrdata.setCache(cache);
+        pdo.setCache(cache);
         return true;
     }
 
