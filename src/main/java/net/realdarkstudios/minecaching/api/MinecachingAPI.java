@@ -130,6 +130,11 @@ public class MinecachingAPI {
         return (PlayerStorage.getInstance().deleteMinecache(minecache) && MinecacheStorage.getInstance().deleteMinecache(minecache));
     }
 
+    public boolean verifyMinecache(Minecache minecache) {
+        minecache.setStatus(MinecacheStatus.VERIFIED);
+        return saveMinecache(minecache, false);
+    }
+
     /**
      * Updates all the internal maps
      * @since 2.0.0.0

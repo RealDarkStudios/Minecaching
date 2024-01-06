@@ -2,6 +2,7 @@ package net.realdarkstudios.minecaching.event;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.api.Config;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -22,6 +23,11 @@ public class MCDebugEventHandler implements Listener {
     }
 
     @EventHandler
+    public void onMinecacheVerified(MinecacheVerifiedEvent event) {
+        sendDebugMessage("Minecache " + event.getCache().id() + " was verified", "cacheId - " + event.getCache().id() + ", verifier - " + (event.getVerifier() instanceof Player plr ? plr.getDisplayName() : "CONSOLE"), "");
+    }
+
+    @EventHandler
     public void onStartLocatingMinecache(StartLocatingMinecacheEvent event) {
         sendDebugMessage(event.getPlayer().getDisplayName() + " start locating " + event.getCache().id(), "cacheId - " + event.getCache().id() + ", player - " + event.getPlayer().getDisplayName(), "plrLocation - (" + event.getPlrLocation().getBlockX() + ", " + event.getPlrLocation().getBlockY() + ", " + event.getPlrLocation().getBlockZ() + "), distance - " + event.getDistance());
     }
@@ -36,7 +42,7 @@ public class MCDebugEventHandler implements Listener {
 
         switch (Config.getInstance().getDebugEventsLevel()) {
             case 1: Minecaching.getInstance().getLogger().info("DEBUG: " + basicMsg + "\nEvent Data: " + importantEventData ); break;
-            case 2: Minecaching.getInstance().getLogger().info("DEBUG: " + basicMsg + "\nEvent Data: " + importantEventData + ", " + otherEventData); break;
+            case 2: Minecaching.getInstance().getLogger().info("DEBUG: " + basicMsg + "\nEvent Data: " + importantEventData + (otherEventData.isEmpty() ? "" :", " + otherEventData)); break;
             default: Minecaching.getInstance().getLogger().info("DEBUG: " + basicMsg);
         }
     }

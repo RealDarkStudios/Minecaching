@@ -3,6 +3,8 @@ package net.realdarkstudios.minecaching.commands;
 import net.realdarkstudios.minecaching.api.Minecache;
 import net.realdarkstudios.minecaching.api.MinecacheStatus;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.event.MinecacheVerifiedEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -23,8 +25,10 @@ public class VerifyCacheCommand implements CommandExecutor, TabExecutor {
         } else if (!minecache.status().equals(MinecacheStatus.NEEDS_REVIEWED)) {
             sender.sendMessage(ChatColor.RED + "This cache can't be verified because it already is or is disabled/archived");
         } else {
-            minecache.setStatus(MinecacheStatus.VERIFIED);
-            MinecachingAPI.get().saveMinecache(minecache, false);
+            MinecacheVerifiedEvent event = new MinecacheVerifiedEvent(minecache, sender);
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (!event.isCancelled()) MinecachingAPI.get().verifyMinecache(minecache);
             sender.sendMessage(ChatColor.GREEN + "Success! Verified " + args[0]);
         }
 
