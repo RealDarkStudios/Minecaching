@@ -29,7 +29,7 @@ commands:
     description: "Check if you have found a Minecache"
     usage: "/logcache <get|found|dnf> <id> <code> [message]"
     aliases: [logc, log]
-    permission: minecaching.findcache
+    permission: minecaching.logcache
     permission-message: "You do not have permission to log caches..."
   verifycache:
     description: "[ADMIN] Confirms a cache"
@@ -37,17 +37,17 @@ commands:
     aliases: [vercache, verc, vc, verify]
     permission: minecaching.admin.confirmcache
     permission-message: "You do not have permission to confirm caches!"
-  delcache:
+  deletecache:
     description: "Deletes a Minecache"
     usage: "/delcache <id>"
-    aliases: [deletecache, delc, dc, delete]
+    aliases: [delcache, delc, dc, delete]
     permission: minecaching.delcache
     permission-message: "You do not have permission to delete caches!"
   listcaches:
     description: "Lists all Minecaches"
     usage: "/listcaches [page]"
     aliases: [listc, lc, list]
-    permission: minecaching.command.listcaches
+    permission: minecaching.listcaches
     permission-message: "You do not have permission to view caches!"
   mcadmin:
     description: "[ADMIN] Minecaching Admin Utilities"
@@ -62,13 +62,13 @@ permissions:
     default: true
   minecaching.locatecache:
     default: true
-  minecaching.findcache:
+  minecaching.logcache:
     default: true
   minecaching.admin.verifycache:
     default: op
-  minecaching.delcache:
+  minecaching.deletecache:
     default: true
-  minecaching.command.listcaches:
+  minecaching.listcaches:
     default: true
   minecaching.admin:
     default: op

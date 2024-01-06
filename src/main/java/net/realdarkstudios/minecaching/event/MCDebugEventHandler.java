@@ -7,6 +7,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class MCDebugEventHandler implements Listener {
+    /**
+     * Minecaching's debug event handler.
+     * <p>
+     * Depending on whether DEBUG_EVENTS is true or not, events will output a message according to the DEBUG_EVENTS_LEVEL.
+     * Both of these settings are controlled by the {@link Config}
+     *
+     * @since 2.0.0.0
+     */
+
     @EventHandler
     public void onMinecacheFound(MinecacheFoundEvent event) {
         sendDebugMessage(event.getPlayer().getDisplayName() + " found " + event.getCache().id(), "cacheId - " + event.getCache().id() + ", player - " + event.getPlayer().getDisplayName(), "isFTF - " + event.isFTF());
