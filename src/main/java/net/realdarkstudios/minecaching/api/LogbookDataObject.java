@@ -6,13 +6,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.util.HashMap;
 
-public class LogbookStorageObject {
+public class LogbookDataObject {
     private final String id;
     private YamlConfiguration yaml;
     private File file;
     private HashMap<String, Log> logs = new HashMap<>();
 
-    public LogbookStorageObject(String id, YamlConfiguration yaml, File file) {
+    public LogbookDataObject(String id, YamlConfiguration yaml, File file) {
         this.id = id;
         this.yaml = yaml;
         this.file = file;
@@ -67,12 +67,12 @@ public class LogbookStorageObject {
         return true;
     }
 
-    public static LogbookStorageObject get(Minecache cache) {
+    public static LogbookDataObject get(Minecache cache) {
         return get(cache.id());
     }
 
-    public static LogbookStorageObject get(String id) {
-        File logFile = new File(Minecaching.getInstance().getDataFolder() + "/logs/" + id + ".yml");
+    public static LogbookDataObject get(String id) {
+        File logFile = new File(Minecaching.getInstance().getDataFolder() + "/logbook/" + id + ".yml");
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(logFile);
 
         if (!logFile.exists()) {
@@ -81,8 +81,15 @@ public class LogbookStorageObject {
             } catch (Exception e) {
                 Minecaching.getInstance().getLogger().warning("Failed to make log file " + id + ".yml");
             }
+        } else if (Config.getInstance().getLogbookDataVersion() != Minecaching.getInstance().LOGBOOK_DATA_VERSION) {
+            try {
+                logFile.delete();
+                logFile.createNewFile();
+            } catch (Exception e) {
+                Minecaching.getInstance().getLogger().warning("Failed to make log file " + id + ".yml during update");
+            }
         }
 
-        return new LogbookStorageObject(id, yaml, logFile);
+        return new LogbookDataObject(id, yaml, logFile);
     }
 }

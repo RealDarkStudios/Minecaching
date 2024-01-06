@@ -26,7 +26,7 @@ public final class Minecaching extends JavaPlugin {
         File playerFolder = new File(getDataFolder() + "/player/");
         if (!playerFolder.exists()) playerFolder.mkdirs();
 
-        File logFolder = new File(getDataFolder() + "/logs/");
+        File logFolder = new File(getDataFolder() + "/logbook/");
         if (!logFolder.exists()) logFolder.mkdirs();
 
         getLogger().info("Checking server version...");

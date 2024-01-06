@@ -204,6 +204,13 @@ public class PlayerDataObject {
             } catch (Exception e) {
                 Minecaching.getInstance().getLogger().warning("Failed to make per-player file " + uuid + ".yml");
             }
+        } else if (Config.getInstance().getPlayerDataVersion() != Minecaching.getInstance().PLAYER_DATA_VERSION) {
+            try {
+                plrFile.delete();
+                plrFile.createNewFile();
+            } catch (Exception e) {
+                Minecaching.getInstance().getLogger().warning("Failed to make per-player file " + uuid + ".yml during update");
+            }
         }
 
         return new PlayerDataObject(uuid, yaml, plrFile, useEmptyMinecache);

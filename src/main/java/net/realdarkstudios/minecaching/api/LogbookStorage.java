@@ -9,7 +9,7 @@ import java.util.List;
 
 public class LogbookStorage {
     private final static LogbookStorage INSTANCE = new LogbookStorage();
-    private HashMap<String, LogbookStorageObject> logStorage;
+    private HashMap<String, LogbookDataObject> logStorage;
     private List<String> logIDs;
 
     private LogbookStorage() {
@@ -19,7 +19,7 @@ public class LogbookStorage {
         updateMaps();
 
         if (logStorage != null) {
-            for (LogbookStorageObject log : logStorage.values()) {
+            for (LogbookDataObject log : logStorage.values()) {
                 log.load();
             }
         }
@@ -27,18 +27,18 @@ public class LogbookStorage {
 
     public void save() {
         if (logStorage != null) {
-            for (LogbookStorageObject log : logStorage.values()) {
+            for (LogbookDataObject log : logStorage.values()) {
                 log.save();
             }
         }
     }
 
-    public void updateMaps() {
-        HashMap<String, LogbookStorageObject> logs = new HashMap<>();
+    void updateMaps() {
+        HashMap<String, LogbookDataObject> logs = new HashMap<>();
         ArrayList<String> lIDs = new ArrayList<>();
 
         for (String key: MinecacheStorage.getInstance().getIDArray()) {
-            LogbookStorageObject log = LogbookStorageObject.get(key);
+            LogbookDataObject log = LogbookDataObject.get(key);
 
             log.load();
             logs.put(key, log);
@@ -48,7 +48,7 @@ public class LogbookStorage {
         this.logStorage = logs;
     }
 
-    void deleteLog(LogbookStorageObject log) {
+    void deleteLog(LogbookDataObject log) {
         logIDs.removeAll(Collections.singleton(log.id()));
 
         save();
@@ -69,7 +69,7 @@ public class LogbookStorage {
         updateMaps();
     }
 
-    LogbookStorageObject createLog(Minecache cache) {
+    LogbookDataObject createLog(Minecache cache) {
         logIDs.add(cache.id());
 
         save();
@@ -78,7 +78,7 @@ public class LogbookStorage {
         return getLog(cache);
     }
 
-    LogbookStorageObject createLog(String id) {
+    LogbookDataObject createLog(String id) {
         logIDs.add(id);
 
         save();
@@ -95,20 +95,20 @@ public class LogbookStorage {
         return logStorage.containsKey(id);
     }
 
-    LogbookStorageObject getLog(Minecache cache) {
+    LogbookDataObject getLog(Minecache cache) {
         return logStorage.get(cache.id());
     }
 
-    LogbookStorageObject getLog(String id) {
+    LogbookDataObject getLog(String id) {
         return logStorage.get(id);
     }
 
-    LogbookStorageObject getOrCreateLog(Minecache cache) {
+    LogbookDataObject getOrCreateLog(Minecache cache) {
         if (hasLog(cache)) return getLog(cache);
         else return createLog(cache);
     }
 
-    LogbookStorageObject getOrCreateLog(String id) {
+    LogbookDataObject getOrCreateLog(String id) {
         if (hasLog(id)) return getLog(id);
         else return createLog(id);
     }
@@ -120,7 +120,7 @@ public class LogbookStorage {
     public void attemptUpdate() {
         try {
             if (logStorage != null) {
-                for (LogbookStorageObject log : logStorage.values()) {
+                for (LogbookDataObject log : logStorage.values()) {
                     log.attemptUpdate();
                 }
             }
@@ -129,7 +129,7 @@ public class LogbookStorage {
 
             Config.getInstance().setLogbookDataVersion(Minecaching.getInstance().LOGBOOK_DATA_VERSION);
             if (logStorage != null) {
-                for (LogbookStorageObject log : logStorage.values()) {
+                for (LogbookDataObject log : logStorage.values()) {
                     log.save();
                 }
             }
