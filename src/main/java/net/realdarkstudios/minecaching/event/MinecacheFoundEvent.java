@@ -1,19 +1,27 @@
 package net.realdarkstudios.minecaching.event;
 
 import net.realdarkstudios.minecaching.api.Minecache;
+import net.realdarkstudios.minecaching.commands.LogCacheCommand;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
 
-public class MinecacheFoundEvent extends Event implements Cancellable {
+public class MinecacheFoundEvent extends MinecacheEvent {
+    /**
+     * Called when a {@link Minecache} is found
+     *
+     * @see LogCacheCommand
+     * @since 2.0.0.0
+     */
     private final Player player;
-    private final Minecache minecache;
     private final boolean isFTF;
-    private boolean cancelled = false;
-    private static final HandlerList handlers = new HandlerList();
 
-    public MinecacheFoundEvent(Player player, Minecache minecache, boolean isFTF) {
+    /**
+     * Create a new MinecacheFoundEvent
+     *
+     * @param minecache The {@link Minecache} that was found
+     * @param player The {@link Player} that found the Minecache
+     * @param isFTF If this find is the first one for this cache
+     */
+    public MinecacheFoundEvent(Minecache minecache, Player player, boolean isFTF) {
         this.player = player;
         this.minecache = minecache;
         this.isFTF = isFTF;
@@ -23,30 +31,7 @@ public class MinecacheFoundEvent extends Event implements Cancellable {
         return player;
     }
 
-    public Minecache getCache() {
-        return minecache;
-    }
-
     public boolean isFTF() {
         return isFTF;
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancel) {
-        cancelled = cancel;
     }
 }

@@ -13,6 +13,7 @@ public class PlayerDataObject {
     private final UUID uniqueID;
     private boolean banned;
     private ArrayList<String> finds, ftfs, hides;
+    private String locatingId;
     private Minecache newCache, editingCache;
     private YamlConfiguration yaml;
     private File file;
@@ -29,6 +30,7 @@ public class PlayerDataObject {
         this.ftfs = yFtfs;
         this.hides = yHides;
         this.finds = yFinds;
+        this.locatingId = yaml.getString("locating_id") == null ? "NULL" : yaml.getString("locating_id");
         this.newCache = useEmptyMinecache ? Minecache.EMPTY : Minecache.fromYaml(yaml, "cache");
         this.editingCache = useEmptyMinecache ? Minecache.EMPTY : Minecache.fromYaml(yaml, "editing");
         this.yaml = yaml;
@@ -60,6 +62,15 @@ public class PlayerDataObject {
 
     public YamlConfiguration getYaml() {
         return yaml;
+    }
+
+    public String getLocatingId() {
+        return locatingId;
+    }
+
+    public void setLocatingId(String locatingId) {
+        this.locatingId = locatingId;
+        saveData();
     }
 
     public void addFind(String id) {
@@ -116,6 +127,7 @@ public class PlayerDataObject {
         this.ftfs = yFtfs;
         this.hides = yHides;
         this.finds = yFinds;
+        this.locatingId = yaml.getString("locating_id") == null ? "NULL" : yaml.getString("locating_id");
         this.newCache = Minecache.fromYaml(yaml, "cache");
         this.editingCache = Minecache.fromYaml(yaml, "editing");
 
@@ -127,6 +139,7 @@ public class PlayerDataObject {
         yaml.set("ftfs", this.ftfs);
         yaml.set("hides", this.hides);
         yaml.set("finds", this.finds);
+        yaml.set("locating_id", this.locatingId);
         yaml.set("cache_id", this.newCache.id());
         newCache.toYaml(yaml, "cache");
         yaml.set("editing_id", this.editingCache.id());
@@ -185,6 +198,7 @@ public class PlayerDataObject {
                 yaml.set("ftfs", List.of());
                 yaml.set("hides", List.of());
                 yaml.set("finds", List.of());
+                yaml.set("locating_id", "NULL");
                 Minecache.EMPTY.toYaml(yaml, "cache");
                 Minecache.EMPTY.toYaml(yaml, "editing");
             } catch (Exception e) {

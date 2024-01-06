@@ -59,7 +59,7 @@ public class MinecachingAPI {
      * @since 2.0.0.0
      */
     public Minecache getMinecache(String cacheId) {
-        return MinecacheStorage.getInstance().getMinecacheByID(cacheId);
+        return cacheId.equals("NULL") ? Minecache.EMPTY : MinecacheStorage.getInstance().getMinecacheByID(cacheId);
     }
 
     /**

@@ -58,7 +58,7 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
                     boolean isFTF = pdo.isFTF(cache);
 
                     // Emit MinecacheFoundEvent
-                    MinecacheFoundEvent event = new MinecacheFoundEvent(plr, cache, pdo.isFTF(cache));
+                    MinecacheFoundEvent event = new MinecacheFoundEvent(cache, plr, pdo.isFTF(cache));
                     Bukkit.getPluginManager().callEvent(event);
 
                     if (event.isCancelled()) {

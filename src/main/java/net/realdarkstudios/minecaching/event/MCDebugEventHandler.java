@@ -21,6 +21,16 @@ public class MCDebugEventHandler implements Listener {
         sendDebugMessage("Minecache " + event.getCache().id() + " was deleted", "cacheId - " + event.getCache().id(), "cacheAuthor - " + event.getAuthor().getDisplayName());
     }
 
+    @EventHandler
+    public void onStartLocatingMinecache(StartLocatingMinecacheEvent event) {
+        sendDebugMessage(event.getPlayer().getDisplayName() + " start locating " + event.getCache().id(), "cacheId - " + event.getCache().id() + ", player - " + event.getPlayer().getDisplayName(), "plrLocation - (" + event.getPlrLocation().getBlockX() + ", " + event.getPlrLocation().getBlockY() + ", " + event.getPlrLocation().getBlockZ() + "), distance - " + event.getDistance());
+    }
+
+    @EventHandler
+    public void onStopLocatingMinecache(StopLocatingMinecacheEvent event) {
+        sendDebugMessage(event.getPlayer().getDisplayName() + " stopped locating " + event.getCache().id(), "cacheId - " + event.getCache().id() + ", player - " + event.getPlayer().getDisplayName() + ", fromCancel - " + event.isLocateCancelled(), "plrLocation - (" + event.getPlrLocation().getBlockX() + ", " + event.getPlrLocation().getBlockY() + ", " + event.getPlrLocation().getBlockZ() + "), distance - " + event.getDistance());
+    }
+
     private void sendDebugMessage(String basicMsg, String importantEventData, String otherEventData) {
         if (!Config.getInstance().getDebugEvents()) return;
 

@@ -4,6 +4,9 @@ import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.api.Config;
 import net.realdarkstudios.minecaching.api.Minecache;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.PlayerDataObject;
+import net.realdarkstudios.minecaching.event.StartLocatingMinecacheEvent;
+import net.realdarkstudios.minecaching.event.StopLocatingMinecacheEvent;
 import net.realdarkstudios.minecaching.util.MCPluginMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -35,8 +38,21 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
             return false;
         }
 
+        PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(plr);
+
         String id = args[0];
+
+        if (id.equalsIgnoreCase("cancel") && !pdo.getLocatingId().equals("NULL")) {
+            cancelTask(MinecachingAPI.get().getMinecache(pdo.getLocatingId()), MinecachingAPI.get().getMinecache(pdo.getLocatingId()).lodeLocation(), plr, true);
+            return true;
+        }
+
         Minecache cache = MinecachingAPI.get().getMinecache(id);
+
+        if (!pdo.getLocatingId().equals("NULL")) {
+            sender.sendMessage(ChatColor.RED + "You are already locating " + pdo.getLocatingId() + "!", ChatColor.RED + "If you wish to look for " + id + ", use /" + label + " cancel");
+            return true;
+        }
 
         if (cache.equals(Minecache.EMPTY)) {
             sender.sendMessage(ChatColor.RED + "Did not find minecache with ID " + id);
@@ -52,7 +68,7 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
         Location cacheLocationC = lodeLocation.clone();
         cacheLocationC.setY(plr.getLocation().getY());
         if (plr.getLocation().distance(cacheLocationC) < Config.getInstance().getFindLodestoneDistance()) {
-            plr.sendMessage(ChatColor.AQUA + "You are within ~" + Config.getInstance().getMaxLodestoneDistance() + " blocks of the cache!");
+            plr.sendMessage(ChatColor.AQUA + "You are within ~" + (Math.round(cache.location().distance(lodeLocation)) + Config.getInstance().getFindLodestoneDistance()) + " blocks of the cache!");
             return true;
         }
 
@@ -84,18 +100,25 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
         }
 
         plr.sendMessage(ChatColor.AQUA + "Here's a compass to " + cache.id() + ": " + cache.name());
+        pdo.setLocatingId(cache.id());
+
+        StartLocatingMinecacheEvent event = new StartLocatingMinecacheEvent(cache, plr, plr.getLocation(), plr.getLocation().distance(cacheLocationC));
+        Bukkit.getPluginManager().callEvent(event);
 
         int dist = Config.getInstance().getFindLodestoneDistance();
         taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Minecaching.getInstance(), () -> {
-            if (plr.getLocation().distance(cacheLocationC) < dist) {
-                cancelTask(cache, lodeLocation, plr);
-            } else cacheLocationC.setY(plr.getLocation().getY());
+            if (plr.getLocation().distance(lodeLocation) < dist) {
+                cancelTask(cache, lodeLocation, plr, false);
+            }
         }, 0L, 1L);
 
         return true;
     }
 
-    private void cancelTask(Minecache cache, Location cacheLocation, Player plr) {
+    private void cancelTask(Minecache cache, Location cacheLocation, Player plr, boolean fromCancel) {
+        StopLocatingMinecacheEvent event = new StopLocatingMinecacheEvent(cache, plr, plr.getLocation(), plr.getLocation().distance(cacheLocation), fromCancel);
+        Bukkit.getPluginManager().callEvent(event);
+
         Bukkit.getScheduler().cancelTask(taskID);
         Block cacheB = cacheLocation.getBlock();
         cacheB.setType(cache.blockType());
@@ -105,11 +128,16 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
                 plr.getInventory().setItem(slot, null);
             }
         }
-        plr.sendMessage(ChatColor.AQUA + "You are now within ~" + Config.getInstance().getMaxLodestoneDistance() + " blocks of the cache!");
+
+        MinecachingAPI.get().getPlayerData(plr).setLocatingId("NULL");
+        if (!fromCancel) plr.sendMessage(ChatColor.AQUA + "You are now within ~" + (Math.round(cache.location().distance(cacheLocation)) + Config.getInstance().getFindLodestoneDistance()) + " blocks of the cache!");
+        else plr.sendMessage(ChatColor.AQUA + "Stopped looking for " + cache.id());
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player plr)) return List.of();
+        if (!MinecachingAPI.get().getPlayerData(plr).getLocatingId().equals("NULL")) return List.of("cancel");
         return args.length == 0 ? MinecachingAPI.get().getAllKnownCacheIDs() : args.length == 1 ? MinecachingAPI.get().getFilteredCacheIDs(s -> s.contains(args[0])) : List.of();
     }
 }
