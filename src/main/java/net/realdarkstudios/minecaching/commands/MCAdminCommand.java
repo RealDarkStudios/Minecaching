@@ -2,10 +2,9 @@ package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.api.Config;
-import net.realdarkstudios.minecaching.api.LogbookStorage;
-import net.realdarkstudios.minecaching.api.MinecacheStorage;
-import net.realdarkstudios.minecaching.api.PlayerStorage;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.util.MCPluginMessages;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -37,19 +36,16 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
             }
 
             Minecaching.getInstance().getLogger().info("Reloading...");
-            Config.getInstance().load();
-            MinecacheStorage.getInstance().load();
-            PlayerStorage.getInstance().load();
-            LogbookStorage.getInstance().load();
+            MinecachingAPI.get().load(!(args.length >= 2 && args[1].equalsIgnoreCase("false")));
             Minecaching.getInstance().getLogger().info("Reloaded");
-            sender.sendMessage("Reloaded Minecaching");
+            sender.sendMessage("Reloaded Minecaching!");
         } else if (subcommand.equals("version")) {
             if (!sender.hasPermission("minecaching.admin.version")) {
                 sender.spigot().sendMessage(MCPluginMessages.NO_PERMISSION);
                 return true;
             }
 
-            sender.sendMessage("Minecaching Version: " + Minecaching.getInstance().getDescription().getVersion());
+            sender.sendMessage("Minecaching Version: " + Minecaching.getInstance().getDescription().getVersion() + " on MC " + Bukkit.getBukkitVersion().split("-")[0]);
             sender.sendMessage("Config Version: " + Config.getInstance().getConfigVersion());
             sender.sendMessage("Minecache Data Version: " + Config.getInstance().getMinecacheDataVersion());
             sender.sendMessage("Player Data Version: " + Config.getInstance().getPlayerDataVersion());

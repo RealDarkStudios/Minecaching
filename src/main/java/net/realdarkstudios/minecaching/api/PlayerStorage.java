@@ -5,10 +5,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerStorage {
 
@@ -155,6 +152,10 @@ public class PlayerStorage {
     PlayerDataObject getOrCreatePlayerData(UUID uuid) {
         if (hasPlayerData(uuid)) return getPlayerData(uuid);
         else return createPlayerData(uuid);
+    }
+
+    List<PlayerDataObject> getPlayers() {
+        return playerStorage.values().stream().toList();
     }
 
     boolean deleteMinecache(Minecache cache) {

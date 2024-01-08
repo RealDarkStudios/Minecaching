@@ -22,7 +22,7 @@ public class LogbookDataObject {
         return id;
     }
 
-    public void load() {
+    void load() {
         yaml = YamlConfiguration.loadConfiguration(file);
         yaml.options().parseComments(true);
 
@@ -50,7 +50,7 @@ public class LogbookDataObject {
         update();
     }
 
-    public void save() {
+    void save() {
         try {
             yaml.save(file);
         } catch (Exception e) {
@@ -58,13 +58,12 @@ public class LogbookDataObject {
         }
     }
 
-    public boolean attemptUpdate() {
+    void attemptUpdate() {
         update();
 
         get(id);
 
         saveData();
-        return true;
     }
 
     public static LogbookDataObject get(Minecache cache) {

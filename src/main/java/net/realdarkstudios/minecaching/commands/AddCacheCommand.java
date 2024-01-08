@@ -163,8 +163,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     pdo.addHide(cache.id());
                     pdo.setCache(Minecache.EMPTY.setID("NULL"));
 
-                    pdo.save();
-                    MinecacheStorage.getInstance().save();
+                    MinecachingAPI.get().save();
                     MinecachingAPI.get().update();
 
                     plr.sendMessage(ChatColor.LIGHT_PURPLE + "Created " + cache.id() + ": " + cache.name());

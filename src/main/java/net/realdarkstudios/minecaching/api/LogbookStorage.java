@@ -15,7 +15,7 @@ public class LogbookStorage {
     private LogbookStorage() {
     }
 
-    public void load() {
+    void load() {
         updateMaps();
 
         if (logStorage != null) {
@@ -25,7 +25,7 @@ public class LogbookStorage {
         }
     }
 
-    public void save() {
+    void save() {
         if (logStorage != null) {
             for (LogbookDataObject log : logStorage.values()) {
                 log.save();
@@ -117,7 +117,7 @@ public class LogbookStorage {
         return INSTANCE;
     }
 
-    public void attemptUpdate() {
+    void attemptUpdate() {
         try {
             if (logStorage != null) {
                 for (LogbookDataObject log : logStorage.values()) {

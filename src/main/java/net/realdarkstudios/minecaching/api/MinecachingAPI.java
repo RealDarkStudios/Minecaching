@@ -1,5 +1,6 @@
 package net.realdarkstudios.minecaching.api;
 
+import net.realdarkstudios.minecaching.Minecaching;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -8,6 +9,11 @@ import java.util.function.Predicate;
 
 public class MinecachingAPI {
     private static final MinecachingAPI api = new MinecachingAPI();
+    private static final int CONFIG_DATA_VERSION = 5;
+    private static final int MINECACHE_DATA_VERSION = 3;
+    private static final int PLAYER_DATA_VERSION = 3;
+
+    private static final int LOGBOOK_DATA_VERSION = 1;
 
     private MinecachingAPI() {
     }
@@ -50,6 +56,14 @@ public class MinecachingAPI {
      */
     public boolean hasPlayerData(UUID uuid) {
         return PlayerStorage.getInstance().hasPlayerData(uuid);
+    }
+
+    public List<PlayerDataObject> getAllKnownPlayers() {
+        return PlayerStorage.getInstance().getPlayers();
+    }
+
+    public List<PlayerDataObject> getFilteredPlayers(Predicate<PlayerDataObject> predicate) {
+        return PlayerStorage.getInstance().getPlayers().stream().filter(predicate).toList();
     }
 
     /**
@@ -148,6 +162,68 @@ public class MinecachingAPI {
     public void update() {
         MinecacheStorage.getInstance().updateMaps();
         PlayerStorage.getInstance().updateMaps();
+        LogbookStorage.getInstance().updateMaps();
+    }
+
+    /**
+     * Saves all plugin data
+     * @since 2.0.1.2
+     * @see MinecachingAPI#load(boolean)
+     * @see MinecachingAPI#update()
+     */
+    public void save() {
+        Minecaching.getInstance().getLogger().info("Saving config...");
+        Config.getInstance().save();
+        Minecaching.getInstance().getLogger().info("Saving minecache data...");
+        MinecacheStorage.getInstance().save();
+        Minecaching.getInstance().getLogger().info("Saving player data...");
+        PlayerStorage.getInstance().save();
+        Minecaching.getInstance().getLogger().info("Saving logbook data...");
+        LogbookStorage.getInstance().save();
+    }
+
+    /**
+     * Loads all plugin data
+     *
+     * @param attemptUpdates Whether to attempt updates (if needed) or not
+     * @since 2.0.1.2
+     * @see MinecachingAPI#save()
+     * @see MinecachingAPI#update()
+     */
+    public void load(boolean attemptUpdates) {
+        Minecaching minecaching = Minecaching.getInstance();
+        
+        minecaching.getLogger().info("Loading config...");
+        Config.getInstance().load();
+        if (Config.getInstance().getConfigVersion() < CONFIG_DATA_VERSION) {
+            minecaching.getLogger().warning("Config Version out of date!");
+            if (attemptUpdates) Config.getInstance().attemptUpdate();
+            else minecaching.getLogger().warning("Not attempting update!");
+        }
+
+        minecaching.getLogger().info("Loading minecaches...");
+        MinecacheStorage.getInstance().load();
+        if (Config.getInstance().getMinecacheDataVersion() < MINECACHE_DATA_VERSION) {
+            minecaching.getLogger().warning("Minecache Data Version out of date!");
+            if (attemptUpdates) MinecacheStorage.getInstance().attemptUpdate();
+            else minecaching.getLogger().warning("Not attempting update!");
+        }
+
+        minecaching.getLogger().info("Loading player data...");
+        PlayerStorage.getInstance().load();
+        if (Config.getInstance().getPlayerDataVersion() < PLAYER_DATA_VERSION) {
+            minecaching.getLogger().warning("Player Data Version out of date!");
+            if (attemptUpdates) PlayerStorage.getInstance().attemptUpdate();
+            else minecaching.getLogger().warning("Not attempting update!");
+        }
+
+        minecaching.getLogger().info("Loading logbook data...");
+        LogbookStorage.getInstance().load();
+        if (Config.getInstance().getLogbookDataVersion() < LOGBOOK_DATA_VERSION) {
+            minecaching.getLogger().warning("Logbook Data Version out of date!");
+            if (attemptUpdates) LogbookStorage.getInstance().attemptUpdate();
+            else minecaching.getLogger().warning("Not attempting update!");
+        }
     }
 
     /**

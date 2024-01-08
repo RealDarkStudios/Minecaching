@@ -22,7 +22,7 @@ public class MinecacheStorage {
     private ArrayList<Minecache> minecaches = null;
     private HashMap<String, Minecache> idToMinecache = null;
     private HashMap<Location, Minecache> mcLocations = null;
-    public void load() {
+    void load() {
         file = new File(Minecaching.getInstance().getDataFolder(), "minecaches.yml");
 
         if (!file.exists()) {
@@ -60,7 +60,7 @@ public class MinecacheStorage {
         this.idToMinecache = Utils.sortByMinecache(idMap);
         this.mcLocations = locationMap;
     }
-    public void save() {
+    void save() {
         try {
             yaml.save(file);
         } catch (Exception e) {
@@ -130,7 +130,7 @@ public class MinecacheStorage {
         return minecache.ftf().equals(Utils.EMPTY_UUID);
     }
 
-    public void attemptUpdate() {
+    void attemptUpdate() {
         try {
             updateMaps();
 

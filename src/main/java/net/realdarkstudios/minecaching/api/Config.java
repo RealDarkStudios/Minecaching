@@ -16,7 +16,7 @@ public class Config {
     private Config() {
     }
 
-    public void load() {
+    void load() {
         file = new File(Minecaching.getInstance().getDataFolder(), "config.yml");
 
         if (!file.exists()) {
@@ -33,7 +33,7 @@ public class Config {
         }
     }
 
-    public void save() {
+    void save() {
         try {
             yaml.save(file);
         } catch (Exception e) {
@@ -116,7 +116,7 @@ public class Config {
         return INSTANCE;
     }
 
-    public void attemptUpdate() {
+    void attemptUpdate() {
         try {
             int configVersion = getConfigVersion();
             int minecacheDataVersion = configVersion < 4 ? yaml.getInt("MINECACHE_VERSION") : getMinecacheDataVersion();

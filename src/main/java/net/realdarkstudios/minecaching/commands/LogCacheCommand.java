@@ -74,8 +74,7 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
 
                     MinecachingAPI.get().saveMinecache(cache.setFTF(plr.getUniqueId()), false);
 
-                    pdo.save();
-                    MinecacheStorage.getInstance().save();
+                    MinecachingAPI.get().save();
                     MinecachingAPI.get().update();
 
                     plr.sendMessage(ChatColor.GREEN + "Congratulations! You found " + cache.id() + ": " + cache.name());
