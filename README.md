@@ -60,6 +60,11 @@ td {
     <td>Allows a player to log a cache</td>
   </tr>
   <tr>
+    <td>minecaching.logbook</td>
+    <td>All players</td>
+    <td>Allows a player to get the logbook for a cache</td>
+  </tr>
+  <tr>
     <td>minecaching.listcaches</td>
     <td>All players</td>
     <td>Allows players to see the list of caches</td>
@@ -120,5 +125,6 @@ Alongside this update, there are now events!
 - MinecacheVerifiedEvent
 - StartLocatingMinecacheEvent
 - StopLocatingMinecacheEvent
+- LogCreatedEvent
 
 You can read the javadocs for each of these classes to see the parameters they have.

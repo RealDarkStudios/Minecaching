@@ -31,6 +31,12 @@ commands:
     aliases: [logc, log]
     permission: minecaching.logcache
     permission-message: "You do not have permission to log caches..."
+  logbook:
+    description: "Get the logbook for a Minecache"
+    usage: "/logbook [booknumber]"
+    aliases: [logb, lb]
+    permission: minecaching.logbook
+    permission-message: "You do not have permission to get the logbook!"
   verifycache:
     description: "[ADMIN] Confirms a cache"
     usage: "/verifycache <id>"
@@ -63,6 +69,8 @@ permissions:
   minecaching.locatecache:
     default: true
   minecaching.logcache:
+    default: true
+  minecaching.logbook:
     default: true
   minecaching.admin.verifycache:
     default: op

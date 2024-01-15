@@ -43,6 +43,7 @@ public final class Minecaching extends JavaPlugin {
             getCommand("verifycache").setExecutor(new VerifyCacheCommand());
             getCommand("locatecache").setExecutor(new LocateCacheCommand());
             getCommand("logcache").setExecutor(new LogCacheCommand());
+            getCommand("logbook").setExecutor(new LogbookCommand());
 
             if (Config.getInstance().getDebugEvents()) {
                 getLogger().info("Debug Events Enabled! (Level: " + Config.getInstance().getDebugEventsLevel() + ")");

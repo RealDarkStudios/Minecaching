@@ -4,6 +4,7 @@ import net.realdarkstudios.minecaching.api.Log;
 import net.realdarkstudios.minecaching.api.Minecache;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -27,7 +28,7 @@ public class LogbookGenerator {
     }
 
     private void addEntry(Log log) {
-        String top = Bukkit.getPlayer(log.author()).getDisplayName() + (log.isFTF() ? " | FTF" : "");
+        String top = (log.author().equals(minecache.author()) ? ChatColor.GOLD : ChatColor.RESET) + Bukkit.getOfflinePlayer(log.author()).getName() + ChatColor.RESET + (log.isFTF() ? " | FTF" : "");
         String middle = log.type().toLogFormat() + " " + log.time().format(DateTimeFormatter.ofPattern("M/d/yy"));
         String bottom = log.log();
 
@@ -54,7 +55,9 @@ public class LogbookGenerator {
         // For book 1: Pages 100 * (1 - 1) to (100 * 1) - 1 = 0 to 99
         // For book 2: Pages 100 * (2 - 1) to (100 * 2) - 1 = 100 to 199
         // and on.
-        bookMeta.setPages(pages.subList(Math.max(100 * (bookNumber - 1), 0), Math.min((100 * bookNumber) - 1, numPages)));
+        int lPage = Math.max(100 * (bookNumber - 1), 0);
+
+        bookMeta.setPages(pages.subList(lPage, Math.min(lPage + 100, numPages)));
         bookMeta.setTitle(minecache.id() + " Logbook");
         bookMeta.setAuthor("Minecaching Log");
         book.setItemMeta(bookMeta);
