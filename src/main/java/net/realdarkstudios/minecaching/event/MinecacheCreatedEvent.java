@@ -26,6 +26,7 @@ public class MinecacheCreatedEvent extends MinecacheEvent {
      * @param author The {@link Player} who made the newly created cache
      */
     public MinecacheCreatedEvent(Minecache minecache, Player author) {
+        this.minecache = minecache;
         this.author = author;
         this.hidden = minecache.hidden();
         this.type = minecache.type();

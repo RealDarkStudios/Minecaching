@@ -6,7 +6,7 @@ public enum LogType  {
     FOUND("found", "Found on", ChatColor.GOLD),
     DNF("dnf", "DNF on", ChatColor.BLUE),
     NOTE("note", "Note on", ChatColor.GRAY),
-    REQUEST_REVIEW("request_review", "Request review on", ChatColor.RED),
+    REQUEST_REVIEW("request_review", "Flagged on", ChatColor.RED),
     MAINTENANCE("maintenance", "Maintain on", ChatColor.GREEN),
     DISABLE("disable", "Disable on", ChatColor.DARK_RED),
     ARCHIVE("archive", "Archive on", ChatColor.GRAY),

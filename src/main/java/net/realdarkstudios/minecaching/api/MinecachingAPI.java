@@ -1,6 +1,7 @@
 package net.realdarkstudios.minecaching.api;
 
 import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.Utils;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.function.Predicate;
 
 public class MinecachingAPI {
     private static final MinecachingAPI api = new MinecachingAPI();
-    private static final int CONFIG_DATA_VERSION = 5;
+    private static final int CONFIG_DATA_VERSION = 6;
     private static final int MINECACHE_DATA_VERSION = 3;
     private static final int PLAYER_DATA_VERSION = 3;
 
@@ -190,8 +191,11 @@ public class MinecachingAPI {
      * @return {@code true} if the cache was successfully verified
      * @since 2.0.0.5
      */
-    public boolean verifyMinecache(Minecache minecache) {
+    public boolean verifyMinecache(UUID player, Minecache minecache) {
         minecache.setStatus(MinecacheStatus.VERIFIED);
+
+        Utils.createLog(player, minecache, LogType.PUBLISH, "Published", false);
+
         return saveMinecache(minecache, false);
     }
 

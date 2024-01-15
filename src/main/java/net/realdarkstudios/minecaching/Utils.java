@@ -1,7 +1,8 @@
 package net.realdarkstudios.minecaching;
 
-import net.realdarkstudios.minecaching.api.Config;
-import net.realdarkstudios.minecaching.api.Minecache;
+import net.realdarkstudios.minecaching.api.*;
+import net.realdarkstudios.minecaching.event.LogCreatedEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -118,7 +119,11 @@ public class Utils {
     }
 
     public static String commandSenderName(CommandSender commandSender) {
-        return commandSender instanceof Player plr ? plr.getDisplayName() : "CONSOLE";
+        return commandSender instanceof Player plr ? plr.getDisplayName() : "[CONSOLE]";
+    }
+
+    public static String uuidName(UUID uuid) {
+        return uuid.equals(EMPTY_UUID) ? "[CONSOLE]" : Bukkit.getOfflinePlayer(uuid).getName();
     }
 
     public static void sendPlrMessage(Player plr, String... message) {
@@ -136,5 +141,25 @@ public class Utils {
         msg.addAll(Arrays.stream(message).toList());
 
         plr.sendMessage(msg.toArray(new String[]{}));
+    }
+
+    public static Log createLog(Player plr, Minecache cache, LogType logType, String message, boolean isFTF) {
+        LogbookDataObject logbook = MinecachingAPI.get().getLogbook(cache.id());
+        Log log = logbook.createLog(plr, logType, message, isFTF);
+
+        LogCreatedEvent logEvent = new LogCreatedEvent(cache, log.logId(), log.type(), plr);
+        Bukkit.getPluginManager().callEvent(logEvent);
+
+        return log;
+    }
+
+    public static Log createLog(UUID plr, Minecache cache, LogType logType, String message, boolean isFTF) {
+        LogbookDataObject logbook = MinecachingAPI.get().getLogbook(cache.id());
+        Log log = logbook.createLog(plr, logType, message, isFTF);
+
+        LogCreatedEvent logEvent = new LogCreatedEvent(cache, log.logId(), log.type(), plr);
+        Bukkit.getPluginManager().callEvent(logEvent);
+
+        return log;
     }
 }

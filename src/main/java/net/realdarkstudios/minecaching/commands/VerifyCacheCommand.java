@@ -1,5 +1,6 @@
 package net.realdarkstudios.minecaching.commands;
 
+import net.realdarkstudios.minecaching.Utils;
 import net.realdarkstudios.minecaching.api.Minecache;
 import net.realdarkstudios.minecaching.api.MinecacheStatus;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
@@ -10,6 +11,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,7 @@ public class VerifyCacheCommand implements CommandExecutor, TabExecutor {
                 return true;
             }
 
-            MinecachingAPI.get().verifyMinecache(minecache);
+            MinecachingAPI.get().verifyMinecache(sender instanceof Player plr ? plr.getUniqueId() : Utils.EMPTY_UUID, minecache);
             sender.sendMessage(ChatColor.GREEN + "Success! Verified " + args[0]);
         }
 

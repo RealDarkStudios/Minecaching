@@ -104,14 +104,17 @@ public class Config {
     public int getMaxLodestoneDistance() {
         return yaml.getInt("MAX_LODESTONE_DISTANCE");
     }
+    public int getFindLodestoneDistance() {
+        return yaml.getInt("FIND_LODESTONE_DISTANCE");
+    }
+    public boolean useLodestoneBasedLocating() {
+        return yaml.getBoolean("USE_LODESTONE_BASED_LOCATING");
+    }
 
     public List<?> getEnabledTypes() {
         return yaml.getList("ENABLED_TYPES");
     }
 
-    public int getFindLodestoneDistance() {
-        return yaml.getInt("FIND_LODESTONE_DISTANCE");
-    }
     public static Config getInstance() {
         return INSTANCE;
     }
@@ -123,8 +126,8 @@ public class Config {
             int playerDataVersion = configVersion < 4 ? yaml.getInt("PLAYER_VERSION") : getPlayerDataVersion();
             int logbookDataVersion = configVersion < 4 ? 0 : getLogbookDataVersion();
 
-            boolean verboseEvents = configVersion >= 5 && getDebugEvents();
-            int verboseLevel = configVersion < 5 ? 0 : getDebugEventsLevel();
+            boolean debugEvents = configVersion >= 5 && getDebugEvents();
+            int debugEventsLevel = configVersion < 5 ? 0 : getDebugEventsLevel();
             int maxY = getMaxY();
             int minY = getMinY();
             int maxX = getMaxX();
@@ -133,9 +136,10 @@ public class Config {
             int minZ = getMinZ();
 
             int maxLodestoneDistance = getMaxLodestoneDistance();
-            List<?> enabledTypes = getEnabledTypes();
-
             int findLodestoneDistance = configVersion < 3 ? 25 : getFindLodestoneDistance();
+            boolean useLodestoneBasedLocating = configVersion >= 6 && useLodestoneBasedLocating();
+
+            List<?> enabledTypes = getEnabledTypes();
 
             Minecaching.getInstance().saveResource("config.yml", true);
             load();
@@ -143,8 +147,8 @@ public class Config {
             yaml.set("MINECACHE_DATA_VERSION", minecacheDataVersion);
             yaml.set("PLAYER_DATA_VERSION", playerDataVersion);
             yaml.set("LOGBOOK_DATA_VERSION", logbookDataVersion);
-            yaml.set("VERBOSE_EVENTS", verboseEvents);
-            yaml.set("VERBOSE_LEVEL", verboseLevel);
+            yaml.set("DEBUG_EVENTS", debugEvents);
+            yaml.set("DEBUG_EVENTS_LEVEL", debugEventsLevel);
             yaml.set("MAX_Y", maxY);
             yaml.set("MIN_Y", minY);
             yaml.set("MAX_X", maxX);
@@ -152,8 +156,9 @@ public class Config {
             yaml.set("MAX_Z", maxZ);
             yaml.set("MIN_Z", minZ);
             yaml.set("MAX_LODESTONE_DISTANCE", maxLodestoneDistance);
-            yaml.set("ENABLED_TYPES", enabledTypes);
             yaml.set("FIND_LODESTONE_DISTANCE", findLodestoneDistance);
+            yaml.set("USE_LODESTONE_BASED_LOCATING", useLodestoneBasedLocating);
+            yaml.set("ENABLED_TYPES", enabledTypes);
             yaml.set("CONFIG_VERSION", MinecachingAPI.getConfigDataVersion());
             Minecaching.getInstance().getLogger().info("Config update succeeded, updated from v" + configVersion + " to v" + getConfigVersion());
             save();

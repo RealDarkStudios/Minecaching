@@ -42,6 +42,12 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
         String id = args[0];
         boolean gettingNewCompass = id.equalsIgnoreCase("compass");
 
+        if (id.equalsIgnoreCase("coords") && !Config.getInstance().useLodestoneBasedLocating()) {
+            Location lodeLocation = MinecachingAPI.get().getMinecache(MinecachingAPI.get().getPlayerData(plr).getLocatingId()).lodeLocation();
+            plr.sendMessage(String.format("%sHead to (%d, %d, %d)!", ChatColor.AQUA, lodeLocation.getBlockX(), lodeLocation.getBlockY(), lodeLocation.getBlockZ()));
+            return true;
+        }
+
         if (id.equalsIgnoreCase("cancel") && !pdo.getLocatingId().equals("NULL")) {
             cancelTask(MinecachingAPI.get().getMinecache(pdo.getLocatingId()), MinecachingAPI.get().getMinecache(pdo.getLocatingId()).lodeLocation(), plr, true, false);
             return true;
@@ -49,7 +55,7 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
 
         Minecache c = MinecachingAPI.get().getMinecache(id);
 
-        if (gettingNewCompass && !pdo.getLocatingId().equals("NULL")) {
+        if (gettingNewCompass && !pdo.getLocatingId().equals("NULL") && Config.getInstance().useLodestoneBasedLocating()) {
             c = MinecachingAPI.get().getMinecache(pdo.getLocatingId());
             cancelTask(c, c.lodeLocation(), plr, false, true);
         }
@@ -76,6 +82,13 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
         cacheLocationC.setY(plr.getLocation().getY());
         if (plr.getLocation().distance(cacheLocationC) < Config.getInstance().getFindLodestoneDistance()) {
             plr.sendMessage(ChatColor.AQUA + "You are within ~" + (Math.round(cache.location().distance(lodeLocation)) + Config.getInstance().getFindLodestoneDistance()) + " blocks of the cache!");
+            pdo.setLocatingId(cache.id());
+            return true;
+        }
+
+        if (!Config.getInstance().useLodestoneBasedLocating()) {
+            plr.sendMessage(String.format("%sHead to (%d, %d, %d)!", ChatColor.AQUA, lodeLocation.getBlockX(), lodeLocation.getBlockY(), lodeLocation.getBlockZ()));
+            plr.sendMessage(ChatColor.AQUA + "Use /" + label + " coords if you need them again!");
             pdo.setLocatingId(cache.id());
             return true;
         }
@@ -137,43 +150,49 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
         StopLocatingMinecacheEvent event = new StopLocatingMinecacheEvent(cache, plr, plr.getLocation(), plr.getLocation().distance(cacheLocation), fromCancel);
         Bukkit.getPluginManager().callEvent(event);
 
-        Block cacheB = cacheLocation.getBlock();
+        if (Config.getInstance().useLodestoneBasedLocating()) {
+            Block cacheB = cacheLocation.getBlock();
 
-        for (int slot = 0; slot < plr.getInventory().getSize() - 5; slot++) {
-            ItemStack item = plr.getInventory().getItem(slot);
-            if (item != null && item.hasItemMeta() && Objects.requireNonNull(item.getItemMeta()).getPersistentDataContainer().has(new NamespacedKey(Minecaching.getInstance(), "attachedMinecacheId"), PersistentDataType.STRING)) {
-                plr.getInventory().setItem(slot, null);
-            }
-        }
-
-        if (!gettingNewCompass) {
-            String id = MinecachingAPI.get().getPlayerData(plr).getLocatingId();
-
-            MinecachingAPI.get().getPlayerData(plr).setLocatingId("NULL");
-
-            boolean anyOtherPlayersSearching = false;
-            for (PlayerDataObject pdo : MinecachingAPI.get().getAllKnownPlayers()) {
-                if (pdo.getLocatingId().equals(cache.id())) {
-                    anyOtherPlayersSearching = true;
-                    break;
+            for (int slot = 0; slot < plr.getInventory().getSize() - 5; slot++) {
+                ItemStack item = plr.getInventory().getItem(slot);
+                if (item != null && item.hasItemMeta() && Objects.requireNonNull(item.getItemMeta()).getPersistentDataContainer().has(new NamespacedKey(Minecaching.getInstance(), "attachedMinecacheId"), PersistentDataType.STRING)) {
+                    plr.getInventory().setItem(slot, null);
                 }
             }
 
-            MinecachingAPI.get().getPlayerData(plr).setLocatingId(id);
+            if (!gettingNewCompass) {
+                String id = MinecachingAPI.get().getPlayerData(plr).getLocatingId();
 
-            Minecaching.getInstance().getLogger().info(anyOtherPlayersSearching + "");
+                MinecachingAPI.get().getPlayerData(plr).setLocatingId("NULL");
 
-            if (!anyOtherPlayersSearching) cacheB.setType(cache.blockType());
+                boolean anyOtherPlayersSearching = false;
+                for (PlayerDataObject pdo : MinecachingAPI.get().getAllKnownPlayers()) {
+                    if (pdo.getLocatingId().equals(cache.id())) {
+                        anyOtherPlayersSearching = true;
+                        break;
+                    }
+                }
+
+                MinecachingAPI.get().getPlayerData(plr).setLocatingId(id);
+
+                Minecaching.getInstance().getLogger().info(anyOtherPlayersSearching + "");
+
+                if (!anyOtherPlayersSearching) cacheB.setType(cache.blockType());
+            }
+
+            if (!fromCancel && !gettingNewCompass)
+                plr.sendMessage(ChatColor.AQUA + "You are now within ~" + (Math.round(cache.location().distance(cacheLocation)) + Config.getInstance().getFindLodestoneDistance()) + " blocks of the cache!");
+            else if (!gettingNewCompass) plr.sendMessage(ChatColor.AQUA + "Stopped looking for " + cache.id());
+        } else {
+            plr.sendMessage(ChatColor.AQUA + "Stopped looking for " + cache.id());
+            MinecachingAPI.get().getPlayerData(plr).setLocatingId("NULL");
         }
-
-        if (!fromCancel && !gettingNewCompass) plr.sendMessage(ChatColor.AQUA + "You are now within ~" + (Math.round(cache.location().distance(cacheLocation)) + Config.getInstance().getFindLodestoneDistance()) + " blocks of the cache!");
-        else if (!gettingNewCompass) plr.sendMessage(ChatColor.AQUA + "Stopped looking for " + cache.id());
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player plr)) return List.of();
-        if (!MinecachingAPI.get().getPlayerData(plr).getLocatingId().equals("NULL")) return List.of("cancel", "compass");
+        if (!MinecachingAPI.get().getPlayerData(plr).getLocatingId().equals("NULL")) return Config.getInstance().useLodestoneBasedLocating() ? List.of("cancel", "compass") : List.of("cancel", "coords");
         return args.length == 0 ? MinecachingAPI.get().getAllKnownCacheIDs() : args.length == 1 ? MinecachingAPI.get().getFilteredCacheIDs(s -> s.contains(args[0])) : List.of();
     }
 }

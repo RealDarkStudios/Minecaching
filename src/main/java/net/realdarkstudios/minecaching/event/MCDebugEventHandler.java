@@ -53,7 +53,7 @@ public class MCDebugEventHandler implements Listener {
 
     @EventHandler
     public void onLogCreatedEvent(LogCreatedEvent event) {
-        sendDebugMessage("Log " + event.getLogId() + " was created", "cacheId - " + event.getCache().id() + ", logId - " + event.getLogId() + ", author - " + event.getAuthor().getDisplayName(), "type - " + event.getType().getId());
+        sendDebugMessage("Log " + event.getLogId() + " was created", "cacheId - " + event.getCache().id() + ", logId - " + event.getLogId() + ", author - " + Utils.uuidName(event.getAuthor()), "type - " + event.getType().getId());
     }
 
     private void sendDebugMessage(String basicMsg, String importantEventData, String otherEventData) {

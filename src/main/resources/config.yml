@@ -35,11 +35,15 @@ MIN_Z: -30000000
 
 # Determines the maximum distance a cache lodestone can be from the cache.
 MAX_LODESTONE_DISTANCE: 50
+# Determines how far away from a cache lodestone the compass will be removed. Default is 25.
+FIND_LODESTONE_DISTANCE: 25
+# Determines whether to use lodestone-based locating or coordinate-based locating
+# Coordinate-based is stable, it tells the player the rough coordinates of the cache
+# Lodestone-based is stable until more than one player is locating the same cache. This may be fixed in a future
+# Defaults: false (Coordinate-based)
+USE_LODESTONE_BASED_LOCATING: false
 
 # Determines which types are enabled on the server.
 ENABLED_TYPES:
   - TRADITIONAL
   - MYSTERY
-
-# Determines how far away from a cache lodestone the compass will be removed. Default is 25.
-FIND_LODESTONE_DISTANCE: 25
