@@ -51,6 +51,11 @@ public class MCDebugEventHandler implements Listener {
         sendDebugMessage(event.getPlayer().getDisplayName() + " stopped locating " + event.getCache().id(), "cacheId - " + event.getCache().id() + ", player - " + event.getPlayer().getDisplayName() + ", fromCancel - " + event.isLocateCancelled(), "plrLocation - (" + event.getPlrLocation().getBlockX() + ", " + event.getPlrLocation().getBlockY() + ", " + event.getPlrLocation().getBlockZ() + "), distance - " + event.getDistance());
     }
 
+    @EventHandler
+    public void onLogCreatedEvent(LogCreatedEvent event) {
+        sendDebugMessage("Log " + event.getLogId() + " was created", "cacheId - " + event.getCache().id() + ", logId - " + event.getLogId() + ", author - " + event.getAuthor().getDisplayName(), "type - " + event.getType().getId());
+    }
+
     private void sendDebugMessage(String basicMsg, String importantEventData, String otherEventData) {
         if (!Config.getInstance().getDebugEvents()) return;
 

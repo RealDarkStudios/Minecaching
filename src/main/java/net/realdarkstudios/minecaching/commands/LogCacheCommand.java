@@ -1,6 +1,8 @@
 package net.realdarkstudios.minecaching.commands;
 
+import net.realdarkstudios.minecaching.Utils;
 import net.realdarkstudios.minecaching.api.*;
+import net.realdarkstudios.minecaching.event.LogCreatedEvent;
 import net.realdarkstudios.minecaching.event.MinecacheFoundEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,11 +24,28 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
 
         if (args.length < 2) {
             plr.sendMessage(ChatColor.RED + "Incorrect number of arguments!");
-            plr.sendMessage(ChatColor.RED + "/find <id> <code>");
+            plr.sendMessage(ChatColor.RED + "Use /" + label + " found <code> [logmessage]");
+            plr.sendMessage(ChatColor.RED + "or /" + label + " <type> [logmessage]");
             return true;
         }
 
-        String id = args[0];
+        PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(plr);
+
+        String id = pdo.getLocatingId();
+
+        if (id.equals("NULL")) {
+            plr.sendMessage(ChatColor.RED + "You are not looking for a cache!");
+            plr.sendMessage(ChatColor.RED + "Use /locate <id> ");
+            return true;
+        }
+
+        String type = args[0];
+        LogType logType = LogType.get(type);
+
+        if (logType.equals(LogType.INVALID)) {
+            Utils.sendPlrErrorMessage(plr, "Invalid Log Type!");
+        }
+
         String code = args[1];
 
         Minecache cache = MinecachingAPI.get().getMinecache(id);
@@ -51,17 +70,27 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
             default -> {}
         }
 
+        StringBuilder logMessage = new StringBuilder();
+        for (int i = 2; i < args.length; i++) {
+            logMessage.append(args[i]).append(" ");
+        }
+
+        if (logMessage.length() > 200) {
+            plr.sendMessage(ChatColor.RED + "Log message cannot be longer than 200 characters!");
+        }
+
+        String logMsg = logMessage.toString().trim();
+
         if (cache.type().equals(MinecacheType.TRADITIONAL) || cache.type().equals(MinecacheType.MYSTERY)) {
             if (cache.code().equals(code)) {
                 if (plr.getLocation().distance(cache.location()) < 25) {
-                    PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(plr);
                     boolean isFTF = pdo.isFTF(cache);
 
                     // Emit MinecacheFoundEvent
-                    MinecacheFoundEvent event = new MinecacheFoundEvent(cache, plr, pdo.isFTF(cache));
-                    Bukkit.getPluginManager().callEvent(event);
+                    MinecacheFoundEvent foundEvent = new MinecacheFoundEvent(cache, plr, pdo.isFTF(cache));
+                    Bukkit.getPluginManager().callEvent(foundEvent);
 
-                    if (event.isCancelled()) {
+                    if (foundEvent.isCancelled()) {
                         plr.sendMessage(ChatColor.RED + "Could not log this minecache!");
                         return true;
                     }
@@ -76,6 +105,15 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
 
                     MinecachingAPI.get().save();
                     MinecachingAPI.get().update();
+
+                    LogbookDataObject logbook = MinecachingAPI.get().getLogbook(cache.id());
+                    Log log = logbook.createLog(plr, logType, logMsg, isFTF);
+
+                    LogCreatedEvent logEvent = new LogCreatedEvent(cache, log.logId(), log.type(), plr);
+                    Bukkit.getPluginManager().callEvent(logEvent);
+
+                    pdo.setLocatingId("NULL");
+                    pdo.saveData();
 
                     plr.sendMessage(ChatColor.GREEN + "Congratulations! You found " + cache.id() + ": " + cache.name());
                     if (isFTF) {
@@ -96,7 +134,14 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 0 ? MinecachingAPI.get().getAllKnownCacheIDs() : args.length == 1 ? MinecachingAPI.get().getFilteredCacheIDs(s -> s.contains(args[0])) : List.of();
-
+        if (!(sender instanceof Player plr)) return List.of();
+        return switch (args.length) {
+            case 0 -> List.of("found", "dnf", "note", "requestreview", "maintenance", "archive", "disable", "publish");
+            case 1 -> switch (args[0]) {
+                case "found", "dnf", "note", "requestreview", "maintenance", "archive", "disable", "publish" -> List.of();
+                default -> List.of("found", "dnf", "note", "requestreview", "maintenance", "archive", "disable", "publish").stream().filter(s -> s.contains(args[0])).toList();
+            };
+            default -> List.of();
+        };
     }
 }

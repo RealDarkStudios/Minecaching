@@ -7,14 +7,16 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Log {
+    public static final Log EMPTY = new Log(null, null, Utils.EMPTY_UUID, LogType.INVALID, LocalDateTime.now(), "", true, false);
+
     private final String cacheID, logID;
     private String log;
     private final UUID author;
     private final LogType type;
     private final LocalDateTime time;
-    private final boolean invalidated;
+    private final boolean invalidated, isFTF;
 
-    public Log(String cacheID, String logID, UUID author, LogType type, LocalDateTime time, String log, boolean invalidated) {
+    public Log(String cacheID, String logID, UUID author, LogType type, LocalDateTime time, String log, boolean invalidated, boolean isFTF) {
         this.cacheID = cacheID;
         this.logID = logID;
         this.author = author;
@@ -22,6 +24,7 @@ public class Log {
         this.time = time;
         this.log = log;
         this.invalidated = invalidated;
+        this.isFTF = isFTF;
     }
 
     public String cacheId() {
@@ -48,6 +51,10 @@ public class Log {
         return log;
     }
 
+    public boolean isFTF() {
+        return isFTF;
+    }
+
     public void setLog(String log) {
         this.log = log;
     }
@@ -64,13 +71,13 @@ public class Log {
         try { lAuthor = UUID.fromString(author); } catch (Exception e) { lAuthor = Utils.EMPTY_UUID; isInvalidated = true; }
         try { lTime = LocalDateTime.parse(yaml.getString(key + ".time")); } catch (Exception e) { lTime = LocalDateTime.now(); isInvalidated = true; }
 
-        return new Log(cacheID, key, lAuthor, lType, lTime, lLog, isInvalidated);
+        return new Log(cacheID, key, lAuthor, lType, lTime, lLog, isInvalidated, MinecachingAPI.get().getMinecache(cacheID).ftf().equals(lAuthor));
     }
 
     public void toYaml(YamlConfiguration yaml, String key) {
-        yaml.set(key + ".author", author);
+        yaml.set(key + ".author", author.toString());
         yaml.set(key + ".type", type.getId());
         yaml.set(key + ".log", log);
-        yaml.set(key + ".time", time);
+        yaml.set(key + ".time", time.toString());
     }
 }

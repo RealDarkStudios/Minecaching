@@ -27,7 +27,7 @@ commands:
     permission-message: "You do not have permission to locate caches!"
   logcache:
     description: "Check if you have found a Minecache"
-    usage: "/logcache <get|found|dnf> <id> <code> [message]"
+    usage: "/logcache <found|dnf|note|requestreview|maintenance|archive|disable|publish> <code> [logmessage]"
     aliases: [logc, log]
     permission: minecaching.logcache
     permission-message: "You do not have permission to log caches..."

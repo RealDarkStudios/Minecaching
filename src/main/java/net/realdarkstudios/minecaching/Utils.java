@@ -26,7 +26,7 @@ public class Utils {
         return result.toString();
     }
 
-    public static String generateCode(int length){
+    public static String generateRandomString(int length){
         String alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
         int n = alphabet.length();
@@ -119,5 +119,22 @@ public class Utils {
 
     public static String commandSenderName(CommandSender commandSender) {
         return commandSender instanceof Player plr ? plr.getDisplayName() : "CONSOLE";
+    }
+
+    public static void sendPlrMessage(Player plr, String... message) {
+        sendPlrMessage(plr, ChatColor.WHITE, message);
+    }
+
+    public static void sendPlrErrorMessage(Player plr, String... message) {
+        sendPlrMessage(plr, ChatColor.RED, message);
+    }
+
+    public static void sendPlrMessage(Player plr, ChatColor color, String... message) {
+        ArrayList<String> msg = new ArrayList<>();
+
+        msg.add(color.toString());
+        msg.addAll(Arrays.stream(message).toList());
+
+        plr.sendMessage(msg.toArray(new String[]{}));
     }
 }

@@ -40,7 +40,6 @@ MAX_LODESTONE_DISTANCE: 50
 ENABLED_TYPES:
   - TRADITIONAL
   - MYSTERY
-  - MULTI
 
 # Determines how far away from a cache lodestone the compass will be removed. Default is 25.
 FIND_LODESTONE_DISTANCE: 25

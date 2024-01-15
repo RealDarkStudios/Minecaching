@@ -154,7 +154,7 @@ public class Config {
             yaml.set("MAX_LODESTONE_DISTANCE", maxLodestoneDistance);
             yaml.set("ENABLED_TYPES", enabledTypes);
             yaml.set("FIND_LODESTONE_DISTANCE", findLodestoneDistance);
-            yaml.set("CONFIG_VERSION", Minecaching.getInstance().CONFIG_DATA_VERSION);
+            yaml.set("CONFIG_VERSION", MinecachingAPI.getConfigDataVersion());
             Minecaching.getInstance().getLogger().info("Config update succeeded, updated from v" + configVersion + " to v" + getConfigVersion());
             save();
         } catch (Exception e) {

@@ -18,6 +18,34 @@ public class MinecachingAPI {
     private MinecachingAPI() {
     }
 
+    public static int getConfigDataVersion() {
+        return CONFIG_DATA_VERSION;
+    }
+
+    public static int getMinecacheDataVersion() {
+        return MINECACHE_DATA_VERSION;
+    }
+
+    public static int getPlayerDataVersion() {
+        return PLAYER_DATA_VERSION;
+    }
+
+    public static int getLogbookDataVersion() {
+        return LOGBOOK_DATA_VERSION;
+    }
+
+    public static void info(String... messages) {
+        for (String msg : messages) {
+            Minecaching.getInstance().getLogger().info(msg);
+        }
+    }
+
+    public static void warning(String... messages) {
+        for (String msg : messages) {
+            Minecaching.getInstance().getLogger().warning(msg);
+        }
+    }
+
     /**
      * Gets the player data for the given player
      * @param player The player to get the data for
@@ -36,6 +64,14 @@ public class MinecachingAPI {
      */
     public PlayerDataObject getPlayerData(UUID uuid) {
         return PlayerStorage.getInstance().getOrCreatePlayerData(uuid);
+    }
+
+    public List<PlayerDataObject> getAllKnownPlayers() {
+        return PlayerStorage.getInstance().getPlayers();
+    }
+
+    public List<PlayerDataObject> getFilteredPlayers(Predicate<PlayerDataObject> predicate) {
+        return PlayerStorage.getInstance().getPlayers().stream().filter(predicate).toList();
     }
 
     /**
@@ -58,12 +94,16 @@ public class MinecachingAPI {
         return PlayerStorage.getInstance().hasPlayerData(uuid);
     }
 
-    public List<PlayerDataObject> getAllKnownPlayers() {
-        return PlayerStorage.getInstance().getPlayers();
+    public boolean deletePlayerData(PlayerDataObject pdo) {
+        return deletePlayerData(pdo.getUniqueID());
     }
 
-    public List<PlayerDataObject> getFilteredPlayers(Predicate<PlayerDataObject> predicate) {
-        return PlayerStorage.getInstance().getPlayers().stream().filter(predicate).toList();
+    public boolean deletePlayerData(Player player) {
+        return deletePlayerData(player.getUniqueId());
+    }
+
+    public boolean deletePlayerData(UUID uuid) {
+        return PlayerStorage.getInstance().deletePlayerData(uuid);
     }
 
     /**
@@ -153,6 +193,42 @@ public class MinecachingAPI {
     public boolean verifyMinecache(Minecache minecache) {
         minecache.setStatus(MinecacheStatus.VERIFIED);
         return saveMinecache(minecache, false);
+    }
+
+    public LogbookDataObject getLogbook(Minecache cache) {
+        return getLogbook(cache.id());
+    }
+
+    public LogbookDataObject getLogbook(String id) {
+        return LogbookStorage.getInstance().getOrCreateLogbook(id);
+    }
+
+    public List<LogbookDataObject> getAllKnownLogbooks() {
+        return LogbookStorage.getInstance().getLogbooks();
+    }
+
+    public List<LogbookDataObject> getFilteredLogbooks(Predicate<LogbookDataObject> predicate) {
+        return LogbookStorage.getInstance().getLogbooks().stream().filter(predicate).toList();
+    }
+
+    public boolean hasLogbook(Minecache cache) {
+        return hasLogbook(cache.id());
+    }
+
+    public boolean hasLogbook(String id) {
+        return LogbookStorage.getInstance().hasLogbook(id);
+    }
+
+    public boolean deleteLogbook(LogbookDataObject ldo) {
+        return deleteLogbook(ldo.id());
+    }
+
+    public boolean deleteLogbook(Minecache cache) {
+        return deleteLogbook(cache.id());
+    }
+
+    public boolean deleteLogbook(String id) {
+        return LogbookStorage.getInstance().deleteLogbook(id);
     }
 
     /**

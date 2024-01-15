@@ -76,6 +76,7 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
         cacheLocationC.setY(plr.getLocation().getY());
         if (plr.getLocation().distance(cacheLocationC) < Config.getInstance().getFindLodestoneDistance()) {
             plr.sendMessage(ChatColor.AQUA + "You are within ~" + (Math.round(cache.location().distance(lodeLocation)) + Config.getInstance().getFindLodestoneDistance()) + " blocks of the cache!");
+            pdo.setLocatingId(cache.id());
             return true;
         }
 
@@ -146,6 +147,8 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
         }
 
         if (!gettingNewCompass) {
+            String id = MinecachingAPI.get().getPlayerData(plr).getLocatingId();
+
             MinecachingAPI.get().getPlayerData(plr).setLocatingId("NULL");
 
             boolean anyOtherPlayersSearching = false;
@@ -156,6 +159,7 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
                 }
             }
 
+            MinecachingAPI.get().getPlayerData(plr).setLocatingId(id);
 
             Minecaching.getInstance().getLogger().info(anyOtherPlayersSearching + "");
 

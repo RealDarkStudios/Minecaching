@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Minecache {
-    public static final Minecache EMPTY = new Minecache(null, MinecacheType.TRADITIONAL, null, Utils.EMPTY_UUID, null, 0, 0, 0, 0, 0, 0, Utils.EMPTY_UUID, MinecacheStatus.INVALID, null, null, 0, false, null);
+    public static final Minecache EMPTY = new Minecache(null, MinecacheType.TRADITIONAL, null, Utils.EMPTY_UUID, null, 0, 0, 0, 0, 0, 0, Utils.EMPTY_UUID, MinecacheStatus.INVALID, null, null, 0, null, true);
 
     private String id, name, code;
     private MinecacheType type;
@@ -21,7 +21,7 @@ public class Minecache {
     private Material blockType;
     private boolean invalidated;
 
-    public Minecache(String id, MinecacheType type, String name, UUID author, World world, int x, int y, int z, int lx, int ly, int lz, UUID ftf, MinecacheStatus status, LocalDateTime hidden, Material blockType, int finds, boolean invalidated, String code) {
+    public Minecache(String id, MinecacheType type, String name, UUID author, World world, int x, int y, int z, int lx, int ly, int lz, UUID ftf, MinecacheStatus status, LocalDateTime hidden, Material blockType, int finds, String code, boolean invalidated) {
         this.id = id;
         this.type = type;
         this.name = name;
@@ -242,7 +242,7 @@ public class Minecache {
             isInvalidated = true;
         }
 
-        return new Minecache(key, cType, cName, cAuthor, cWorld, cX, cY, cZ, cLX, cLY, cLZ, cFTF, cStatus, cHidden, cBlockType, cFinds, isInvalidated, cCode);
+        return new Minecache(key, cType, cName, cAuthor, cWorld, cX, cY, cZ, cLX, cLY, cLZ, cFTF, cStatus, cHidden, cBlockType, cFinds, cCode, isInvalidated);
     }
 
     public void toYaml(YamlConfiguration yaml, String key) {

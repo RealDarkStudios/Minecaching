@@ -48,69 +48,89 @@ public class LogbookStorage {
         this.logStorage = logs;
     }
 
-    void deleteLog(LogbookDataObject log) {
-        logIDs.removeAll(Collections.singleton(log.id()));
+    boolean deleteLogbook(LogbookDataObject log) {
+        try {
+            logIDs.removeAll(Collections.singleton(log.id()));
 
-        save();
-        updateMaps();
+            save();
+            updateMaps();
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    void deleteLog(Minecache cache) {
-        logIDs.removeAll(Collections.singleton(cache.id()));
+    boolean deleteLogbook(Minecache cache) {
+        try {
+            logIDs.removeAll(Collections.singleton(cache.id()));
 
-        save();
-        updateMaps();
+            save();
+            updateMaps();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    void deleteLog(String id) {
-        logIDs.removeAll(Collections.singleton(id));
+    boolean deleteLogbook(String id){
+        try {
+            logIDs.removeAll(Collections.singleton(id));
 
-        save();
-        updateMaps();
+            save();
+            updateMaps();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    LogbookDataObject createLog(Minecache cache) {
+    LogbookDataObject createLogbook(Minecache cache) {
         logIDs.add(cache.id());
 
         save();
         updateMaps();
 
-        return getLog(cache);
+        return getLogbook(cache);
     }
 
-    LogbookDataObject createLog(String id) {
+    LogbookDataObject createLogbook(String id) {
         logIDs.add(id);
 
         save();
         updateMaps();
 
-        return getLog(id);
+        return getLogbook(id);
     }
 
-    boolean hasLog(Minecache cache) {
+    boolean hasLogbook(Minecache cache) {
         return logStorage.containsKey(cache.id());
     }
 
-    boolean hasLog(String id) {
+    boolean hasLogbook(String id) {
         return logStorage.containsKey(id);
     }
 
-    LogbookDataObject getLog(Minecache cache) {
+    LogbookDataObject getLogbook(Minecache cache) {
         return logStorage.get(cache.id());
     }
 
-    LogbookDataObject getLog(String id) {
+    LogbookDataObject getLogbook(String id) {
         return logStorage.get(id);
     }
 
-    LogbookDataObject getOrCreateLog(Minecache cache) {
-        if (hasLog(cache)) return getLog(cache);
-        else return createLog(cache);
+    LogbookDataObject getOrCreateLogbook(Minecache cache) {
+        if (hasLogbook(cache)) return getLogbook(cache);
+        else return createLogbook(cache);
     }
 
-    LogbookDataObject getOrCreateLog(String id) {
-        if (hasLog(id)) return getLog(id);
-        else return createLog(id);
+    LogbookDataObject getOrCreateLogbook(String id) {
+        if (hasLogbook(id)) return getLogbook(id);
+        else return createLogbook(id);
+    }
+
+    List<LogbookDataObject> getLogbooks() {
+        return logStorage.values().stream().toList();
     }
 
     public static LogbookStorage getInstance() {
@@ -125,9 +145,9 @@ public class LogbookStorage {
                 }
             }
 
-            Minecaching.getInstance().getLogger().info("Logbook data update succeeded, updated from v" + Config.getInstance().getLogbookDataVersion() + " to v" + Minecaching.getInstance().PLAYER_DATA_VERSION);
+            Minecaching.getInstance().getLogger().info("Logbook data update succeeded, updated from v" + Config.getInstance().getLogbookDataVersion() + " to v" + MinecachingAPI.getLogbookDataVersion());
 
-            Config.getInstance().setLogbookDataVersion(Minecaching.getInstance().LOGBOOK_DATA_VERSION);
+            Config.getInstance().setLogbookDataVersion(MinecachingAPI.getLogbookDataVersion());
             if (logStorage != null) {
                 for (LogbookDataObject log : logStorage.values()) {
                     log.save();

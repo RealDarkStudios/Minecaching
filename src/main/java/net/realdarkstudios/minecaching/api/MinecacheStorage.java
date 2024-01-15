@@ -140,9 +140,9 @@ public class MinecacheStorage {
                 cache.toYaml(yaml, cache.id());
             }
 
-            Minecaching.getInstance().getLogger().info("Minecache data update succeeded, updated from v" + Config.getInstance().getMinecacheDataVersion() + " to v" + Minecaching.getInstance().MINECACHE_DATA_VERSION);
+            Minecaching.getInstance().getLogger().info("Minecache data update succeeded, updated from v" + Config.getInstance().getMinecacheDataVersion() + " to v" + MinecachingAPI.getMinecacheDataVersion());
 
-            Config.getInstance().setMinecacheDataVersion(Minecaching.getInstance().MINECACHE_DATA_VERSION);
+            Config.getInstance().setMinecacheDataVersion(MinecachingAPI.getMinecacheDataVersion());
             Config.getInstance().save();
 
             save();

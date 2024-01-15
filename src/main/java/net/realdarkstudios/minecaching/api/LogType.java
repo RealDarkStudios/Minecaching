@@ -3,14 +3,15 @@ package net.realdarkstudios.minecaching.api;
 import org.bukkit.ChatColor;
 
 public enum LogType  {
-    FOUND("found", "Found on", ChatColor.YELLOW),
-    DNF("dnf", "Did not find on", ChatColor.BLUE),
-    NOTE("note", "Added note on", ChatColor.GRAY),
-    REQUEST_REVIEW("request_review", "Requested owner attention on", ChatColor.RED),
-    MAINTENANCE("maintenance", "Did maintenance on", ChatColor.GREEN),
-    DISABLE("disable", "Disabled on", ChatColor.DARK_RED),
-    ARCHIVE("archive", "Archived on", ChatColor.GRAY),
-    INVALID("invalid", "Did something on", ChatColor.DARK_RED);
+    FOUND("found", "Found on", ChatColor.GOLD),
+    DNF("dnf", "DNF on", ChatColor.BLUE),
+    NOTE("note", "Note on", ChatColor.GRAY),
+    REQUEST_REVIEW("request_review", "Request review on", ChatColor.RED),
+    MAINTENANCE("maintenance", "Maintain on", ChatColor.GREEN),
+    DISABLE("disable", "Disable on", ChatColor.DARK_RED),
+    ARCHIVE("archive", "Archive on", ChatColor.GRAY),
+    PUBLISH("publish", "Publish on", ChatColor.DARK_GREEN),
+    INVALID("invalid", "Action on", ChatColor.DARK_RED);
 
     private final String id, msg;
     private final ChatColor color;
@@ -26,10 +27,11 @@ public enum LogType  {
             case "found" -> FOUND;
             case "dnf" -> DNF;
             case "note" -> NOTE;
-            case "request_review" -> REQUEST_REVIEW;
+            case "requestreview", "request_review" -> REQUEST_REVIEW;
             case "maintenance" -> MAINTENANCE;
             case "disable" -> DISABLE;
             case "archive" -> ARCHIVE;
+            case "publish" -> PUBLISH;
             default -> INVALID;
         };
     }
@@ -48,6 +50,10 @@ public enum LogType  {
 
     @Override
     public String toString() {
-        return color + id + ChatColor.RESET;
+        return id;
+    }
+
+    public String toLogFormat() {
+        return color + msg + ChatColor.RESET;
     }
 }

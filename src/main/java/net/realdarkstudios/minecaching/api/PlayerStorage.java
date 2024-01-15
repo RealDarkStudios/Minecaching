@@ -5,7 +5,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class PlayerStorage {
 
@@ -78,34 +81,49 @@ public class PlayerStorage {
         this.playerStorage = players;
     }
 
-    void deletePlayerData(PlayerDataObject plr) {
-        List<String> plrs = (List<String>) yaml.get("PLAYERS");
-        plrs.removeAll(Collections.singleton(plr.getUniqueID().toString()));
+    boolean deletePlayerData(PlayerDataObject plr) {
+        try {
+            List<String> plrs = (List<String>) yaml.get("PLAYERS");
+            plrs.removeAll(Collections.singleton(plr.getUniqueID().toString()));
 
-        yaml.set("PLAYERS", plrs);
+            yaml.set("PLAYERS", plrs);
 
-        save();
-        updateMaps();
+            save();
+            updateMaps();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    void deletePlayerData(Player plr) {
-        List<String> plrs = (List<String>) yaml.get("PLAYERS");
-        plrs.removeAll(Collections.singleton(plr.getUniqueId().toString()));
+    boolean deletePlayerData(Player plr) {
+        try {
+            List<String> plrs = (List<String>) yaml.get("PLAYERS");
+            plrs.removeAll(Collections.singleton(plr.getUniqueId().toString()));
 
-        yaml.set("PLAYERS", plrs);
+            yaml.set("PLAYERS", plrs);
 
-        save();
-        updateMaps();
+            save();
+            updateMaps();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    void deletePlayerData(UUID uuid) {
-        List<String> plrs = (List<String>) yaml.get("PLAYERS");
-        plrs.removeAll(Collections.singleton(uuid.toString()));
+    boolean deletePlayerData(UUID uuid) {
+        try {
+            List<String> plrs = (List<String>) yaml.get("PLAYERS");
+            plrs.removeAll(Collections.singleton(uuid.toString()));
 
-        yaml.set("PLAYERS", plrs);
+            yaml.set("PLAYERS", plrs);
 
-        save();
-        updateMaps();
+            save();
+            updateMaps();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     PlayerDataObject createPlayerData(Player plr) {
@@ -186,9 +204,9 @@ public class PlayerStorage {
                 }
             }
 
-            Minecaching.getInstance().getLogger().info("Player data update succeeded, updated from v" + Config.getInstance().getPlayerDataVersion() + " to v" + Minecaching.getInstance().PLAYER_DATA_VERSION);
+            Minecaching.getInstance().getLogger().info("Player data update succeeded, updated from v" + Config.getInstance().getPlayerDataVersion() + " to v" + MinecachingAPI.getPlayerDataVersion());
 
-            Config.getInstance().setPlayerDataVersion(Minecaching.getInstance().PLAYER_DATA_VERSION);
+            Config.getInstance().setPlayerDataVersion(MinecachingAPI.getPlayerDataVersion());
             if (playerStorage != null) {
                 for (PlayerDataObject plr : playerStorage.values()) {
                     plr.save();
