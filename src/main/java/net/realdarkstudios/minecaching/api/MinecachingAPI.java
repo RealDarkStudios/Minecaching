@@ -14,7 +14,7 @@ public class MinecachingAPI {
     /**
      * Defines the expected Config Data Version
      */
-    private static final int CONFIG_DATA_VERSION = 6;
+    private static final int CONFIG_DATA_VERSION = 7;
     /**
      * Defines the expected Minecache Data Version
      */
@@ -34,7 +34,7 @@ public class MinecachingAPI {
     /**
      * Gets the Config Data Version
      * @return the expected Config Data Version
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public static int getConfigDataVersion() {
         return CONFIG_DATA_VERSION;
@@ -43,7 +43,7 @@ public class MinecachingAPI {
     /**
      * Gets the Minecache Data Version
      * @return the expected Minecache Data Version
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public static int getMinecacheDataVersion() {
         return MINECACHE_DATA_VERSION;
@@ -52,7 +52,7 @@ public class MinecachingAPI {
     /**
      * Gets the Player Data Version
      * @return the expected Player Data Version
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public static int getPlayerDataVersion() {
         return PLAYER_DATA_VERSION;
@@ -61,7 +61,7 @@ public class MinecachingAPI {
     /**
      * Gets the Logbook Data Version
      * @return the expected Logbook Data Version
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public static int getLogbookDataVersion() {
         return LOGBOOK_DATA_VERSION;
@@ -70,7 +70,7 @@ public class MinecachingAPI {
     /**
      * Logs all the messages at the INFO level
      * @param messages The messages to log
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public static void info(String... messages) {
         for (String msg : messages) {
@@ -81,7 +81,7 @@ public class MinecachingAPI {
     /**
      * Logs all the messages at the WARN level
      * @param messages The messages to log
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public static void warning(String... messages) {
         for (String msg : messages) {
@@ -93,7 +93,7 @@ public class MinecachingAPI {
      * Gets the player data for the given player
      * @param player The {@link Player} to get the data for
      * @return The {@link PlayerDataObject} associated with the player
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     public PlayerDataObject getPlayerData(Player player) {
         return getPlayerData(player.getUniqueId());
@@ -103,7 +103,7 @@ public class MinecachingAPI {
      * Gets the player data for the given UUID
      * @param uuid The {@link UUID} of the player to get the data for
      * @return The {@link PlayerDataObject} associated with the UUID
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     public PlayerDataObject getPlayerData(UUID uuid) {
         return PlayerStorage.getInstance().getOrCreatePlayerData(uuid);
@@ -113,7 +113,7 @@ public class MinecachingAPI {
      * Gets the list of {@link PlayerDataObject}s for all players that currently have data
      * @return The list of PlayerDataObjects for all players that have data.
      * If you want a list of ALL players, use {@link Bukkit#getOfflinePlayers()} or {@link Bukkit#getOnlinePlayers()}
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public List<PlayerDataObject> getAllKnownPlayers() {
         return PlayerStorage.getInstance().getPlayers();
@@ -124,7 +124,7 @@ public class MinecachingAPI {
      * @param predicate The method by which to filter out player data
      * @return The filtered list of PlayerDataObjects for all players that have data.
      * If you want a list of ALL players, use {@link Bukkit#getOfflinePlayers()} or {@link Bukkit#getOnlinePlayers()}
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public List<PlayerDataObject> getFilteredPlayers(Predicate<PlayerDataObject> predicate) {
         return PlayerStorage.getInstance().getPlayers().stream().filter(predicate).toList();
@@ -134,7 +134,7 @@ public class MinecachingAPI {
      * Checks if the player data for the given player exists
      * @param player The player to check for
      * @return true if the player data does exist, false otherwise
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     public boolean hasPlayerData(Player player) {
         return hasPlayerData(player.getUniqueId());
@@ -144,7 +144,7 @@ public class MinecachingAPI {
      * Checks if the player data for the given UUID exists
      * @param uuid The UUID of the player to check for
      * @return true if the player data does exist, false otherwise
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     public boolean hasPlayerData(UUID uuid) {
         return PlayerStorage.getInstance().hasPlayerData(uuid);
@@ -154,7 +154,7 @@ public class MinecachingAPI {
      * Deletes player data from the file system
      * @param pdo The {@link PlayerDataObject} associated with the player data you want to delete
      * @return {@code true} if it succeeded, {@code false} if not
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public boolean deletePlayerData(PlayerDataObject pdo) {
         return deletePlayerData(pdo.getUniqueID());
@@ -164,7 +164,7 @@ public class MinecachingAPI {
      * Deletes player data from the file system
      * @param player The {@link Player} associated with the player data you want to delete
      * @return {@code true} if it succeeded, {@code false} if not
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public boolean deletePlayerData(Player player) {
         return deletePlayerData(player.getUniqueId());
@@ -174,7 +174,7 @@ public class MinecachingAPI {
      * Deletes player data from the file system
      * @param uuid The {@link UUID} associated with the player data you want to delete
      * @return {@code true} if it succeeded, {@code false} if not
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public boolean deletePlayerData(UUID uuid) {
         return PlayerStorage.getInstance().deletePlayerData(uuid);
@@ -184,7 +184,7 @@ public class MinecachingAPI {
      * Gets the Minecache for the given cache ID
      * @param cacheId The ID of the cache to get
      * @return The {@link Minecache} associated with the cache ID
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     public Minecache getMinecache(String cacheId) {
         return cacheId.equals("NULL") ? Minecache.EMPTY : MinecacheStorage.getInstance().getMinecacheByID(cacheId);
@@ -193,7 +193,7 @@ public class MinecachingAPI {
     /**
      * Gets the list of all known Minecaches
      * @return The list of all Minecaches
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     public List<Minecache> getAllKnownCaches() {
         return MinecacheStorage.getInstance().getMinecaches();
@@ -202,7 +202,7 @@ public class MinecachingAPI {
     /**
      * Gets the list of all known Minecache IDs
      * @return A list of all Minecache IDs
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     public List<String> getAllKnownCacheIDs() {
         return MinecacheStorage.getInstance().getIDArray();
@@ -211,7 +211,7 @@ public class MinecachingAPI {
     /**
      * Gets the list of all invalid Minecaches
      * @return A list of all invalid Minecaches
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     public List<Minecache> getAllInvalidCaches() {
         return getAllKnownCaches().stream().filter(m -> m.type().equals(MinecacheType.INVALID)).toList();
@@ -221,7 +221,7 @@ public class MinecachingAPI {
      * Gets the list of all known caches and filters it by the predicate
      * @param predicate The method by which to filter out caches
      * @return A list of all caches that met the predicate
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     public List<Minecache> getFilteredCaches(Predicate<Minecache> predicate) {
         return getAllKnownCaches().stream().filter(predicate).toList();
@@ -231,7 +231,7 @@ public class MinecachingAPI {
      * Gets the list of all known cache IDs and filters it by the predicate
      * @param predicate The method by which to filter out cache IDs
      * @return A list of all cache IDs that met the predicate
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     public List<String> getFilteredCacheIDs(Predicate<String> predicate) {
         return getAllKnownCacheIDs().stream().filter(predicate).toList();
@@ -242,7 +242,7 @@ public class MinecachingAPI {
      * @param minecache The cache to save
      * @param isNewCache If the cache is a new cache. For /addcache, this is true, while for /editcache, this is false
      * @return {@code true} if the cache successfully saved
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     public boolean saveMinecache(Minecache minecache, boolean isNewCache) {
         return MinecacheStorage.getInstance().saveMinecache(minecache, isNewCache);
@@ -252,7 +252,7 @@ public class MinecachingAPI {
      * Deletes a cache from the file system
      * @param minecache The cache to delete
      * @return {@code true} if the cache was successfully deleted
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     public boolean deleteMinecache(Minecache minecache) {
         return (PlayerStorage.getInstance().deleteMinecache(minecache) && MinecacheStorage.getInstance().deleteMinecache(minecache));
@@ -262,7 +262,7 @@ public class MinecachingAPI {
      * Verifies a cache
      * @param minecache The cache to verify
      * @return {@code true} if the cache was successfully verified
-     * @since 2.0.0.5
+     * @since 0.2.0.5
      */
     public boolean verifyMinecache(UUID player, Minecache minecache) {
         minecache.setStatus(MinecacheStatus.VERIFIED);
@@ -276,7 +276,7 @@ public class MinecachingAPI {
      * Gets the Logbook for the given cache
      * @param cache The {@link Minecache} of the Logbook
      * @return The {@link LogbookDataObject} associated with this cache
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public LogbookDataObject getLogbook(Minecache cache) {
         return getLogbook(cache.id());
@@ -286,7 +286,7 @@ public class MinecachingAPI {
      * Gets the Logbook for the given id
      * @param id The ID of the Logbook
      * @return The {@link LogbookDataObject} associated with this ID
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public LogbookDataObject getLogbook(String id) {
         return LogbookStorage.getInstance().getOrCreateLogbook(id);
@@ -295,7 +295,7 @@ public class MinecachingAPI {
     /**
      * Gets all the known Logbooks
      * @return The list of all Logbooks
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public List<LogbookDataObject> getAllKnownLogbooks() {
         return LogbookStorage.getInstance().getLogbooks();
@@ -305,7 +305,7 @@ public class MinecachingAPI {
      * Gets all the known Logbooks, filtered by the predicate
      * @param predicate The method by which to filter out Logbooks
      * @return The list of all filtered Logbooks
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public List<LogbookDataObject> getFilteredLogbooks(Predicate<LogbookDataObject> predicate) {
         return LogbookStorage.getInstance().getLogbooks().stream().filter(predicate).toList();
@@ -315,7 +315,7 @@ public class MinecachingAPI {
      * Checks if the Logbook for the given cache exists
      * @param cache The {@link Minecache} to check for
      * @return {@code true} if the Logbook does exist, {@code false} otherwise
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public boolean hasLogbook(Minecache cache) {
         return hasLogbook(cache.id());
@@ -325,7 +325,7 @@ public class MinecachingAPI {
      * Checks if the Logbook for the given ID exists
      * @param id The ID to check for
      * @return {@code true} if the Logbook does exist, {@code false} otherwise
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public boolean hasLogbook(String id) {
         return LogbookStorage.getInstance().hasLogbook(id);
@@ -335,7 +335,7 @@ public class MinecachingAPI {
      * Deletes the Logbook from the file system
      * @param ldo The {@link LogbookDataObject} associated with the Logbook you want to delete
      * @return {@code true} if succeeded, {@code false} if not
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public boolean deleteLogbook(LogbookDataObject ldo) {
         return deleteLogbook(ldo.id());
@@ -345,7 +345,7 @@ public class MinecachingAPI {
      * Deletes the Logbook from the file system
      * @param cache The {@link Minecache} associated with the Logbook you want to delete
      * @return {@code true} if succeeded, {@code false} if not
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public boolean deleteLogbook(Minecache cache) {
         return deleteLogbook(cache.id());
@@ -355,7 +355,7 @@ public class MinecachingAPI {
      * Deletes the Logbook from the file system
      * @param id The ID associated with the Logbook you want to delete
      * @return {@code true} if succeeded, {@code false} if not
-     * @since 2.0.1.0
+     * @since 0.2.1.0
      */
     public boolean deleteLogbook(String id) {
         return LogbookStorage.getInstance().deleteLogbook(id);
@@ -363,7 +363,7 @@ public class MinecachingAPI {
 
     /**
      * Updates all the internal maps
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     public void update() {
         MinecacheStorage.getInstance().updateMaps();
@@ -373,7 +373,7 @@ public class MinecachingAPI {
 
     /**
      * Saves all plugin data
-     * @since 2.0.1.2
+     * @since 0.2.1.2
      * @see MinecachingAPI#load(boolean)
      * @see MinecachingAPI#update()
      */
@@ -392,7 +392,7 @@ public class MinecachingAPI {
      * Loads all plugin data
      *
      * @param attemptUpdates Whether to attempt updates (if needed) or not
-     * @since 2.0.1.2
+     * @since 0.2.1.2
      * @see MinecachingAPI#save()
      * @see MinecachingAPI#update()
      */
@@ -406,6 +406,9 @@ public class MinecachingAPI {
             if (attemptUpdates) Config.getInstance().attemptUpdate();
             else minecaching.getLogger().warning("Not attempting update!");
         }
+
+        minecaching.getLogger().info("Loading localization...");
+        LocalizationProvider.getInstance().load();
 
         minecaching.getLogger().info("Loading minecaches...");
         MinecacheStorage.getInstance().load();
@@ -435,7 +438,7 @@ public class MinecachingAPI {
     /**
      * Gets the instance of the API
      * @return the API instance
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     public static MinecachingAPI get() {
         return api;

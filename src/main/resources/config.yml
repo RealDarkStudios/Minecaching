@@ -9,6 +9,11 @@ MINECACHE_DATA_VERSION: 3
 PLAYER_DATA_VERSION: 3
 LOGBOOK_DATA_VERSION: 1
 
+# Determines the Locale to use for plugin messages
+# Currently supports: en-US
+# Defaults: en-US
+LOCALE: en-US
+
 # Determines whether or not event messages are logged.
 # Defaults: false
 DEBUG_EVENTS: false

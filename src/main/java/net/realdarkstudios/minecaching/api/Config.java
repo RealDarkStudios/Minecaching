@@ -6,6 +6,7 @@ import org.joml.Math;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 
 public class Config {
     private final static Config INSTANCE = new Config();
@@ -69,6 +70,10 @@ public class Config {
         yaml.set("LOGBOOK_DATA_VERSION", version);
     }
 
+    public Locale getServerLocale() {
+        return Locale.forLanguageTag(yaml.getString("LOCALE"));
+    }
+
     public boolean getDebugEvents() {
         return yaml.getBoolean("DEBUG_EVENTS");
     }
@@ -126,6 +131,8 @@ public class Config {
             int playerDataVersion = configVersion < 4 ? yaml.getInt("PLAYER_VERSION") : getPlayerDataVersion();
             int logbookDataVersion = configVersion < 4 ? 0 : getLogbookDataVersion();
 
+            Locale serverLocale = configVersion < 7 ? Locale.ENGLISH : getServerLocale();
+
             boolean debugEvents = configVersion >= 5 && getDebugEvents();
             int debugEventsLevel = configVersion < 5 ? 0 : getDebugEventsLevel();
             int maxY = getMaxY();
@@ -147,6 +154,7 @@ public class Config {
             yaml.set("MINECACHE_DATA_VERSION", minecacheDataVersion);
             yaml.set("PLAYER_DATA_VERSION", playerDataVersion);
             yaml.set("LOGBOOK_DATA_VERSION", logbookDataVersion);
+            yaml.set("LOCALE", serverLocale.toLanguageTag());
             yaml.set("DEBUG_EVENTS", debugEvents);
             yaml.set("DEBUG_EVENTS_LEVEL", debugEventsLevel);
             yaml.set("MAX_Y", maxY);
