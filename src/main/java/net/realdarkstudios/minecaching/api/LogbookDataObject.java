@@ -115,14 +115,15 @@ public class LogbookDataObject {
             try {
                 logFile.createNewFile();
             } catch (Exception e) {
-                Minecaching.getInstance().getLogger().warning("Failed to make log file " + id + ".yml");
+                MinecachingAPI.tWarning("error.plugin.createfile", id + ".yml");
             }
         } else if (Config.getInstance().getLogbookDataVersion() != MinecachingAPI.getLogbookDataVersion()) {
             try {
+                if (!logFile.canWrite()) throw new Exception();
                 logFile.delete();
                 logFile.createNewFile();
             } catch (Exception e) {
-                Minecaching.getInstance().getLogger().warning("Failed to make log file " + id + ".yml during update");
+                MinecachingAPI.tWarning("error.plugin.updatefile", id + ".yml");
             }
         }
 

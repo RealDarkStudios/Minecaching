@@ -1,6 +1,5 @@
 package net.realdarkstudios.minecaching.api;
 
-import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.Utils;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -234,11 +233,9 @@ public class Minecache {
         Config cfg = Config.getInstance();
         if (cX > cfg.getMaxX() || cX < cfg.getMinX() || cY > cfg.getMaxY() || cY < cfg.getMinY() || cZ > cfg.getMaxZ() || cZ < cfg.getMinZ()
                 || cLX > cfg.getMaxX() || cLX < cfg.getMinX() || cLY > cfg.getMaxY() || cLY < cfg.getMinY() || cLZ > cfg.getMaxZ() || cLZ < cfg.getMinZ()) {
-            Minecaching.getInstance().getLogger().warning(String.format("%s is outside of the boundaries set in the config! The cache has been invalidated!", key));
             isInvalidated = true;
         }
         if (new Location(cWorld, cLX, cLY, cLZ).distance(new Location(cWorld, cX, cY, cZ)) > Config.getInstance().getMaxLodestoneDistance()) {
-            Minecaching.getInstance().getLogger().warning("The lodestone coordinates are too far away! The cache has been invalidated");
             isInvalidated = true;
         }
 

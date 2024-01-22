@@ -131,7 +131,7 @@ public class Config {
             int playerDataVersion = configVersion < 4 ? yaml.getInt("PLAYER_VERSION") : getPlayerDataVersion();
             int logbookDataVersion = configVersion < 4 ? 0 : getLogbookDataVersion();
 
-            Locale serverLocale = configVersion < 7 ? Locale.ENGLISH : getServerLocale();
+            Locale serverLocale = configVersion < 7 ? Locale.US : getServerLocale();
 
             boolean debugEvents = configVersion >= 5 && getDebugEvents();
             int debugEventsLevel = configVersion < 5 ? 0 : getDebugEventsLevel();
@@ -168,10 +168,10 @@ public class Config {
             yaml.set("USE_LODESTONE_BASED_LOCATING", useLodestoneBasedLocating);
             yaml.set("ENABLED_TYPES", enabledTypes);
             yaml.set("CONFIG_VERSION", MinecachingAPI.getConfigDataVersion());
-            Minecaching.getInstance().getLogger().info("Config update succeeded, updated from v" + configVersion + " to v" + getConfigVersion());
+            MinecachingAPI.tInfo("plugin.data.update.succeed", "Config", configVersion, MinecachingAPI.getConfigDataVersion());
             save();
         } catch (Exception e) {
-            Minecaching.getInstance().getLogger().warning("Config update failed!");
+            MinecachingAPI.tInfo("plugin.data.update.failed", "Config", getConfigVersion(), MinecachingAPI.getConfigDataVersion());
         }
     }
 }

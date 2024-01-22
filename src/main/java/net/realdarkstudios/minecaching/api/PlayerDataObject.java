@@ -202,14 +202,14 @@ public class PlayerDataObject {
                 Minecache.EMPTY.toYaml(yaml, "cache");
                 Minecache.EMPTY.toYaml(yaml, "editing");
             } catch (Exception e) {
-                Minecaching.getInstance().getLogger().warning("Failed to make per-player file " + uuid + ".yml");
+                MinecachingAPI.tWarning("error.plugin.createfile", uuid + ".yml");
             }
         } else if (Config.getInstance().getPlayerDataVersion() != MinecachingAPI.getPlayerDataVersion()) {
             try {
                 plrFile.delete();
                 plrFile.createNewFile();
             } catch (Exception e) {
-                Minecaching.getInstance().getLogger().warning("Failed to make per-player file " + uuid + ".yml during update");
+                MinecachingAPI.tWarning("error.plugin.updatefile", uuid + ".yml");
             }
         }
 

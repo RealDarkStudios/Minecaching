@@ -68,7 +68,7 @@ public class PlayerStorage {
             try {
                 uuid = UUID.fromString(key);
             } catch (Exception e) {
-                Minecaching.getInstance().getLogger().warning("Could not parse UUID " + key);
+                MinecachingAPI.tWarning("error.plugin.parseuuid", key);
                 continue;
             }
 
@@ -204,7 +204,7 @@ public class PlayerStorage {
                 }
             }
 
-            Minecaching.getInstance().getLogger().info("Player data update succeeded, updated from v" + Config.getInstance().getPlayerDataVersion() + " to v" + MinecachingAPI.getPlayerDataVersion());
+            MinecachingAPI.tWarning("plugin.data.update.succeed", "Player Data", Config.getInstance().getPlayerDataVersion(), MinecachingAPI.getPlayerDataVersion());
 
             Config.getInstance().setPlayerDataVersion(MinecachingAPI.getPlayerDataVersion());
             if (playerStorage != null) {
@@ -214,7 +214,7 @@ public class PlayerStorage {
             }
             Config.getInstance().save();
         } catch (Exception e) {
-            Minecaching.getInstance().getLogger().warning("Player data update failed!");
+            MinecachingAPI.tWarning("plugin.data.update.fail", "Player Data", Config.getInstance().getPlayerDataVersion(), MinecachingAPI.getPlayerDataVersion());
         }
     }
 }

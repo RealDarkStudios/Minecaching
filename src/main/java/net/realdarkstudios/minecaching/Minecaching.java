@@ -1,6 +1,7 @@
 package net.realdarkstudios.minecaching;
 
-import net.realdarkstudios.minecaching.api.*;
+import net.realdarkstudios.minecaching.api.Config;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.commands.*;
 import net.realdarkstudios.minecaching.event.MCDebugEventHandler;
 import net.realdarkstudios.minecaching.event.MCEventHandler;
@@ -15,8 +16,6 @@ public final class Minecaching extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        getLogger().info(String.format("Minecaching v%s is enabling...", VERSION));
-
         File playerFolder = new File(getDataFolder() + "/player/");
         if (!playerFolder.exists()) playerFolder.mkdirs();
 
@@ -27,7 +26,7 @@ public final class Minecaching extends JavaPlugin {
         getLogger().info("Server Version: " + Bukkit.getBukkitVersion());
         String[] serverVersion = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
         if (!(Integer.parseInt(serverVersion[1]) >= 16)) {
-            getLogger().info("This plugin requires you to be on 1.16 or above!");
+            getLogger().warning("This plugin can't run on versions below 1.16! Please update!");
             // Load Config and MCStorage so there's no warning about this.yaml not existing
             MinecachingAPI.get().load(false);
             onDisable();
@@ -45,16 +44,15 @@ public final class Minecaching extends JavaPlugin {
             getCommand("logcache").setExecutor(new LogCacheCommand());
             getCommand("logbook").setExecutor(new LogbookCommand());
 
-            if (Config.getInstance().getDebugEvents()) {
-                getLogger().info("Debug Events Enabled! (Level: " + Config.getInstance().getDebugEventsLevel() + ")");
-            }
+            if (Config.getInstance().getDebugEvents()) MinecachingAPI.tInfo("mcadmin.version.debugevents.on", Config.getInstance().getDebugEventsLevel());
+            else MinecachingAPI.tInfo("mcadmin.version.debugevents.off");
 
             // Must register regardless of if Debug Events are enabled, in case someone decides to enable it while running.
             // A check is performed in MCDebugEventHandler#sendDebugMessage
             getServer().getPluginManager().registerEvents(new MCDebugEventHandler(), this);
             getServer().getPluginManager().registerEvents(new MCEventHandler(), this);
 
-            getLogger().info("Minecaching has been enabled!");
+            MinecachingAPI.tInfo("plugin.enabled", VERSION);
         }
     }
 

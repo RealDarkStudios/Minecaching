@@ -46,6 +46,10 @@
   "error.usage.listcaches.page": "Incorrect Type! (Got non-number \"%s\")",
   "error.usage.logcache.logtype": "Invalid Log Type!",
 
+  "error.plugin.createfile": "Failed to create file %s!",
+  "error.plugin.updatefile": "Failed to create file %s during update!",
+  "error.plugin.parseuuid": "Failed to parse UUID %s",
+
   "addcache.cancel": "%sStopped creating %s",
   "addcache.create": "%sStarting creation of new cache...",
   "addcache.save": "%sCreated %s: %s",
@@ -84,8 +88,16 @@
   "mcadmin.version.debugevents.off": "Debug Events: False",
   "verifycache.verify": "%sVerified %s",
 
+  "plugin.data.update": "%s out of date! Attempting update...",
+  "plugin.data.update.fail": "%s update failed (v%d -> v%d)",
+  "plugin.data.update.succeed": "%s updated succeeded (v%d -> v%d)",
+  "plugin.data.update.notattempting": "Not attempting %s update!",
+  "plugin.localization.missingformatarg": "Missing Format Argument! Returning %s with no substitutions",
+  "plugin.enabled": "Minecaching v%s enabled!",
   "plugin.reloading": "Reloading...",
   "plugin.reloaded": "Reloaded Minecaching",
+  "plugin.load": "Loading %s...",
+  "plugin.save": "Saving %s...",
 
   "permission.none": "You do not have permission to use this command!",
   "permission.none.mcadmin": "You do not have permission to use the /mcadmin command!",

@@ -60,7 +60,7 @@ public class LocalizationProvider {
         try {
             return String.format(getTranslation(key), substitutions);
         } catch (MissingFormatArgumentException e) {
-            MinecachingAPI.warning("Missing Format Argument! Returning with no substitutions...");
+            MinecachingAPI.tWarning("plugin.localization.missingformatarg", key);
             return getTranslation(key);
         }
     }

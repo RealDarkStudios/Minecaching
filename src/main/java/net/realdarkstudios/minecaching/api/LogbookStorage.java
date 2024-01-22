@@ -1,7 +1,5 @@
 package net.realdarkstudios.minecaching.api;
 
-import net.realdarkstudios.minecaching.Minecaching;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -145,7 +143,7 @@ public class LogbookStorage {
                 }
             }
 
-            Minecaching.getInstance().getLogger().info("Logbook data update succeeded, updated from v" + Config.getInstance().getLogbookDataVersion() + " to v" + MinecachingAPI.getLogbookDataVersion());
+            MinecachingAPI.tInfo("plugin.data.update.succeed",  "Logbook Data", Config.getInstance().getLogbookDataVersion(), MinecachingAPI.getLogbookDataVersion());
 
             Config.getInstance().setLogbookDataVersion(MinecachingAPI.getLogbookDataVersion());
             if (logStorage != null) {
@@ -155,7 +153,7 @@ public class LogbookStorage {
             }
             Config.getInstance().save();
         } catch (Exception e) {
-            Minecaching.getInstance().getLogger().warning("Logbook data update failed!");
+            MinecachingAPI.tWarning("plugin.data.update.fail",  "Logbook Data", Config.getInstance().getLogbookDataVersion(), MinecachingAPI.getLogbookDataVersion());
         }
     }
 }

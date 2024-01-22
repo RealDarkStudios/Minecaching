@@ -140,7 +140,7 @@ public class MinecacheStorage {
                 cache.toYaml(yaml, cache.id());
             }
 
-            Minecaching.getInstance().getLogger().info("Minecache data update succeeded, updated from v" + Config.getInstance().getMinecacheDataVersion() + " to v" + MinecachingAPI.getMinecacheDataVersion());
+            MinecachingAPI.tInfo("plugin.data.update.succeed",  "Minecache Data", Config.getInstance().getMinecacheDataVersion(), MinecachingAPI.getMinecacheDataVersion());
 
             Config.getInstance().setMinecacheDataVersion(MinecachingAPI.getMinecacheDataVersion());
             Config.getInstance().save();
@@ -148,7 +148,7 @@ public class MinecacheStorage {
             save();
             updateMaps();
         } catch (Exception e) {
-            Minecaching.getInstance().getLogger().warning("Minecache data update failed!");
+            MinecachingAPI.tWarning("plugin.data.update.fail",  "Minecache Data", Config.getInstance().getMinecacheDataVersion(), MinecachingAPI.getMinecacheDataVersion());
         }
     }
 }

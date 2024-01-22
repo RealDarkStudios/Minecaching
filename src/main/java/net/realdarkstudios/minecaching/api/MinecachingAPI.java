@@ -82,6 +82,10 @@ public class MinecachingAPI {
         Minecaching.getInstance().getLogger().info(LocalizationProvider.getInstance().getTranslation(key));
     }
 
+    public static void tInfo(String key, Object... substitutions) {
+        Minecaching.getInstance().getLogger().info(LocalizationProvider.getInstance().getTranslation(key, substitutions));
+    }
+
     /**
      * Logs all the messages at the WARN level
      * @param messages The messages to log
@@ -95,6 +99,10 @@ public class MinecachingAPI {
 
     public static void tWarning(String key) {
         Minecaching.getInstance().getLogger().warning(LocalizationProvider.getInstance().getTranslation(key));
+    }
+
+    public static void tWarning(String key, Object... substitutions) {
+        Minecaching.getInstance().getLogger().warning(LocalizationProvider.getInstance().getTranslation(key, substitutions));
     }
 
     /**
@@ -386,13 +394,13 @@ public class MinecachingAPI {
      * @see MinecachingAPI#update()
      */
     public void save() {
-        Minecaching.getInstance().getLogger().info("Saving config...");
+        tInfo("plugin.save", "Config");
         Config.getInstance().save();
-        Minecaching.getInstance().getLogger().info("Saving minecache data...");
+        tInfo("plugin.save", "Minecache Data");
         MinecacheStorage.getInstance().save();
-        Minecaching.getInstance().getLogger().info("Saving player data...");
+        tInfo("plugin.save", "Player Data");
         PlayerStorage.getInstance().save();
-        Minecaching.getInstance().getLogger().info("Saving logbook data...");
+        tInfo("plugin.save", "Logbook Data");
         LogbookStorage.getInstance().save();
     }
 
@@ -406,40 +414,41 @@ public class MinecachingAPI {
      */
     public void load(boolean attemptUpdates) {
         Minecaching minecaching = Minecaching.getInstance();
-        
-        minecaching.getLogger().info("Loading config...");
-        Config.getInstance().load();
-        if (Config.getInstance().getConfigVersion() < CONFIG_DATA_VERSION) {
-            minecaching.getLogger().warning("Config Version out of date!");
-            if (attemptUpdates) Config.getInstance().attemptUpdate();
-            else minecaching.getLogger().warning("Not attempting update!");
-        }
 
-        minecaching.getLogger().info("Loading localization...");
+        Config.getInstance().load();
         LocalizationProvider.getInstance().load();
 
-        minecaching.getLogger().info("Loading minecaches...");
+        tInfo("plugin.load", "Config");
+        if (Config.getInstance().getConfigVersion() < CONFIG_DATA_VERSION) {
+            tWarning("plugin.data.update", "Config");
+            if (attemptUpdates) Config.getInstance().attemptUpdate();
+            else tWarning("plugin.data.update.notattempting", "Config");
+        }
+
+        MinecachingAPI.tInfo("plugin.load", "Localization");
+
+        tInfo("plugin.load", "Minecache Data");
         MinecacheStorage.getInstance().load();
         if (Config.getInstance().getMinecacheDataVersion() < MINECACHE_DATA_VERSION) {
-            minecaching.getLogger().warning("Minecache Data Version out of date!");
+            tWarning("plugin.data.update", "Minecache Data");
             if (attemptUpdates) MinecacheStorage.getInstance().attemptUpdate();
-            else minecaching.getLogger().warning("Not attempting update!");
+            else tWarning("plugin.data.update.notattempting", "Minecache Data");
         }
 
-        minecaching.getLogger().info("Loading player data...");
+        tInfo("plugin.load", "Player Data");
         PlayerStorage.getInstance().load();
         if (Config.getInstance().getPlayerDataVersion() < PLAYER_DATA_VERSION) {
-            minecaching.getLogger().warning("Player Data Version out of date!");
+            tWarning("plugin.data.update", "Player Data");
             if (attemptUpdates) PlayerStorage.getInstance().attemptUpdate();
-            else minecaching.getLogger().warning("Not attempting update!");
+            else tWarning("plugin.data.update.notattempting", "Player Data");
         }
 
-        minecaching.getLogger().info("Loading logbook data...");
+        tInfo("plugin.load", "Logbook Data");
         LogbookStorage.getInstance().load();
         if (Config.getInstance().getLogbookDataVersion() < LOGBOOK_DATA_VERSION) {
-            minecaching.getLogger().warning("Logbook Data Version out of date!");
+            tWarning("plugin.data.update", "Logbook Data");
             if (attemptUpdates) LogbookStorage.getInstance().attemptUpdate();
-            else minecaching.getLogger().warning("Not attempting update!");
+            else tWarning("plugin.data.update.notattempting", "Logbook Data");
         }
     }
 
