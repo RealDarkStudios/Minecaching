@@ -2,8 +2,8 @@ package net.realdarkstudios.minecaching;
 
 import net.realdarkstudios.minecaching.api.*;
 import net.realdarkstudios.minecaching.event.LogCreatedEvent;
+import net.realdarkstudios.minecaching.util.MCPluginMessages;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -60,27 +60,27 @@ public class Utils {
     public static boolean validateLocation(CommandSender sender, int x, int y, int z) {
         Config cfg = Config.getInstance();
         if (x > cfg.getMaxX()) {
-            sender.sendMessage(ChatColor.RED + "X coordinate is above the allowed limit of " + cfg.getMaxX());
+            MCPluginMessages.sendErrorMsg(sender, "coords.abovelimit", "X", x, cfg.getMaxX());
             return false;
         }
         if (x < cfg.getMinX()) {
-            sender.sendMessage(ChatColor.RED + "X coordinate is below the allowed limit of " + cfg.getMinX());
+            MCPluginMessages.sendErrorMsg(sender, "coords.belowlimit", "X", x, cfg.getMinX());
             return false;
         }
         if (y > cfg.getMaxY()) {
-            sender.sendMessage(ChatColor.RED + "Y coordinate is above the allowed limit of " + cfg.getMaxY());
+            MCPluginMessages.sendErrorMsg(sender, "coords.abovelimit", "Y", y, cfg.getMaxY());
             return false;
         }
         if (y < cfg.getMinY()) {
-            sender.sendMessage(ChatColor.RED + "Y coordinate is below the allowed limit of " + cfg.getMinY());
+            MCPluginMessages.sendErrorMsg(sender, "coords.belowlimit", "Y", y, cfg.getMinY());
             return false;
         }
         if (z > cfg.getMaxZ()) {
-            sender.sendMessage(ChatColor.RED + "Z coordinate is above the allowed limit of " + cfg.getMaxZ());
+            MCPluginMessages.sendErrorMsg(sender, "coords.abovelimit", "Z", z, cfg.getMaxZ());
             return false;
         }
         if (z < cfg.getMinZ()) {
-            sender.sendMessage(ChatColor.RED + "Z coordinate is below the allowed limit of " + cfg.getMinZ());
+            MCPluginMessages.sendErrorMsg(sender, "coords.belowlimit", "Z", z, cfg.getMinZ());
             return false;
         }
         return true;
@@ -91,10 +91,10 @@ public class Utils {
 
         if (coord.contains("~")) {
             if (coord.length() == 1) {
-                return plr.getLocation().getBlockZ();
+                return a.equals("X") ? plr.getLocation().getBlockX() : a.equals("Y") ? plr.getLocation().getBlockY() : plr.getLocation().getBlockZ();
             } else {
                 try {
-                    return plr.getLocation().getBlockZ() + Integer.parseInt(coord.substring(1));
+                    return (a.equals("X") ? plr.getLocation().getBlockX() : a.equals("Y") ? plr.getLocation().getBlockY() : plr.getLocation().getBlockZ()) + Integer.parseInt(coord.substring(1));
                 } catch (Exception e) {
                     return (a.equals("X") ? Config.getInstance().getMaxX() : a.equals("Y") ? Config.getInstance().getMaxY() : Config.getInstance().getMaxZ()) + 1;
                 }
@@ -124,23 +124,6 @@ public class Utils {
 
     public static String uuidName(UUID uuid) {
         return uuid.equals(EMPTY_UUID) ? "[CONSOLE]" : Bukkit.getOfflinePlayer(uuid).getName();
-    }
-
-    public static void sendPlrMessage(Player plr, String... message) {
-        sendPlrMessage(plr, ChatColor.WHITE, message);
-    }
-
-    public static void sendPlrErrorMessage(Player plr, String... message) {
-        sendPlrMessage(plr, ChatColor.RED, message);
-    }
-
-    public static void sendPlrMessage(Player plr, ChatColor color, String... message) {
-        ArrayList<String> msg = new ArrayList<>();
-
-        msg.add(color.toString());
-        msg.addAll(Arrays.stream(message).toList());
-
-        plr.sendMessage(msg.toArray(new String[]{}));
     }
 
     public static Log createLog(Player plr, Minecache cache, LogType logType, String message, boolean isFTF) {

@@ -3,6 +3,7 @@ package net.realdarkstudios.minecaching.util;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.realdarkstudios.minecaching.api.LocalizationProvider;
 
 public class TextComponentBuilder {
     private final String message;
@@ -12,6 +13,13 @@ public class TextComponentBuilder {
 
     public TextComponentBuilder(String msg) {
         this.message = msg;
+    }
+    public static TextComponentBuilder fromTranslation(String key) {
+        return new TextComponentBuilder(LocalizationProvider.getInstance().getTranslation(key));
+    }
+
+    public static TextComponentBuilder fromTranslation(String key, Object... substitutions) {
+        return new TextComponentBuilder(LocalizationProvider.getInstance().getTranslation(key, substitutions));
     }
 
     public TextComponentBuilder color(ChatColor color) {

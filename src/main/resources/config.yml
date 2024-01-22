@@ -44,7 +44,7 @@ MAX_LODESTONE_DISTANCE: 50
 FIND_LODESTONE_DISTANCE: 25
 # Determines whether to use lodestone-based locating or coordinate-based locating
 # Coordinate-based is stable, it tells the player the rough coordinates of the cache
-# Lodestone-based is stable until more than one player is locating the same cache. This may be fixed in a future
+# Lodestone-based is stable until more than one player is locating the same cache. This may be fixed in the future
 # Defaults: false (Coordinate-based)
 USE_LODESTONE_BASED_LOCATING: false
 

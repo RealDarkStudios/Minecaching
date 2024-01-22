@@ -1,8 +1,8 @@
 package net.realdarkstudios.minecaching.commands;
 
-import net.md_5.bungee.api.ChatColor;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.util.LogbookGenerator;
+import net.realdarkstudios.minecaching.util.MCPluginMessages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,12 +15,13 @@ public class LogbookCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player plr)) {
-            sender.sendMessage("Only players can use this command!");
+            MCPluginMessages.sendErrorMsg(sender, "execute.console");
             return true;
         }
 
         if (args.length < 1) {
-            plr.sendMessage(ChatColor.RED + "Please enter an ID!");
+            MCPluginMessages.incorrectUsage(sender);
+            MCPluginMessages.usage(sender, "logbook", command, label);
             return true;
         }
 
@@ -33,11 +34,8 @@ public class LogbookCommand implements CommandExecutor, TabExecutor {
             bookNum = 1;
         }
 
-        MinecachingAPI.info("BookNum: " + bookNum);
-
-
         if (plr.getInventory().firstEmpty() == -1) {
-            plr.sendMessage(ChatColor.RED + "No available slots!");
+            MCPluginMessages.sendErrorMsg(sender,"logbook.noslots");
         } else plr.getInventory().addItem(new LogbookGenerator(MinecachingAPI.get().getMinecache(id)).getLogbook(bookNum));
         return true;
     }

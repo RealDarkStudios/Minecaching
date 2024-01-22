@@ -10,21 +10,20 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.UUID;
 
 public class MCAdminCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
-            sender.spigot().sendMessage(MCPluginMessages.INCORRECT_USAGE);
-            return false;
+            MCPluginMessages.incorrectUsage(sender);
+            MCPluginMessages.usage(sender, "mcadmin", command, label);
+            return true;
         }
 
         if (!sender.hasPermission("minecaching.admin")) {
-            sender.spigot().sendMessage(MCPluginMessages.NO_PERMISSION);
+            MCPluginMessages.noPermission(sender,"mcadmin");
             return true;
         }
 
@@ -32,27 +31,28 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
 
         if (subcommand.equals("reload")) {
             if (!sender.hasPermission("minecaching.admin.reload")) {
-                sender.spigot().sendMessage(MCPluginMessages.NO_PERMISSION);
+                MCPluginMessages.noPermission(sender, "mcadmin.reload");
                 return true;
             }
 
-            Minecaching.getInstance().getLogger().info("Reloading...");
+            MinecachingAPI.tInfo("plugin.reloading");
             MinecachingAPI.get().load(!(args.length >= 2 && args[1].equalsIgnoreCase("false")));
-            Minecaching.getInstance().getLogger().info("Reloaded");
-            sender.sendMessage("Reloaded Minecaching!");
+            MinecachingAPI.tInfo("plugin.reloaded");
+            MCPluginMessages.sendMsg(sender, "plugin.reloaded");
         } else if (subcommand.equals("version")) {
             if (!sender.hasPermission("minecaching.admin.version")) {
-                sender.spigot().sendMessage(MCPluginMessages.NO_PERMISSION);
+                MCPluginMessages.noPermission(sender, "admin.version");
                 return true;
             }
 
-            sender.sendMessage("Minecaching Version: " + Minecaching.getInstance().getDescription().getVersion() + " on MC " + Bukkit.getBukkitVersion().split("-")[0]);
-            sender.sendMessage("Server Language: " + LocalizationProvider.getInstance().getTranslation("locale.name"));
-            sender.sendMessage("Config Version: " + Config.getInstance().getConfigVersion());
-            sender.sendMessage("Minecache Data Version: " + Config.getInstance().getMinecacheDataVersion());
-            sender.sendMessage("Player Data Version: " + Config.getInstance().getPlayerDataVersion());
-            sender.sendMessage("Logbook Data Version: " + Config.getInstance().getLogbookDataVersion());
-            sender.sendMessage("Debug Events: " + Config.getInstance().getDebugEvents() + " (Level: " + Config.getInstance().getDebugEventsLevel() + ")");
+            MCPluginMessages.sendMsg(sender, "mcadmin.version.mcversion",Minecaching.getInstance().getDescription().getVersion(), Bukkit.getBukkitVersion().split("-")[0]);
+            MCPluginMessages.sendMsg(sender, "mcadmin.version.serverlang", LocalizationProvider.getInstance().getTranslation("locale.name"));
+            MCPluginMessages.sendMsg(sender, "mcadmin.version.configversion", Config.getInstance().getConfigVersion());
+            MCPluginMessages.sendMsg(sender, "mcadmin.version.mcdataversion", Config.getInstance().getMinecacheDataVersion());
+            MCPluginMessages.sendMsg(sender, "mcadmin.version.plrdataversion", Config.getInstance().getPlayerDataVersion());
+            MCPluginMessages.sendMsg(sender, "mcadmin.version.logbookdataversion", Config.getInstance().getLogbookDataVersion());
+            if (Config.getInstance().getDebugEvents()) MCPluginMessages.sendMsg(sender, "mcadmin.version.debugevents.on", Config.getInstance().getDebugEventsLevel());
+            else MCPluginMessages.sendMsg(sender, "mcadmin.version.debugevents.off");
         } else return false;
 
         return true;
@@ -61,7 +61,7 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1) {
-            return (sender instanceof Player plr) && plr.getUniqueId() == UUID.fromString("cc7f192c-e46b-49ad-86f7-f95eb2cf8b83") ? List.of("version", "reload", "getBlockData", "getBlockState") : List.of("reload", "version");
+            return List.of("reload", "version");
         } else return List.of();
     }
 }

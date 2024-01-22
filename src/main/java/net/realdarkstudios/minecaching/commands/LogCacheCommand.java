@@ -1,8 +1,10 @@
 package net.realdarkstudios.minecaching.commands;
 
+import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.Utils;
 import net.realdarkstudios.minecaching.api.*;
 import net.realdarkstudios.minecaching.event.MinecacheFoundEvent;
+import net.realdarkstudios.minecaching.util.MCPluginMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -17,14 +19,26 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player plr)) {
-            sender.sendMessage(ChatColor.RED + "You must be a player to find caches!");
+            MCPluginMessages.sendErrorMsg(sender, "execute.console");
             return true;
         }
 
-        if (args.length < 2) {
-            plr.sendMessage(ChatColor.RED + "Incorrect number of arguments!");
-            plr.sendMessage(ChatColor.RED + "Use /" + label + " found <code> [logmessage]");
-            plr.sendMessage(ChatColor.RED + "or /" + label + " <type> [logmessage]");
+        if (args.length < 1) {
+            MCPluginMessages.incorrectUsage(sender, "argcount");
+            MCPluginMessages.usage(sender, "logcache", command, label);
+            return true;
+        }
+
+        String type = args[0];
+        LogType logType = LogType.get(type);
+
+        if (logType.equals(LogType.INVALID)) {
+            MCPluginMessages.incorrectUsage(sender, "logcache.logtype");
+        }
+
+        if (logType.equals(LogType.FOUND) && args.length < 2) {
+            MCPluginMessages.incorrectUsage(sender, "argcount");
+            MCPluginMessages.usage(sender, "logcache.found", command, label);
             return true;
         }
 
@@ -33,17 +47,11 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
         String id = pdo.getLocatingId();
 
         if (id.equals("NULL")) {
-            plr.sendMessage(ChatColor.RED + "You are not looking for a cache!");
-            plr.sendMessage(ChatColor.RED + "Use /locate <id> ");
+            MCPluginMessages.sendErrorMsg(sender, "logcache.notlocating");
+            MCPluginMessages.usage(sender, "locatecache", Minecaching.getInstance().getCommand("locatecache"), "locatecache");
             return true;
         }
 
-        String type = args[0];
-        LogType logType = LogType.get(type);
-
-        if (logType.equals(LogType.INVALID)) {
-            Utils.sendPlrErrorMessage(plr, "Invalid Log Type!");
-        }
 
         String code = args[1];
 
@@ -51,19 +59,19 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
 
         switch (cache.status()) {
             case NEEDS_REVIEWED -> {
-                plr.sendMessage(ChatColor.RED + "This cache is waiting to be reviewed!");
+                MCPluginMessages.sendErrorMsg(sender, "logcache.needs_reviewed");
                 return true;
             }
             case ARCHIVED -> {
-                plr.sendMessage(ChatColor.RED + "This cache is archived!");
+                MCPluginMessages.sendErrorMsg(sender, "logcache.archived");
                 return true;
             }
             case DISABLED -> {
-                plr.sendMessage(ChatColor.RED + "This cache is disabled! It may be back soon, though.");
+                MCPluginMessages.sendErrorMsg(sender, "logcache.disabled");
                 return true;
             }
             case INVALID -> {
-                plr.sendMessage(ChatColor.RED + "This cache is currently invalid!");
+                MCPluginMessages.sendErrorMsg(sender, "logcache.invalid");
                 return true;
             }
             default -> {}
@@ -75,7 +83,8 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
         }
 
         if (logMessage.length() > 200) {
-            plr.sendMessage(ChatColor.RED + "Log message cannot be longer than 200 characters!");
+            MCPluginMessages.sendErrorMsg(sender, "logcache.longlog", logMessage.length());
+            return true;
         }
 
         String logMsg = logMessage.toString().trim();
@@ -91,46 +100,35 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
                         Bukkit.getPluginManager().callEvent(foundEvent);
 
                         if (foundEvent.isCancelled()) {
-                            plr.sendMessage(ChatColor.RED + "Could not log this minecache!");
+                            MCPluginMessages.sendErrorMsg(sender, "logcache");
                             return true;
                         }
 
                         pdo.addFind(cache.id());
                         if (isFTF) {
                             pdo.addFTF(cache.id());
-                            MinecachingAPI.get().saveMinecache(cache.setFTF(plr.getUniqueId()), false);
-                        }
+                            MinecachingAPI.get().saveMinecache(cache.setFTF(plr.getUniqueId()).setFinds(cache.finds() + 1), false);
+                        } else MinecachingAPI.get().saveMinecache(cache.setFinds(pdo.getFinds().contains(cache.id()) ? cache.finds() : cache.finds() + 1), false);
 
-                        MinecachingAPI.get().saveMinecache(cache.setFTF(plr.getUniqueId()), false);
+                        pdo.setLocatingId("NULL");
+                        pdo.saveData();
 
                         MinecachingAPI.get().save();
                         MinecachingAPI.get().update();
 
-                        plr.sendMessage(ChatColor.GREEN + "Congratulations! You found " + cache.id() + ": " + cache.name());
-                        if (isFTF) {
-                            plr.sendMessage(ChatColor.GREEN + "You were also the first one to find this cache. Your new FTF total is " + pdo.getFTFs().size());
-                        }
-                        plr.sendMessage(ChatColor.GREEN + "You now have " + pdo.getFinds().size() + " finds");
+                        MCPluginMessages.sendMsg(sender, "logcache.find", ChatColor.GREEN, cache.id(), cache.name());
+                        MCPluginMessages.sendMsg(sender, isFTF ? "logcache.findcount.ftf" : "logcache.findcount", ChatColor.GREEN, pdo.getFinds().size(), isFTF ? pdo.getFTFs().size() : null);
                     }
 
                     Log log = Utils.createLog(plr, cache, logType, logMsg, isFTF);
-
-                    pdo.setLocatingId("NULL");
-                    pdo.saveData();
-
-                    switch (logType) {
-                        case DNF -> plr.sendMessage("Logged a DNF for " + cache.id());
-                        case NOTE -> plr.sendMessage("Logged a Note on " + cache.id());
-                        default -> plr.sendMessage("Logged!");
-                    }
                 } else {
-                    plr.sendMessage(ChatColor.RED + "You must be within 25 blocks of the cache!");
+                    MCPluginMessages.sendErrorMsg(sender, "logcache.distance");
                 }
             } else {
-                plr.sendMessage(ChatColor.RED + "Incorrect code!");
+                MCPluginMessages.sendErrorMsg(sender, "logcache.code");
             }
         } else {
-            plr.sendMessage(ChatColor.RED + "Only Traditional and Mystery caches supported at this time");
+            MCPluginMessages.sendErrorMsg(sender, "logcache.unsupported");
         }
         return true;
     }

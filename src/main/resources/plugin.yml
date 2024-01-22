@@ -47,7 +47,7 @@ commands:
     description: "Deletes a Minecache"
     usage: "/delcache <id>"
     aliases: [delcache, delc, dc, delete]
-    permission: minecaching.delcache
+    permission: minecaching.deletecache
     permission-message: "You do not have permission to delete caches!"
   listcaches:
     description: "Lists all Minecaches"

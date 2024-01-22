@@ -6,6 +6,7 @@ import net.realdarkstudios.minecaching.api.Minecache;
 import net.realdarkstudios.minecaching.api.MinecacheStatus;
 import net.realdarkstudios.minecaching.api.MinecacheType;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.util.MCPluginMessages;
 import net.realdarkstudios.minecaching.util.TextComponentBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -18,15 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListCachesCommand implements CommandExecutor, TabExecutor {
-    //caches [page]
-    //10 a page
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         int page;
         try {
             page = args.length == 0 ? 0 : Math.max(Integer.parseInt(args[0]) - 1, 0);
         } catch (NumberFormatException e) {
-            sender.sendMessage(String.format("Incorrect Usage (Expected a number, but got '%s'!)", args[0]));
+            MCPluginMessages.incorrectUsage(sender, "listcaches.page", args[0]);
             return false;
         }
 
@@ -39,7 +38,7 @@ public class ListCachesCommand implements CommandExecutor, TabExecutor {
 
         TextComponent msg;
         if (numCaches != 0) {
-            msg = new TextComponentBuilder(String.format("Showing %d - %d of %d\n", (page * 10) + 1, Math.min((page + 1) * 10, numCaches), numCaches)).build();
+            msg = TextComponentBuilder.fromTranslation("listcaches.page", (page * 10) + 1, Math.min((page + 1) * 10, numCaches), numCaches).build();
 
             for (int i = 0; i < 10; i++) {
                 Minecache cache;
@@ -56,14 +55,13 @@ public class ListCachesCommand implements CommandExecutor, TabExecutor {
                 ChatColor typeColor = cache.invalidated() ? MinecacheType.INVALID.getColor() : cache.type().getColor();
                 ChatColor statusColor = cache.invalidated() ? MinecacheStatus.INVALID.getColor() : cache.status().getColor();
                 ChatColor primaryColor = cache.status().equals(MinecacheStatus.VERIFIED) || cache.status().equals(MinecacheStatus.NEEDS_REVIEWED) || cache.type().equals(MinecacheType.INVALID) ? typeColor : statusColor;
-                TextComponent entry = new TextComponentBuilder(String.format("%s%d. [%s] [%s%s%s] %s: \"%s\" (Finds: %s) ", primaryColor, (page * 10) + i + 1, cache.invalidated() ? MinecacheType.INVALID : cache.type().toString(), statusColor, cache.invalidated() ? MinecacheStatus.INVALID : cache.status(), primaryColor, cache.id(), cache.name(), cache.finds())).build();
-                TextComponent findEntry = new TextComponentBuilder("Find\n").color(ChatColor.AQUA.asBungee()).underline().clickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/findcache " + cache.id()).build();
+                TextComponent entry = TextComponentBuilder.fromTranslation("listcaches.entry", primaryColor, (page * 10) + i + 1, cache.invalidated() ? MinecacheType.INVALID : cache.type().getId().substring(0, 4), statusColor, cache.invalidated() ? MinecacheStatus.INVALID : cache.status(), primaryColor, cache.id(), cache.name(), cache.finds()).build();
+                TextComponent findEntry = TextComponentBuilder.fromTranslation("listcaches.find", ChatColor.AQUA, ChatColor.UNDERLINE).clickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/locate " + cache.id()).build();
                 msg.addExtra(entry);
                 if (!cache.status().equals(MinecacheStatus.INVALID) && !cache.type().equals(MinecacheType.INVALID)) msg.addExtra(findEntry);
-                else msg.addExtra("\n");
             }
         } else {
-            msg = new TextComponentBuilder("No caches to show!").color(ChatColor.RED.asBungee()).build();
+            msg = TextComponentBuilder.fromTranslation("listcaches.nocaches", ChatColor.RED).build();
         }
 
         sender.spigot().sendMessage(msg);

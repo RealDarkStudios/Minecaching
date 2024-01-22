@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Locale;
+import java.util.MissingFormatArgumentException;
 
 public class LocalizationProvider {
     private static final LocalizationProvider INSTANCE = new LocalizationProvider();
@@ -49,9 +50,23 @@ public class LocalizationProvider {
     }
 
     public String getTranslation(String key) {
+        if (!hasTranslation(key)) return "Translation Not Found";
         String translation = json.get(key).toString();
         // The substring removes the quotation marks around the result
-        return translation.substring(1, translation.length() - 1);
+        return translation.substring(1, translation.length() - 1).replace("\\n", "\n").replace("\\\"", "\"");
+    }
+
+    public String getTranslation(String key, Object... substitutions) {
+        try {
+            return String.format(getTranslation(key), substitutions);
+        } catch (MissingFormatArgumentException e) {
+            MinecachingAPI.warning("Missing Format Argument! Returning with no substitutions...");
+            return getTranslation(key);
+        }
+    }
+
+    public boolean hasTranslation(String key) {
+        return json.has(key);
     }
 
     public static LocalizationProvider getInstance() {

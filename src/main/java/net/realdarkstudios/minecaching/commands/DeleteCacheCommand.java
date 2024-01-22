@@ -3,6 +3,7 @@ package net.realdarkstudios.minecaching.commands;
 import net.realdarkstudios.minecaching.api.Minecache;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.event.MinecacheDeletedEvent;
+import net.realdarkstudios.minecaching.util.MCPluginMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -15,24 +16,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
-    // delcache <id>
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length != 1) {
-            sender.sendMessage("Incorrect Usage!");
-            return false;
+            MCPluginMessages.incorrectUsage(sender);
+            MCPluginMessages.usage(sender, "deletecache", command, label);
         }
 
         String id = args[0].trim();
         Minecache cache = MinecachingAPI.get().getMinecache(id);
         if (cache.equals(Minecache.EMPTY)) {
-            sender.sendMessage(ChatColor.RED + "Did not find minecache with ID " + id);
+            MCPluginMessages.sendErrorMsg(sender, "cantfind", id);
             return true;
         }
 
         if ((sender instanceof Player plr && !plr.getUniqueId().equals(cache.author())) && !sender.isOp()) {
-            sender.sendMessage(ChatColor.RED + "You can't delete other player's Minecaches!");
+            MCPluginMessages.sendErrorMsg(sender, "deletecache.others");
             return true;
         }
 
@@ -40,13 +39,12 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
         Bukkit.getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {
-            sender.sendMessage(ChatColor.RED + "The cache could not be deleted for some reason!");
+            MCPluginMessages.sendErrorMsg(sender, "deletecache");
             return true;
         }
 
         MinecachingAPI.get().deleteMinecache(cache);
-        sender.sendMessage(String.format("%sSuccess! Deleted Minecache with ID %s", ChatColor.GREEN, id));
-
+        MCPluginMessages.sendMsg(sender, "deletecache", ChatColor.GREEN, id);
         return true;
     }
 

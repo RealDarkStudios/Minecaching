@@ -78,6 +78,10 @@ public class MinecachingAPI {
         }
     }
 
+    public static void tInfo(String key) {
+        Minecaching.getInstance().getLogger().info(LocalizationProvider.getInstance().getTranslation(key));
+    }
+
     /**
      * Logs all the messages at the WARN level
      * @param messages The messages to log
@@ -87,6 +91,10 @@ public class MinecachingAPI {
         for (String msg : messages) {
             Minecaching.getInstance().getLogger().warning(msg);
         }
+    }
+
+    public static void tWarning(String key) {
+        Minecaching.getInstance().getLogger().warning(LocalizationProvider.getInstance().getTranslation(key));
     }
 
     /**
