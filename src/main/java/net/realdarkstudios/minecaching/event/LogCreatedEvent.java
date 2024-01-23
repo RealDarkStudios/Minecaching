@@ -1,12 +1,20 @@
 package net.realdarkstudios.minecaching.event;
 
+import net.realdarkstudios.minecaching.api.Log;
 import net.realdarkstudios.minecaching.api.LogType;
 import net.realdarkstudios.minecaching.api.Minecache;
+import net.realdarkstudios.minecaching.commands.LogCacheCommand;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
 public class LogCreatedEvent extends BaseEvent {
+    /**
+     * Called when a {@link Log} is created
+     *
+     * @since 0.2.1.2
+     * @see LogCacheCommand
+     */
     private final Minecache minecache;
     private final String logId;
     private final LogType type;

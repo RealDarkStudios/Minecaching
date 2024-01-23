@@ -10,8 +10,11 @@
   "error.addcache.nolodecoords": "Couldn't save cache because it has no lodestone coordinates!",
   "error.addcache.lodetoofar": "Couldn't save cache because the lodestone coordinates are too far away!",
   "error.addcache.nocode": "Couldn't save cache because it has no code!",
+  "error.archivecache": "Couldn't archive cache for some reason!",
+  "error.archivecache.cantarchive": "Couldn't archive cache because it already is or is invalid!",
   "error.deletecache": "Couldn't delete the cache for some reason!",
   "error.deletecache.others": "You can't delete other player's Minecaches!",
+  "error.disablecache.cantdisable": "Couldn't disable cache because it already is or is archived/invalid",
   "error.editcache": "Couldn't save edits for some reason!",
   "error.editcache.alreadyediting": "You are already editing %s!",
   "error.editcache.nocache": "You haven't started editing a cache yet!",
@@ -33,8 +36,8 @@
   "error.logcache.distance": "You must be within 25 blocks of the cache!",
   "error.logcache.code": "Incorrect code!",
   "error.logcache.unsupported": "This cache type is not supported yet!",
-  "error.verifycache": "Couldn't verify cache for some reason!",
-  "error.verifycache.cantverify": "Couldn't verify cache because it already is or is disabled/archived",
+  "error.publishcache": "Couldn't publish cache for some reason!",
+  "error.publishcache.cantpublish": "Couldn't publish cache because it already is or is archived/invalid",
 
   "error": "Execution Error!",
   "error.execute.console": "This command must be executed by a player!",
@@ -58,7 +61,9 @@
   "addcache.lodecoords": "%sSet lodestone coords to [%s](%d, %d, %d)",
   "addcache.name": "%sSet name to \"%s\"",
   "addcache.type": "%sSet type to %s",
+  "archivecache.archive": "%sArchived %s",
   "deletecache": "%sDeleted Minecache with ID %s",
+  "disablecache.disable": "%sDisabled %s",
   "editcache.cancel": "%sStopped editing %s",
   "editcache.edit": "%sStarting editing %s",
   "editcache.save": "%sSaved %s: %s",
@@ -86,7 +91,7 @@
   "mcadmin.version.logbookdataversion": "Logbook Data Version: %d",
   "mcadmin.version.debugevents.on": "Debug Events: True (Level: %d)",
   "mcadmin.version.debugevents.off": "Debug Events: False",
-  "verifycache.verify": "%sVerified %s",
+  "publishcache.publish": "%sPublished %s",
 
   "plugin.data.update": "%s out of date! Attempting update...",
   "plugin.data.update.fail": "%s update failed (v%d -> v%d)",
@@ -113,7 +118,9 @@
   "usage.addcache.name": "/%s name <name>",
   "usage.addcache.save": "/%s save",
   "usage.addcache.type": "/%s type <type>",
+  "usage.archivecache": "/%s <id> [reason]",
   "usage.deletecache": "/%s <id>",
+  "usage.disablecache": "/%s <id> [reason]",
   "usage.editcache": "/%s <id>",
   "usage.editcache.options": "/%s <cancel|code|coords|lodecoords|name|save>",
   "usage.editcache.cancel": "/%s cancel",
@@ -130,5 +137,5 @@
   "usage.logcache": "/%s <type> [logmessage]",
   "usage.logcache.found": "/%s found <code> [logmessage]",
   "usage.mcadmin": "/%s <reload|version>",
-  "usage.verifycache": "/%s <id>"
+  "usage.publishcache": "/%s <id> [reason]"
 }

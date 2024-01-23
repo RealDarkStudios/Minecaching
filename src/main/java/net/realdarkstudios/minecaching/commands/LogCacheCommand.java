@@ -4,7 +4,7 @@ import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.Utils;
 import net.realdarkstudios.minecaching.api.*;
 import net.realdarkstudios.minecaching.event.MinecacheFoundEvent;
-import net.realdarkstudios.minecaching.util.MCPluginMessages;
+import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -19,13 +19,13 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player plr)) {
-            MCPluginMessages.sendErrorMsg(sender, "execute.console");
+            MCMessages.sendErrorMsg(sender, "execute.console");
             return true;
         }
 
         if (args.length < 1) {
-            MCPluginMessages.incorrectUsage(sender, "argcount");
-            MCPluginMessages.usage(sender, "logcache", command, label);
+            MCMessages.incorrectUsage(sender, "argcount");
+            MCMessages.usage(sender, "logcache", command, label);
             return true;
         }
 
@@ -33,12 +33,12 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
         LogType logType = LogType.get(type);
 
         if (logType.equals(LogType.INVALID)) {
-            MCPluginMessages.incorrectUsage(sender, "logcache.logtype");
+            MCMessages.incorrectUsage(sender, "logcache.logtype");
         }
 
         if (logType.equals(LogType.FOUND) && args.length < 2) {
-            MCPluginMessages.incorrectUsage(sender, "argcount");
-            MCPluginMessages.usage(sender, "logcache.found", command, label);
+            MCMessages.incorrectUsage(sender, "argcount");
+            MCMessages.usage(sender, "logcache.found", command, label);
             return true;
         }
 
@@ -47,8 +47,8 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
         String id = pdo.getLocatingId();
 
         if (id.equals("NULL")) {
-            MCPluginMessages.sendErrorMsg(sender, "logcache.notlocating");
-            MCPluginMessages.usage(sender, "locatecache", Minecaching.getInstance().getCommand("locatecache"), "locatecache");
+            MCMessages.sendErrorMsg(sender, "logcache.notlocating");
+            MCMessages.usage(sender, "locatecache", Minecaching.getInstance().getCommand("locatecache"), "locatecache");
             return true;
         }
 
@@ -59,19 +59,19 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
 
         switch (cache.status()) {
             case NEEDS_REVIEWED -> {
-                MCPluginMessages.sendErrorMsg(sender, "logcache.needs_reviewed");
+                MCMessages.sendErrorMsg(sender, "logcache.needs_reviewed");
                 return true;
             }
             case ARCHIVED -> {
-                MCPluginMessages.sendErrorMsg(sender, "logcache.archived");
+                MCMessages.sendErrorMsg(sender, "logcache.archived");
                 return true;
             }
             case DISABLED -> {
-                MCPluginMessages.sendErrorMsg(sender, "logcache.disabled");
+                MCMessages.sendErrorMsg(sender, "logcache.disabled");
                 return true;
             }
             case INVALID -> {
-                MCPluginMessages.sendErrorMsg(sender, "logcache.invalid");
+                MCMessages.sendErrorMsg(sender, "logcache.invalid");
                 return true;
             }
             default -> {}
@@ -83,7 +83,7 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
         }
 
         if (logMessage.length() > 200) {
-            MCPluginMessages.sendErrorMsg(sender, "logcache.longlog", logMessage.length());
+            MCMessages.sendErrorMsg(sender, "logcache.longlog", logMessage.length());
             return true;
         }
 
@@ -100,7 +100,7 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
                         Bukkit.getPluginManager().callEvent(foundEvent);
 
                         if (foundEvent.isCancelled()) {
-                            MCPluginMessages.sendErrorMsg(sender, "logcache");
+                            MCMessages.sendErrorMsg(sender, "logcache");
                             return true;
                         }
 
@@ -116,19 +116,19 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
                         MinecachingAPI.get().save();
                         MinecachingAPI.get().update();
 
-                        MCPluginMessages.sendMsg(sender, "logcache.find", ChatColor.GREEN, cache.id(), cache.name());
-                        MCPluginMessages.sendMsg(sender, isFTF ? "logcache.findcount.ftf" : "logcache.findcount", ChatColor.GREEN, pdo.getFinds().size(), isFTF ? pdo.getFTFs().size() : null);
+                        MCMessages.sendMsg(sender, "logcache.find", ChatColor.GREEN, cache.id(), cache.name());
+                        MCMessages.sendMsg(sender, isFTF ? "logcache.findcount.ftf" : "logcache.findcount", ChatColor.GREEN, pdo.getFinds().size(), isFTF ? pdo.getFTFs().size() : null);
                     }
 
                     Log log = Utils.createLog(plr, cache, logType, logMsg, isFTF);
                 } else {
-                    MCPluginMessages.sendErrorMsg(sender, "logcache.distance");
+                    MCMessages.sendErrorMsg(sender, "logcache.distance");
                 }
             } else {
-                MCPluginMessages.sendErrorMsg(sender, "logcache.code");
+                MCMessages.sendErrorMsg(sender, "logcache.code");
             }
         } else {
-            MCPluginMessages.sendErrorMsg(sender, "logcache.unsupported");
+            MCMessages.sendErrorMsg(sender, "logcache.unsupported");
         }
         return true;
     }

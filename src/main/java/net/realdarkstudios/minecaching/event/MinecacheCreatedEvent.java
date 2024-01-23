@@ -12,7 +12,7 @@ public class MinecacheCreatedEvent extends MinecacheEvent {
      * Called when a new {@link Minecache} is created
      *
      * @see AddCacheCommand
-     * @since 2.0.0.1
+     * @since 0.2.0.1
      */
 
     private final Player author;

@@ -13,7 +13,7 @@ public class MCDebugEventHandler implements Listener {
      * Depending on whether DEBUG_EVENTS is true or not, events will output a message according to the DEBUG_EVENTS_LEVEL.
      * Both of these settings are controlled by the {@link Config}
      *
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
 
     @EventHandler
@@ -37,8 +37,18 @@ public class MCDebugEventHandler implements Listener {
     }
 
     @EventHandler
-    public void onMinecacheVerified(MinecacheVerifiedEvent event) {
-        sendDebugMessage("Minecache " + event.getCache().id() + " was verified", "cacheId - " + event.getCache().id() + ", verifier - " + Utils.commandSenderName(event.getVerifier()), "");
+    public void onMinecachePublished(MinecachePublishedEvent event) {
+        sendDebugMessage("Minecache " + event.getCache().id() + " was published", "cacheId - " + event.getCache().id() + ", verifier - " + Utils.commandSenderName(event.getVerifier()), "");
+    }
+
+    @EventHandler
+    public void onMinecacheArchived(MinecacheArchivedEvent event) {
+        sendDebugMessage("Minecache " + event.getCache().id() + " was archived", "cacheId - " + event.getCache().id() + ", archiver - " + Utils.commandSenderName(event.getArchiver()), "");
+    }
+
+    @EventHandler
+    public void onMinecacheDisabled(MinecacheDisabledEvent event) {
+        sendDebugMessage("Minecache " + event.getCache().id() + " was disabled", "cacheId - " + event.getCache().id() + ", disabled - " + Utils.commandSenderName(event.getDisabler()), "");
     }
 
     @EventHandler

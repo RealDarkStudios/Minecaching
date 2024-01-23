@@ -9,7 +9,7 @@ public class MinecacheFoundEvent extends MinecacheEvent {
      * Called when a {@link Minecache} is found
      *
      * @see LogCacheCommand
-     * @since 2.0.0.0
+     * @since 0.2.0.0
      */
     private final Player player;
     private final boolean isFTF;

@@ -275,15 +275,43 @@ public class MinecachingAPI {
     }
 
     /**
-     * Verifies a cache
-     * @param minecache The cache to verify
-     * @return {@code true} if the cache was successfully verified
+     * Publishes a Minecache
+     * @param minecache The cache to publish
+     * @return {@code true} if the cache was successfully published
      * @since 0.2.0.5
      */
-    public boolean verifyMinecache(UUID player, Minecache minecache) {
-        minecache.setStatus(MinecacheStatus.VERIFIED);
+    public boolean publishMinecache(UUID player, Minecache minecache, String reason) {
+        minecache.setStatus(MinecacheStatus.PUBLISHED);
 
-        Utils.createLog(player, minecache, LogType.PUBLISH, "Published", false);
+        Utils.createLog(player, minecache, LogType.PUBLISH, reason, false);
+
+        return saveMinecache(minecache, false);
+    }
+
+    /**
+     * Archives a Minecache
+     * @param minecache The cache to archive
+     * @return {@code true} if the cache was successfully archived
+     * @since 0.2.2.2
+     */
+    public boolean archiveMinecache(UUID player, Minecache minecache, String reason) {
+        minecache.setStatus(MinecacheStatus.ARCHIVED);
+
+        Utils.createLog(player, minecache, LogType.ARCHIVE, reason, false);
+
+        return saveMinecache(minecache, false);
+    }
+
+    /**
+     * Disables a Minecache
+     * @param minecache The cache to disable
+     * @return {@code true} if the cache was successfully disabled
+     * @since 0.2.2.2
+     */
+    public boolean disableMinecache(UUID player, Minecache minecache, String reason) {
+        minecache.setStatus(MinecacheStatus.DISABLED);
+
+        Utils.createLog(player, minecache, LogType.DISABLE, reason, false);
 
         return saveMinecache(minecache, false);
     }

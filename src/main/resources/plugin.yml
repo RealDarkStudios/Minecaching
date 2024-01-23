@@ -37,12 +37,12 @@ commands:
     aliases: [logb, lb]
     permission: minecaching.logbook
     permission-message: "You do not have permission to get the logbook!"
-  verifycache:
-    description: "[ADMIN] Confirms a cache"
-    usage: "/verifycache <id>"
-    aliases: [vercache, verc, vc, verify]
-    permission: minecaching.admin.confirmcache
-    permission-message: "You do not have permission to confirm caches!"
+  publishcache:
+    description: "[ADMIN] Publishes a cache"
+    usage: "/publishcache <id>"
+    aliases: [pubcache, pubc, pc, publish]
+    permission: minecaching.admin.publishcache
+    permission-message: "You do not have permission to publish caches!"
   deletecache:
     description: "Deletes a Minecache"
     usage: "/delcache <id>"
@@ -61,6 +61,17 @@ commands:
     aliases: [mca]
     permission: minecaching.admin
     permission-message: "You do not have permission to use the admin utilities"
+  archivecache:
+    description: "Archives a minecache"
+    usage: "/archivecache <id>"
+    aliases: [arcache, arc, archive]
+    permission: minecaching.archivecache
+    permission-message: "You do not have permission to archive caches!"
+  disablecache:
+    description: "Disables a minecache"
+    usage: "/disablecache <id>"
+    aliases: [discache, dic, disable]
+    permission-message: "You do not have permission to disable caches!"
 permissions:
   minecaching.addcache:
     default: true
@@ -72,11 +83,15 @@ permissions:
     default: true
   minecaching.logbook:
     default: true
-  minecaching.admin.verifycache:
+  minecaching.admin.publishcache:
     default: op
   minecaching.deletecache:
     default: true
   minecaching.listcaches:
+    default: true
+  minecaching.archivecache:
+    default: true
+  minecaching.disablecache:
     default: true
   minecaching.admin:
     default: op

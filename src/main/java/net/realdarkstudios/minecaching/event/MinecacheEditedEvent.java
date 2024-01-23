@@ -8,7 +8,7 @@ public class MinecacheEditedEvent extends MinecacheEvent {
     /**
      * Called when a {@link Minecache} is edited.
      *
-     * @since 2.0.0.6
+     * @since 0.2.0.6
      * @see EditCacheCommand
      */
     private final CommandSender editor;

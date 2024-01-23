@@ -206,13 +206,21 @@ public class PlayerDataObject {
             }
         } else if (Config.getInstance().getPlayerDataVersion() != MinecachingAPI.getPlayerDataVersion()) {
             try {
+                if (!plrFile.canWrite()) throw new Exception();
+                PlayerDataObject pdo = getPDO(uuid, yaml, plrFile, useEmptyMinecache);
                 plrFile.delete();
                 plrFile.createNewFile();
+                pdo.saveData();
+                return pdo;
             } catch (Exception e) {
                 MinecachingAPI.tWarning("error.plugin.updatefile", uuid + ".yml");
             }
         }
 
+        return new PlayerDataObject(uuid, yaml, plrFile, useEmptyMinecache);
+    }
+
+    private static PlayerDataObject getPDO(UUID uuid, YamlConfiguration yaml, File plrFile, boolean useEmptyMinecache) {
         return new PlayerDataObject(uuid, yaml, plrFile, useEmptyMinecache);
     }
 }

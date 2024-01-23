@@ -2,7 +2,7 @@ package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.util.LogbookGenerator;
-import net.realdarkstudios.minecaching.util.MCPluginMessages;
+import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,13 +15,13 @@ public class LogbookCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player plr)) {
-            MCPluginMessages.sendErrorMsg(sender, "execute.console");
+            MCMessages.sendErrorMsg(sender, "execute.console");
             return true;
         }
 
         if (args.length < 1) {
-            MCPluginMessages.incorrectUsage(sender);
-            MCPluginMessages.usage(sender, "logbook", command, label);
+            MCMessages.incorrectUsage(sender);
+            MCMessages.usage(sender, "logbook", command, label);
             return true;
         }
 
@@ -35,7 +35,7 @@ public class LogbookCommand implements CommandExecutor, TabExecutor {
         }
 
         if (plr.getInventory().firstEmpty() == -1) {
-            MCPluginMessages.sendErrorMsg(sender,"logbook.noslots");
+            MCMessages.sendErrorMsg(sender,"logbook.noslots");
         } else plr.getInventory().addItem(new LogbookGenerator(MinecachingAPI.get().getMinecache(id)).getLogbook(bookNum));
         return true;
     }

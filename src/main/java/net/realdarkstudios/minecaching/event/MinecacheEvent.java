@@ -7,7 +7,7 @@ public abstract class MinecacheEvent extends CancellableBaseEvent {
      * A base event for Minecache-related events that contains a getCache() method
      *
      * @see CancellableBaseEvent
-     * @since 2.0.0.4
+     * @since 0.2.0.4
      */
     Minecache minecache;
 

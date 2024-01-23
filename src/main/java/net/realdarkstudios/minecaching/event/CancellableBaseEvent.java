@@ -7,7 +7,7 @@ public abstract class CancellableBaseEvent extends BaseEvent implements Cancella
      * An extension of {@link BaseEvent} than adds a default isCancelled() and setCancelled() implementation.
      *
      * @see BaseEvent
-     * @since 2.0.0.4
+     * @since 0.2.0.4
      */
     private boolean cancelled;
 

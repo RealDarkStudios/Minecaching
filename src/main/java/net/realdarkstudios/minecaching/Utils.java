@@ -2,7 +2,7 @@ package net.realdarkstudios.minecaching;
 
 import net.realdarkstudios.minecaching.api.*;
 import net.realdarkstudios.minecaching.event.LogCreatedEvent;
-import net.realdarkstudios.minecaching.util.MCPluginMessages;
+import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -60,27 +60,27 @@ public class Utils {
     public static boolean validateLocation(CommandSender sender, int x, int y, int z) {
         Config cfg = Config.getInstance();
         if (x > cfg.getMaxX()) {
-            MCPluginMessages.sendErrorMsg(sender, "coords.abovelimit", "X", x, cfg.getMaxX());
+            MCMessages.sendErrorMsg(sender, "coords.abovelimit", "X", x, cfg.getMaxX());
             return false;
         }
         if (x < cfg.getMinX()) {
-            MCPluginMessages.sendErrorMsg(sender, "coords.belowlimit", "X", x, cfg.getMinX());
+            MCMessages.sendErrorMsg(sender, "coords.belowlimit", "X", x, cfg.getMinX());
             return false;
         }
         if (y > cfg.getMaxY()) {
-            MCPluginMessages.sendErrorMsg(sender, "coords.abovelimit", "Y", y, cfg.getMaxY());
+            MCMessages.sendErrorMsg(sender, "coords.abovelimit", "Y", y, cfg.getMaxY());
             return false;
         }
         if (y < cfg.getMinY()) {
-            MCPluginMessages.sendErrorMsg(sender, "coords.belowlimit", "Y", y, cfg.getMinY());
+            MCMessages.sendErrorMsg(sender, "coords.belowlimit", "Y", y, cfg.getMinY());
             return false;
         }
         if (z > cfg.getMaxZ()) {
-            MCPluginMessages.sendErrorMsg(sender, "coords.abovelimit", "Z", z, cfg.getMaxZ());
+            MCMessages.sendErrorMsg(sender, "coords.abovelimit", "Z", z, cfg.getMaxZ());
             return false;
         }
         if (z < cfg.getMinZ()) {
-            MCPluginMessages.sendErrorMsg(sender, "coords.belowlimit", "Z", z, cfg.getMinZ());
+            MCMessages.sendErrorMsg(sender, "coords.belowlimit", "Z", z, cfg.getMinZ());
             return false;
         }
         return true;

@@ -3,7 +3,7 @@ package net.realdarkstudios.minecaching.commands;
 import net.realdarkstudios.minecaching.Utils;
 import net.realdarkstudios.minecaching.api.*;
 import net.realdarkstudios.minecaching.event.MinecacheCreatedEvent;
-import net.realdarkstudios.minecaching.util.MCPluginMessages;
+import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -23,7 +23,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player plr)) {
-            MCPluginMessages.sendErrorMsg(sender, "execute.console");
+            MCMessages.sendErrorMsg(sender, "execute.console");
             return true;
         }
 
@@ -31,17 +31,17 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
 
         Minecache cache = pdo.getCache();
         if (args.length < 1 && (cache != null && !cache.id().equals("NULL"))) {
-            MCPluginMessages.sendErrorMsg(sender, "addcache.alreadycreating");
+            MCMessages.sendErrorMsg(sender, "addcache.alreadycreating");
             return true;
         } else if (args.length < 1) {
-            MCPluginMessages.sendMsg(sender, "addcache.create", ChatColor.LIGHT_PURPLE);
+            MCMessages.sendMsg(sender, "addcache.create", ChatColor.LIGHT_PURPLE);
             pdo.setCache(Minecache.EMPTY.setID(Utils.generateID(5)));
             return true;
         }
 
         if (cache == null || cache.id().equals("NULL")) {
-            MCPluginMessages.sendErrorMsg(sender, "addcache.nocache", label);
-            MCPluginMessages.usage(sender, "addcache", command, label);
+            MCMessages.sendErrorMsg(sender, "addcache.nocache", label);
+            MCMessages.usage(sender, "addcache", command, label);
             return true;
         }
 
@@ -49,27 +49,27 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
 
         switch (subCommand) {
             case "cancel" -> {
-                MCPluginMessages.sendMsg(sender, "addcache.cancel", ChatColor.LIGHT_PURPLE, cache.id());
+                MCMessages.sendMsg(sender, "addcache.cancel", ChatColor.LIGHT_PURPLE, cache.id());
                 cache = Minecache.EMPTY;
                 cache.setID("NULL");
             }
             case "type" -> {
                 if (args.length < 2) {
-                    MCPluginMessages.incorrectUsage(sender);
-                    MCPluginMessages.usage(sender, "addcache.type", command, label);
+                    MCMessages.incorrectUsage(sender);
+                    MCMessages.usage(sender, "addcache.type", command, label);
                     return true;
                 }
                 MinecacheType type = MinecacheType.get(args[1].toUpperCase());
                 if (type.equals(MinecacheType.INVALID)) {
-                    MCPluginMessages.sendErrorMsg(sender, "addcache.invalidtype");
+                    MCMessages.sendErrorMsg(sender, "addcache.invalidtype");
                     return true;
                 } else cache.setType(type);
-                MCPluginMessages.sendMsg(sender, "addcache.type", ChatColor.LIGHT_PURPLE, args[1]);
+                MCMessages.sendMsg(sender, "addcache.type", ChatColor.LIGHT_PURPLE, args[1]);
             }
             case "name" -> {
                 if (args.length < 2) {
-                    MCPluginMessages.incorrectUsage(sender);
-                    MCPluginMessages.usage(sender, "addcache.name", command, label);
+                    MCMessages.incorrectUsage(sender);
+                    MCMessages.usage(sender, "addcache.name", command, label);
                     return true;
                 } else {
                     StringBuilder name = new StringBuilder();
@@ -77,7 +77,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                         name.append(args[i]).append(" ");
                     }
                     cache.setName(name.toString().trim());
-                    MCPluginMessages.sendMsg(sender, "addcache.name", ChatColor.LIGHT_PURPLE, cache.name());
+                    MCMessages.sendMsg(sender, "addcache.name", ChatColor.LIGHT_PURPLE, cache.name());
                 }
             }
             case "lodecoords" -> {
@@ -91,15 +91,15 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     y = Utils.validateCoordinate(args[2], plr, "y");
                     z = Utils.validateCoordinate(args[3], plr, "z");}
                 else {
-                    MCPluginMessages.incorrectUsage(sender, "argcount", command);
-                    MCPluginMessages.usage(sender, "addcache.lodecoords", command, label, label);
+                    MCMessages.incorrectUsage(sender, "argcount", command);
+                    MCMessages.usage(sender, "addcache.lodecoords", command, label, label);
                     return true;
                 }
 
                 if (!Utils.validateLocation(plr, x, y, z)) return true;
 
                 cache.setLodeLocation(new Location(plr.getWorld(), x, y, z));
-                MCPluginMessages.sendMsg(sender, "addcache.lodecoords", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z);
+                MCMessages.sendMsg(sender, "addcache.lodecoords", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z);
             }
             case "coords" -> {
                 int x, y, z;
@@ -112,41 +112,41 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     y = Utils.validateCoordinate(args[2], plr, "y");
                     z = Utils.validateCoordinate(args[3], plr, "z");}
                 else {
-                    MCPluginMessages.incorrectUsage(sender, "argcount");
-                    MCPluginMessages.usage(sender, "addcache.coords", command, label, label);
+                    MCMessages.incorrectUsage(sender, "argcount");
+                    MCMessages.usage(sender, "addcache.coords", command, label, label);
                     return true;
                 }
 
                 if (!Utils.validateLocation(plr, x, y, z)) return true;
 
                 cache.setLocation(new Location(plr.getWorld(), x, y, z));
-                MCPluginMessages.sendMsg(sender, "addcache.coords", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z);
+                MCMessages.sendMsg(sender, "addcache.coords", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z);
             }
             case "code" -> {
                 if (args.length < 2) {
-                    MCPluginMessages.incorrectUsage(sender);
-                    MCPluginMessages.usage(sender, "addcache.code", command, label);
+                    MCMessages.incorrectUsage(sender);
+                    MCMessages.usage(sender, "addcache.code", command, label);
                     return true;
                 } else {
                     cache.setCode(args[1].trim());
-                    MCPluginMessages.sendMsg(sender, "addcache.code", ChatColor.LIGHT_PURPLE, cache.code());
+                    MCMessages.sendMsg(sender, "addcache.code", ChatColor.LIGHT_PURPLE, cache.code());
                 }
             }
             case "save" -> {
                 if (cache.name() == null) {
-                    MCPluginMessages.sendErrorMsg(sender, "addcache.noname");
-                    MCPluginMessages.usage(sender, "addcache.name", command, label);
+                    MCMessages.sendErrorMsg(sender, "addcache.noname");
+                    MCMessages.usage(sender, "addcache.name", command, label);
                 } else if (cache.x() == 0 && cache.y() == 0 && cache.z() == 0) {
-                    MCPluginMessages.sendErrorMsg(sender, "addcache.nocoords");
-                    MCPluginMessages.usage(sender, "addcache.coords", command, label);
+                    MCMessages.sendErrorMsg(sender, "addcache.nocoords");
+                    MCMessages.usage(sender, "addcache.coords", command, label);
                 } else if (cache.lx() == 0 && cache.ly() == 0 && cache.lz() == 0) {
-                    MCPluginMessages.sendErrorMsg(sender, "addcache.nolodecoords");
-                    MCPluginMessages.usage(sender, "addcache.lodecoords", command, label);
+                    MCMessages.sendErrorMsg(sender, "addcache.nolodecoords");
+                    MCMessages.usage(sender, "addcache.lodecoords", command, label);
                 } else if (cache.lodeLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
-                    MCPluginMessages.sendErrorMsg(sender, "addcache.lodetoofar");
+                    MCMessages.sendErrorMsg(sender, "addcache.lodetoofar");
                 } else if (cache.code() == null || cache.code().isEmpty()) {
-                    MCPluginMessages.sendErrorMsg(sender, "addcache.nocode");
-                    MCPluginMessages.usage(sender, "addcache.code", command, label);
+                    MCMessages.sendErrorMsg(sender, "addcache.nocode");
+                    MCMessages.usage(sender, "addcache.code", command, label);
                 } else {
                     cache.setStatus(MinecacheStatus.NEEDS_REVIEWED).setAuthor(plr.getUniqueId()).setBlockType(cache.lodeLocation().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(Utils.EMPTY_UUID);
 
@@ -154,7 +154,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     Bukkit.getPluginManager().callEvent(event);
 
                     if (event.isCancelled()) {
-                        MCPluginMessages.sendErrorMsg(sender, "addcache");
+                        MCMessages.sendErrorMsg(sender, "addcache");
                     }
 
                     MinecachingAPI.get().saveMinecache(cache, true);
@@ -165,7 +165,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     MinecachingAPI.get().save();
                     MinecachingAPI.get().update();
 
-                    MCPluginMessages.sendMsg(sender, "addcache.save", ChatColor.LIGHT_PURPLE, cache.id(), cache.name());
+                    MCMessages.sendMsg(sender, "addcache.save", ChatColor.LIGHT_PURPLE, cache.id(), cache.name());
 
                     return true;
                 }

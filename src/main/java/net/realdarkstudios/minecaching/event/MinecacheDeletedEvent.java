@@ -9,7 +9,7 @@ public class MinecacheDeletedEvent extends MinecacheEvent {
      * Called when a {@link Minecache} is deleted
      *
      * @see DeleteCacheCommand
-     * @since 2.0.0.2
+     * @since 0.2.0.2
      */
     private final Player author;
 

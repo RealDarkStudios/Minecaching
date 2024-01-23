@@ -3,11 +3,11 @@ package net.realdarkstudios.minecaching.api;
 import org.bukkit.ChatColor;
 
 public enum MinecacheStatus {
-    VERIFIED("ACTIVE", "V", ChatColor.GREEN),
+    PUBLISHED("PUBLISHED", "P", ChatColor.GREEN),
+    NEEDS_MAINTENANCE("NEEDS_MAINTENANCE", "M", ChatColor.LIGHT_PURPLE),
     DISABLED("DISABLED", "D", ChatColor.RED),
     ARCHIVED("ARCHIVED", "A", ChatColor.GRAY),
     NEEDS_REVIEWED("NEEDS_REVIEWED", "N", ChatColor.YELLOW),
-    NEEDS_MAINTENANCE("NEEDS_MAINTENANCE", "M", ChatColor.LIGHT_PURPLE),
     INVALID("INVALID", "I", ChatColor.DARK_RED);
 
     private final String id, strForm;
@@ -21,11 +21,12 @@ public enum MinecacheStatus {
 
     public static MinecacheStatus get(String status) {
         return switch (status) {
-            case "ACTIVE" -> MinecacheStatus.VERIFIED;
-            case "DISABLED" -> MinecacheStatus.DISABLED;
-            case "ARCHIVED" -> MinecacheStatus.ARCHIVED;
-            case "NEEDS_REVIEWED" -> MinecacheStatus.NEEDS_REVIEWED;
-            default -> MinecacheStatus.INVALID;
+            case "PUBLISHED", "ACTIVE" -> PUBLISHED;
+            case "NEEDS_MAINTENANCE" -> NEEDS_MAINTENANCE;
+            case "DISABLED" -> DISABLED;
+            case "ARCHIVED" -> ARCHIVED;
+            case "NEEDS_REVIEWED" -> NEEDS_REVIEWED;
+            default -> INVALID;
         };
     }
 

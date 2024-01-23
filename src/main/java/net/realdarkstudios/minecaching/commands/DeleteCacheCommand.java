@@ -3,7 +3,7 @@ package net.realdarkstudios.minecaching.commands;
 import net.realdarkstudios.minecaching.api.Minecache;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.event.MinecacheDeletedEvent;
-import net.realdarkstudios.minecaching.util.MCPluginMessages;
+import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -19,19 +19,19 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length != 1) {
-            MCPluginMessages.incorrectUsage(sender);
-            MCPluginMessages.usage(sender, "deletecache", command, label);
+            MCMessages.incorrectUsage(sender);
+            MCMessages.usage(sender, "deletecache", command, label);
         }
 
         String id = args[0].trim();
         Minecache cache = MinecachingAPI.get().getMinecache(id);
         if (cache.equals(Minecache.EMPTY)) {
-            MCPluginMessages.sendErrorMsg(sender, "cantfind", id);
+            MCMessages.sendErrorMsg(sender, "cantfind", id);
             return true;
         }
 
         if ((sender instanceof Player plr && !plr.getUniqueId().equals(cache.author())) && !sender.isOp()) {
-            MCPluginMessages.sendErrorMsg(sender, "deletecache.others");
+            MCMessages.sendErrorMsg(sender, "deletecache.others");
             return true;
         }
 
@@ -39,12 +39,12 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
         Bukkit.getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {
-            MCPluginMessages.sendErrorMsg(sender, "deletecache");
+            MCMessages.sendErrorMsg(sender, "deletecache");
             return true;
         }
 
         MinecachingAPI.get().deleteMinecache(cache);
-        MCPluginMessages.sendMsg(sender, "deletecache", ChatColor.GREEN, id);
+        MCMessages.sendMsg(sender, "deletecache", ChatColor.GREEN, id);
         return true;
     }
 

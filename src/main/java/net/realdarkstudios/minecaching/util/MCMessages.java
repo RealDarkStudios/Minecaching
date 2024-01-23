@@ -6,7 +6,7 @@ import net.realdarkstudios.minecaching.api.LocalizationProvider;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class MCPluginMessages {
+public class MCMessages {
     // Provides default messages when no translated one exists
     public static final TextComponent NO_PERMISSION = TextComponentBuilder.fromTranslation("permission.none")
             .color(ChatColor.DARK_RED)

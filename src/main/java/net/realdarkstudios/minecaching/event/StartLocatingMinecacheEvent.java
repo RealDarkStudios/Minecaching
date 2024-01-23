@@ -10,7 +10,7 @@ public class StartLocatingMinecacheEvent extends MinecacheEvent {
      * Called when a player starts locating a {@link Minecache}
      *
      * @see LocateCacheCommand
-     * @since 2.0.0.4
+     * @since 0.2.0.4
      */
     private final Minecache minecache;
     private final Player player;

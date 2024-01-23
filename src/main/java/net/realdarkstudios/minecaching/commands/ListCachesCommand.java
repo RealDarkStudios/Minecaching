@@ -6,7 +6,7 @@ import net.realdarkstudios.minecaching.api.Minecache;
 import net.realdarkstudios.minecaching.api.MinecacheStatus;
 import net.realdarkstudios.minecaching.api.MinecacheType;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.util.MCPluginMessages;
+import net.realdarkstudios.minecaching.util.MCMessages;
 import net.realdarkstudios.minecaching.util.TextComponentBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -25,7 +25,7 @@ public class ListCachesCommand implements CommandExecutor, TabExecutor {
         try {
             page = args.length == 0 ? 0 : Math.max(Integer.parseInt(args[0]) - 1, 0);
         } catch (NumberFormatException e) {
-            MCPluginMessages.incorrectUsage(sender, "listcaches.page", args[0]);
+            MCMessages.incorrectUsage(sender, "listcaches.page", args[0]);
             return false;
         }
 
@@ -54,7 +54,7 @@ public class ListCachesCommand implements CommandExecutor, TabExecutor {
 
                 ChatColor typeColor = cache.invalidated() ? MinecacheType.INVALID.getColor() : cache.type().getColor();
                 ChatColor statusColor = cache.invalidated() ? MinecacheStatus.INVALID.getColor() : cache.status().getColor();
-                ChatColor primaryColor = cache.status().equals(MinecacheStatus.VERIFIED) || cache.status().equals(MinecacheStatus.NEEDS_REVIEWED) || cache.type().equals(MinecacheType.INVALID) ? typeColor : statusColor;
+                ChatColor primaryColor = cache.status().equals(MinecacheStatus.PUBLISHED) || cache.status().equals(MinecacheStatus.NEEDS_REVIEWED) || cache.type().equals(MinecacheType.INVALID) ? typeColor : statusColor;
                 TextComponent entry = TextComponentBuilder.fromTranslation("listcaches.entry", primaryColor, (page * 10) + i + 1, cache.invalidated() ? MinecacheType.INVALID : cache.type().getId().substring(0, 4), statusColor, cache.invalidated() ? MinecacheStatus.INVALID : cache.status(), primaryColor, cache.id(), cache.name(), cache.finds()).build();
                 TextComponent findEntry = TextComponentBuilder.fromTranslation("listcaches.find", ChatColor.AQUA, ChatColor.UNDERLINE).clickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/locate " + cache.id()).build();
                 msg.addExtra(entry);

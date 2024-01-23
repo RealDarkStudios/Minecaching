@@ -3,7 +3,7 @@ package net.realdarkstudios.minecaching.commands;
 import net.realdarkstudios.minecaching.Utils;
 import net.realdarkstudios.minecaching.api.*;
 import net.realdarkstudios.minecaching.event.MinecacheEditedEvent;
-import net.realdarkstudios.minecaching.util.MCPluginMessages;
+import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -33,22 +33,22 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
 
         Minecache cache = plrdata.getEditingCache();
         if (args.length < 1) {
-            MCPluginMessages.incorrectUsage(sender);
-            MCPluginMessages.usage(sender, "editcache", command, label);
+            MCMessages.incorrectUsage(sender);
+            MCMessages.usage(sender, "editcache", command, label);
             return true;
         } else if (args.length == 1 && (cache == null || cache.id().equals("NULL"))) {
             String id = args[0];
 
             if (MinecachingAPI.get().getMinecache(id).equals(Minecache.EMPTY)) {
-                MCPluginMessages.sendErrorMsg(sender, "cantfind", id);
+                MCMessages.sendErrorMsg(sender, "cantfind", id);
                 return true;
             }
 
-            MCPluginMessages.sendMsg(sender, "editcache.edit", ChatColor.LIGHT_PURPLE, id);
+            MCMessages.sendMsg(sender, "editcache.edit", ChatColor.LIGHT_PURPLE, id);
             plrdata.setEditingCache(MinecachingAPI.get().getMinecache(id));
             return true;
         } else if (args.length == 1 && args[0].startsWith("MC-") && !cache.id().equals("NULL")) {
-            MCPluginMessages.sendErrorMsg(sender, "editcache.alreadyediting", cache.id());
+            MCMessages.sendErrorMsg(sender, "editcache.alreadyediting", cache.id());
             return true;
         }
         
@@ -56,14 +56,14 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
         
         switch (subCommand) {
             case "cancel" -> {
-                MCPluginMessages.sendMsg(sender, "editcache.cancel", ChatColor.LIGHT_PURPLE, cache.id());
+                MCMessages.sendMsg(sender, "editcache.cancel", ChatColor.LIGHT_PURPLE, cache.id());
                 cache = Minecache.EMPTY;
                 cache.setID("NULL");
             }
             case "name" -> {
                 if (args.length < 2) {
-                    MCPluginMessages.incorrectUsage(sender);
-                    MCPluginMessages.usage(sender, "editcache.name", command, label);
+                    MCMessages.incorrectUsage(sender);
+                    MCMessages.usage(sender, "editcache.name", command, label);
                     return true;
                 } else {
                     StringBuilder name = new StringBuilder();
@@ -89,15 +89,15 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                     y = Utils.validateCoordinate(args[2], "y");
                     z = Utils.validateCoordinate(args[3], "z");
                 } else {
-                    MCPluginMessages.incorrectUsage(sender, "argcount");
-                    MCPluginMessages.usage(sender, "editcache.lodecoords", command, label);
+                    MCMessages.incorrectUsage(sender, "argcount");
+                    MCMessages.usage(sender, "editcache.lodecoords", command, label);
                     return true;
                 }
 
                 if (!Utils.validateLocation(sender, x, y, z)) return true;
 
                 cache.setLodeLocation(new Location(cache.world(), x, y, z));
-                MCPluginMessages.sendMsg(sender, "editcache.lodecoords", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z);
+                MCMessages.sendMsg(sender, "editcache.lodecoords", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z);
             }
             case "coords" -> {
                 int x, y, z;
@@ -114,53 +114,53 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                     y = Utils.validateCoordinate(args[2], "y");
                     z = Utils.validateCoordinate(args[3], "z");
                 } else {
-                    MCPluginMessages.incorrectUsage(sender, "argcount");
-                    MCPluginMessages.usage(sender, "editcache.coords", command, label);
+                    MCMessages.incorrectUsage(sender, "argcount");
+                    MCMessages.usage(sender, "editcache.coords", command, label);
                     return true;
                 }
 
                 if (!Utils.validateLocation(sender, x, y, z)) return true;
 
                 cache.setLocation(new Location(cache.world(), x, y, z));
-                MCPluginMessages.sendMsg(sender, "editcache.coords", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z);
+                MCMessages.sendMsg(sender, "editcache.coords", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z);
 
             }
             case "code" -> {
                 if (args.length < 2) {
-                    MCPluginMessages.incorrectUsage(sender);
-                    MCPluginMessages.usage(sender, "editcache.code", command, label);
+                    MCMessages.incorrectUsage(sender);
+                    MCMessages.usage(sender, "editcache.code", command, label);
                     return true;
                 } else {
                     cache.setCode(args[1].trim());
-                    MCPluginMessages.sendMsg(sender, "editcache.code", ChatColor.LIGHT_PURPLE, cache.code());
+                    MCMessages.sendMsg(sender, "editcache.code", ChatColor.LIGHT_PURPLE, cache.code());
                 }
             }
             case "save" -> {
                 if (cache.name() == null) {
-                    MCPluginMessages.sendErrorMsg(sender, "editcache.noname");
-                    MCPluginMessages.usage(sender, "editcache.name", command, label);
+                    MCMessages.sendErrorMsg(sender, "editcache.noname");
+                    MCMessages.usage(sender, "editcache.name", command, label);
                 } else if (cache.x() == 0 && cache.y() == 0 && cache.z() == 0) {
-                    MCPluginMessages.sendErrorMsg(sender, "editcache.nocoords");
-                    MCPluginMessages.usage(sender, "editcache.coords", command, label);
+                    MCMessages.sendErrorMsg(sender, "editcache.nocoords");
+                    MCMessages.usage(sender, "editcache.coords", command, label);
                 } else if (cache.lx() == 0 && cache.ly() == 0 && cache.lz() == 0) {
-                    MCPluginMessages.sendErrorMsg(sender, "editcache.nolodecoords");
-                    MCPluginMessages.usage(sender, "editcache.lodecoords", command, label);
+                    MCMessages.sendErrorMsg(sender, "editcache.nolodecoords");
+                    MCMessages.usage(sender, "editcache.lodecoords", command, label);
                 } else if (cache.lodeLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
-                    MCPluginMessages.sendErrorMsg(sender, "editcache.lodetoofar");
+                    MCMessages.sendErrorMsg(sender, "editcache.lodetoofar");
                 } else if (cache.code() == null) {
-                    MCPluginMessages.sendErrorMsg(sender, "editcache.nocode");
-                    MCPluginMessages.usage(sender, "editcache.code", command, label);
+                    MCMessages.sendErrorMsg(sender, "editcache.nocode");
+                    MCMessages.usage(sender, "editcache.code", command, label);
                 }  else {
                     MinecacheEditedEvent event = new MinecacheEditedEvent(cache, sender);
                     Bukkit.getPluginManager().callEvent(event);
 
                     if (event.isCancelled()) {
-                        MCPluginMessages.sendErrorMsg(sender, "editcache");
+                        MCMessages.sendErrorMsg(sender, "editcache");
                         return true;
                     }
 
                     MinecachingAPI.get().saveMinecache(cache, false);
-                    MCPluginMessages.sendMsg(sender, "editcache.save", ChatColor.LIGHT_PURPLE, cache.id(), cache.name());
+                    MCMessages.sendMsg(sender, "editcache.save", ChatColor.LIGHT_PURPLE, cache.id(), cache.name());
                     cache = Minecache.EMPTY;
                     cache.setID("NULL");
                 }

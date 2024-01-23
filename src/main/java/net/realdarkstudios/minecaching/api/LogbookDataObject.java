@@ -120,13 +120,20 @@ public class LogbookDataObject {
         } else if (Config.getInstance().getLogbookDataVersion() != MinecachingAPI.getLogbookDataVersion()) {
             try {
                 if (!logFile.canWrite()) throw new Exception();
+                LogbookDataObject ldo = getLDO(id, yaml, logFile);
                 logFile.delete();
                 logFile.createNewFile();
+                ldo.saveData();
+                return ldo;
             } catch (Exception e) {
                 MinecachingAPI.tWarning("error.plugin.updatefile", id + ".yml");
             }
         }
 
+        return new LogbookDataObject(id, yaml, logFile);
+    }
+
+    private static LogbookDataObject getLDO(String id, YamlConfiguration yaml, File logFile) {
         return new LogbookDataObject(id, yaml, logFile);
     }
 }

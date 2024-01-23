@@ -35,11 +35,13 @@ public final class Minecaching extends JavaPlugin {
 
             getLogger().info("Registering commands...");
             getCommand("addcache").setExecutor(new AddCacheCommand());
+            getCommand("archivecache").setExecutor(new ArchiveCacheCommand());
+            getCommand("disablecache").setExecutor(new DisableCacheCommand());
             getCommand("editcache").setExecutor(new EditCacheCommand());
             getCommand("listcaches").setExecutor(new ListCachesCommand());
             getCommand("delcache").setExecutor(new DeleteCacheCommand());
             getCommand("mcadmin").setExecutor(new MCAdminCommand());
-            getCommand("verifycache").setExecutor(new VerifyCacheCommand());
+            getCommand("publishcache").setExecutor(new PublishCacheCommand());
             getCommand("locatecache").setExecutor(new LocateCacheCommand());
             getCommand("logcache").setExecutor(new LogCacheCommand());
             getCommand("logbook").setExecutor(new LogbookCommand());
