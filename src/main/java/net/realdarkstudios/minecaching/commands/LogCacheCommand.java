@@ -58,7 +58,7 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
         Minecache cache = MinecachingAPI.get().getMinecache(id);
 
         switch (cache.status()) {
-            case NEEDS_REVIEWED -> {
+            case REVIEWING -> {
                 MCMessages.sendErrorMsg(sender, "logcache.needs_reviewed");
                 return true;
             }

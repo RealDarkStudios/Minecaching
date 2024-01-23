@@ -54,8 +54,8 @@ public class ListCachesCommand implements CommandExecutor, TabExecutor {
 
                 ChatColor typeColor = cache.invalidated() ? MinecacheType.INVALID.getColor() : cache.type().getColor();
                 ChatColor statusColor = cache.invalidated() ? MinecacheStatus.INVALID.getColor() : cache.status().getColor();
-                ChatColor primaryColor = cache.status().equals(MinecacheStatus.PUBLISHED) || cache.status().equals(MinecacheStatus.NEEDS_REVIEWED) || cache.type().equals(MinecacheType.INVALID) ? typeColor : statusColor;
-                TextComponent entry = TextComponentBuilder.fromTranslation("listcaches.entry", primaryColor, (page * 10) + i + 1, cache.invalidated() ? MinecacheType.INVALID : cache.type().getId().substring(0, 4), statusColor, cache.invalidated() ? MinecacheStatus.INVALID : cache.status(), primaryColor, cache.id(), cache.name(), cache.finds()).build();
+                ChatColor primaryColor = cache.status().equals(MinecacheStatus.PUBLISHED) || cache.status().equals(MinecacheStatus.REVIEWING) || cache.type().equals(MinecacheType.INVALID) ? typeColor : statusColor;
+                TextComponent entry = TextComponentBuilder.fromTranslation("listcaches.entry", primaryColor, (page * 10) + i + 1, cache.invalidated() ? MinecacheType.INVALID : cache.type().getId().substring(0, 4).toUpperCase(), statusColor, cache.invalidated() ? MinecacheStatus.INVALID : cache.status(), primaryColor, cache.id(), cache.name(), cache.finds()).build();
                 TextComponent findEntry = TextComponentBuilder.fromTranslation("listcaches.find", ChatColor.AQUA, ChatColor.UNDERLINE).clickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/locate " + cache.id()).build();
                 msg.addExtra(entry);
                 if (!cache.status().equals(MinecacheStatus.INVALID) && !cache.type().equals(MinecacheType.INVALID)) msg.addExtra(findEntry);

@@ -42,7 +42,7 @@ public class PublishCacheCommand implements CommandExecutor, TabExecutor {
         if (minecache.equals(Minecache.EMPTY)) {
             MCMessages.sendErrorMsg(sender, "cantfind", minecache.id());
             return false;
-        } else if (!(minecache.status().equals(MinecacheStatus.NEEDS_REVIEWED) || minecache.status().equals(MinecacheStatus.DISABLED))) {
+        } else if (!(minecache.status().equals(MinecacheStatus.REVIEWING) || minecache.status().equals(MinecacheStatus.DISABLED))) {
             MCMessages.sendErrorMsg(sender, "publishcache.cantpublish");
         } else {
             MinecachePublishedEvent event = new MinecachePublishedEvent(minecache, sender);
@@ -62,7 +62,7 @@ public class PublishCacheCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        List<Minecache> fMinecaches = MinecachingAPI.get().getFilteredCaches(m -> (m.status().equals(MinecacheStatus.NEEDS_REVIEWED) || m.status().equals(MinecacheStatus.DISABLED)) && m.id().contains(args.length > 0 ? args[0] : ""));
+        List<Minecache> fMinecaches = MinecachingAPI.get().getFilteredCaches(m -> (m.status().equals(MinecacheStatus.REVIEWING) || m.status().equals(MinecacheStatus.DISABLED)) && m.id().contains(args.length > 0 ? args[0] : ""));
         ArrayList<String> mcIDs = new ArrayList<>();
 
         for (Minecache m : fMinecaches) {

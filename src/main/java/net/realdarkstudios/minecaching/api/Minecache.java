@@ -221,7 +221,7 @@ public class Minecache {
         MinecacheType cType;
         if (type == null) { cType = MinecacheType.TRADITIONAL; } else { cType = MinecacheType.get(type); }
         MinecacheStatus cStatus;
-        if (status == null) { cStatus = MinecacheStatus.NEEDS_REVIEWED; } else { cStatus = MinecacheStatus.get(status); }
+        if (status == null) { cStatus = MinecacheStatus.REVIEWING; } else { cStatus = MinecacheStatus.get(status); }
         try { cHidden = LocalDateTime.parse(yaml.getString(key + ".hidden")); } catch (Exception e) { cHidden = LocalDateTime.now(); isInvalidated = true; }
         try { cAuthor = UUID.fromString(author); } catch (Exception e) { cAuthor = Utils.EMPTY_UUID; isInvalidated = true; }
         try { cFTF = UUID.fromString(FTF); } catch (Exception e) { cFTF = Utils.EMPTY_UUID; isInvalidated = true; }

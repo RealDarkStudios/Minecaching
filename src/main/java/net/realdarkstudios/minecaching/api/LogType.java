@@ -3,31 +3,31 @@ package net.realdarkstudios.minecaching.api;
 import org.bukkit.ChatColor;
 
 public enum LogType  {
-    FOUND("found", "Found on", ChatColor.GOLD),
-    DNF("dnf", "DNF on", ChatColor.BLUE),
-    NOTE("note", "Note on", ChatColor.GRAY),
-    REQUEST_REVIEW("request_review", "Flagged on", ChatColor.RED),
-    MAINTENANCE("maintenance", "Maintain on", ChatColor.GREEN),
-    DISABLE("disable", "Disable on", ChatColor.DARK_RED),
-    ARCHIVE("archive", "Archive on", ChatColor.GRAY),
-    PUBLISH("publish", "Publish on", ChatColor.DARK_GREEN),
-    INVALID("invalid", "Action on", ChatColor.DARK_RED);
+    FOUND("found", ChatColor.GOLD),
+    DNF("dnf", ChatColor.BLUE),
+    NOTE("note", ChatColor.GRAY),
+    FLAG("flag", ChatColor.RED),
+    MAINTENANCE("maintenance", ChatColor.GREEN),
+    DISABLE("disable", ChatColor.RED),
+    ARCHIVE("archive", ChatColor.GRAY),
+    PUBLISH("publish", ChatColor.DARK_GREEN),
+    INVALID("invalid", ChatColor.DARK_RED);
 
     private final String id, msg;
     private final ChatColor color;
 
-    LogType(String id, String msg, ChatColor color) {
+    LogType(String id, ChatColor color) {
         this.id = id;
-        this.msg = msg;
+        this.msg = LocalizationProvider.getInstance().getTranslation("plugin.log." + id);
         this.color = color;
     }
 
     public static LogType get(String type) {
-        return switch (type) {
+        return switch (type.toLowerCase()) {
             case "found" -> FOUND;
             case "dnf" -> DNF;
             case "note" -> NOTE;
-            case "requestreview", "request_review" -> REQUEST_REVIEW;
+            case "requestreview", "request_review", "flag" -> FLAG;
             case "maintenance" -> MAINTENANCE;
             case "disable" -> DISABLE;
             case "archive" -> ARCHIVE;

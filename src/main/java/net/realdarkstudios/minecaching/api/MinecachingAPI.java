@@ -2,9 +2,12 @@ package net.realdarkstudios.minecaching.api;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.Utils;
+import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -22,7 +25,7 @@ public class MinecachingAPI {
     /**
      * Defines the expected Player Data Version
      */
-    private static final int PLAYER_DATA_VERSION = 3;
+    private static final int PLAYER_DATA_VERSION = 4;
     /**
      * Defines the expected Logbook Data Version
      */
@@ -270,7 +273,8 @@ public class MinecachingAPI {
      * @return {@code true} if the cache was successfully deleted
      * @since 0.2.0.0
      */
-    public boolean deleteMinecache(Minecache minecache) {
+    public boolean deleteMinecache(Minecache minecache, UUID initiator) {
+        createNotification(minecache.author(), initiator, NotificationType.DELETION, minecache);
         return (PlayerStorage.getInstance().deleteMinecache(minecache) && MinecacheStorage.getInstance().deleteMinecache(minecache));
     }
 
@@ -285,6 +289,7 @@ public class MinecachingAPI {
 
         Utils.createLog(player, minecache, LogType.PUBLISH, reason, false);
 
+        createNotification(minecache.author(), player, NotificationType.PUBLISH, minecache);
         return saveMinecache(minecache, false);
     }
 
@@ -299,6 +304,7 @@ public class MinecachingAPI {
 
         Utils.createLog(player, minecache, LogType.ARCHIVE, reason, false);
 
+        createNotification(minecache.author(), player, NotificationType.ARCHIVAL, minecache);
         return saveMinecache(minecache, false);
     }
 
@@ -313,6 +319,7 @@ public class MinecachingAPI {
 
         Utils.createLog(player, minecache, LogType.DISABLE, reason, false);
 
+        createNotification(minecache.author(), player, NotificationType.DISABLE, minecache);
         return saveMinecache(minecache, false);
     }
 
@@ -403,6 +410,26 @@ public class MinecachingAPI {
      */
     public boolean deleteLogbook(String id) {
         return LogbookStorage.getInstance().deleteLogbook(id);
+    }
+
+    /**
+     * Creates and adds a notification to a Player
+     * @param uuid
+     * @param initiator
+     * @param type
+     * @param cache
+     * @return {@code true} if succeeded, {@code false} if not
+     */
+    private boolean createNotification(UUID uuid, UUID initiator, NotificationType type, Minecache cache) {
+        try {
+            PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(uuid);
+
+            if (pdo.getPlayer().isOnline()) MCMessages.sendMsg(pdo.getPlayer().getPlayer(), type.getTranslationKey(), ChatColor.ITALIC, ChatColor.GRAY, cache.id(), Utils.uuidName(initiator));
+            else pdo.addNotification(new Notification(Utils.generateRandomString(5), initiator, type, cache, LocalDateTime.now()));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**

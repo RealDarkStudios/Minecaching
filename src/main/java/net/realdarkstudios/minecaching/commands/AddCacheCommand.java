@@ -59,7 +59,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     MCMessages.usage(sender, "addcache.type", command, label);
                     return true;
                 }
-                MinecacheType type = MinecacheType.get(args[1].toUpperCase());
+                MinecacheType type = MinecacheType.get(args[1]);
                 if (type.equals(MinecacheType.INVALID)) {
                     MCMessages.sendErrorMsg(sender, "addcache.invalidtype");
                     return true;
@@ -148,7 +148,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     MCMessages.sendErrorMsg(sender, "addcache.nocode");
                     MCMessages.usage(sender, "addcache.code", command, label);
                 } else {
-                    cache.setStatus(MinecacheStatus.NEEDS_REVIEWED).setAuthor(plr.getUniqueId()).setBlockType(cache.lodeLocation().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(Utils.EMPTY_UUID);
+                    cache.setStatus(MinecacheStatus.REVIEWING).setAuthor(plr.getUniqueId()).setBlockType(cache.lodeLocation().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(Utils.EMPTY_UUID);
 
                     MinecacheCreatedEvent event = new MinecacheCreatedEvent(cache, plr);
                     Bukkit.getPluginManager().callEvent(event);

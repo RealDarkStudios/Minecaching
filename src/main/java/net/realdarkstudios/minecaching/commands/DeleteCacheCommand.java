@@ -1,5 +1,6 @@
 package net.realdarkstudios.minecaching.commands;
 
+import net.realdarkstudios.minecaching.Utils;
 import net.realdarkstudios.minecaching.api.Minecache;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.event.MinecacheDeletedEvent;
@@ -43,7 +44,7 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        MinecachingAPI.get().deleteMinecache(cache);
+        MinecachingAPI.get().deleteMinecache(cache, sender instanceof Player plr ? plr.getUniqueId() : Utils.EMPTY_UUID);
         MCMessages.sendMsg(sender, "deletecache", ChatColor.GREEN, id);
         return true;
     }

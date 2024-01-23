@@ -1,17 +1,38 @@
 package net.realdarkstudios.minecaching.event;
 
 import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.Utils;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.Notification;
+import net.realdarkstudios.minecaching.api.PlayerDataObject;
+import net.realdarkstudios.minecaching.util.MCMessages;
+import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Objects;
 
 public class MCEventHandler implements Listener {
+    @EventHandler
+    public void onPlayerLogin(PlayerJoinEvent event) {
+        PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(event.getPlayer().getUniqueId());
+
+        if (!pdo.getNotifications().isEmpty()) {
+            MCMessages.sendMsg(event.getPlayer(), "plugin.notification.alert", ChatColor.ITALIC, ChatColor.GRAY);
+            for (Notification notification: pdo.getNotifications()) {
+                MCMessages.sendMsg(event.getPlayer(), notification.getType().getTranslationKey(), ChatColor.ITALIC, ChatColor.GRAY, notification.getCache().id(), Utils.uuidName(notification.getInitiator()));
+            }
+        }
+
+        pdo.purgeNotifications();
+    }
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Minecaching.getInstance().getLogger().info(event.getAction().name());

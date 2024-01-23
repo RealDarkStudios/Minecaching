@@ -1,6 +1,8 @@
 package net.realdarkstudios.minecaching.api;
 
 import net.realdarkstudios.minecaching.Minecaching;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -13,6 +15,7 @@ public class PlayerDataObject {
     private final UUID uniqueID;
     private boolean banned;
     private ArrayList<String> finds, ftfs, hides;
+    private ArrayList<Notification> notifications;
     private String locatingId;
     private Minecache newCache, editingCache;
     private YamlConfiguration yaml;
@@ -23,9 +26,9 @@ public class PlayerDataObject {
         this.banned = yaml.getBoolean("banned");
         ArrayList<String> yFtfs = new ArrayList<>(), yHides = new ArrayList<>(), yFinds = new ArrayList<>();
 
-        if (yaml.getList("ftfs") != null) yFtfs.addAll((Collection<? extends String>) yaml.getList("ftfs"));
-        if (yaml.getList("hides") != null) yHides.addAll((Collection<? extends String>) yaml.getList("hides"));
-        if (yaml.getList("finds") != null) yFinds.addAll((Collection<? extends String>) yaml.getList("finds"));
+        if (yaml.contains("ftfs")) yFtfs.addAll((Collection<? extends String>) yaml.getList("ftfs"));
+        if (yaml.contains("hides")) yHides.addAll((Collection<? extends String>) yaml.getList("hides"));
+        if (yaml.contains("finds")) yFinds.addAll((Collection<? extends String>) yaml.getList("finds"));
 
         this.ftfs = yFtfs;
         this.hides = yHides;
@@ -33,8 +36,21 @@ public class PlayerDataObject {
         this.locatingId = yaml.getString("locating_id") == null ? "NULL" : yaml.getString("locating_id");
         this.newCache = useEmptyMinecache ? Minecache.EMPTY : Minecache.fromYaml(yaml, "cache");
         this.editingCache = useEmptyMinecache ? Minecache.EMPTY : Minecache.fromYaml(yaml, "editing");
+
+        ArrayList<Notification> yNotifs = new ArrayList<>();
+        if (yaml.contains("notifications")) {
+            for (String notificationID: yaml.getKeys(true).stream().filter(s -> s.startsWith("notifications.")).toList()) {
+                yNotifs.add(Notification.fromYaml(yaml, notificationID));
+            }
+        }
+        this.notifications = yNotifs;
+
         this.yaml = yaml;
         this.file = file;
+    }
+
+    public OfflinePlayer getPlayer() {
+        return Bukkit.getOfflinePlayer(uniqueID);
     }
 
     public UUID getUniqueID() {
@@ -51,6 +67,14 @@ public class PlayerDataObject {
 
     public List<String> getFTFs() {
         return ftfs;
+    }
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void purgeNotifications() {
+        this.notifications = new ArrayList<>();
+        saveData();
     }
 
     public Minecache getCache() {
@@ -103,6 +127,11 @@ public class PlayerDataObject {
         saveData();
     }
 
+    public void addNotification(Notification notification) {
+        this.notifications.add(notification);
+        saveData();
+    }
+
     public void setCache(Minecache newCache) {
         this.newCache = newCache;
         saveData();
@@ -131,6 +160,14 @@ public class PlayerDataObject {
         this.newCache = Minecache.fromYaml(yaml, "cache");
         this.editingCache = Minecache.fromYaml(yaml, "editing");
 
+        ArrayList<Notification> yNotifs = new ArrayList<>();
+        if (yaml.contains("notifications")) {
+            for (String notificationID: yaml.getKeys(true).stream().filter(s -> s.startsWith("notifications.")).toList()) {
+                yNotifs.add(Notification.fromYaml(yaml, notificationID));
+            }
+        }
+        this.notifications = yNotifs;
+
         newCache.setID(yaml.getString("cache_id") == null ? "NULL" : yaml.getString("cache_id"));
         editingCache.setID(yaml.getString("editing_id") == null ? "NULL" : yaml.getString("editing_id"));
     }
@@ -144,6 +181,12 @@ public class PlayerDataObject {
         newCache.toYaml(yaml, "cache");
         yaml.set("editing_id", this.editingCache.id());
         editingCache.toYaml(yaml, "editing");
+
+        if (!this.notifications.isEmpty()) {
+            for (Notification notification : this.notifications) {
+                notification.toYaml(yaml, "notifications." + notification.getId());
+            }
+        } else yaml.set("notifications", null);
 
         save();
         update();
@@ -201,26 +244,20 @@ public class PlayerDataObject {
                 yaml.set("locating_id", "NULL");
                 Minecache.EMPTY.toYaml(yaml, "cache");
                 Minecache.EMPTY.toYaml(yaml, "editing");
+                yaml.set("cache_id", "NULL");
+                yaml.set("editing_id", "NULL");
             } catch (Exception e) {
                 MinecachingAPI.tWarning("error.plugin.createfile", uuid + ".yml");
             }
         } else if (Config.getInstance().getPlayerDataVersion() != MinecachingAPI.getPlayerDataVersion()) {
             try {
                 if (!plrFile.canWrite()) throw new Exception();
-                PlayerDataObject pdo = getPDO(uuid, yaml, plrFile, useEmptyMinecache);
-                plrFile.delete();
                 plrFile.createNewFile();
-                pdo.saveData();
-                return pdo;
             } catch (Exception e) {
                 MinecachingAPI.tWarning("error.plugin.updatefile", uuid + ".yml");
             }
         }
 
-        return new PlayerDataObject(uuid, yaml, plrFile, useEmptyMinecache);
-    }
-
-    private static PlayerDataObject getPDO(UUID uuid, YamlConfiguration yaml, File plrFile, boolean useEmptyMinecache) {
         return new PlayerDataObject(uuid, yaml, plrFile, useEmptyMinecache);
     }
 }

@@ -3,13 +3,13 @@ package net.realdarkstudios.minecaching.api;
 import org.bukkit.ChatColor;
 
 public enum MinecacheType {
-    TRADITIONAL("TRADITIONAL", ChatColor.DARK_GREEN),
-    MYSTERY("MYSTERY", ChatColor.BLUE),
-    MULTI("MULTI", ChatColor.GOLD),
-    INVALID("INVALID", ChatColor.DARK_RED);
+    TRADITIONAL("traditional", ChatColor.DARK_GREEN),
+    MYSTERY("mystery", ChatColor.BLUE),
+    MULTI("multi", ChatColor.GOLD),
+    INVALID("invalid", ChatColor.DARK_RED);
 
-    private String id;
-    private ChatColor color;
+    private final String id;
+    private final ChatColor color;
 
     MinecacheType(String id, ChatColor color) {
         this.id = id;
@@ -17,10 +17,10 @@ public enum MinecacheType {
     }
 
     public static MinecacheType get(String type) {
-        return switch (type) {
-          case "TRADITIONAL" -> TRADITIONAL;
-          case "MYSTERY" -> MYSTERY;
-          case "MULTI" -> MULTI;
+        return switch (type.toLowerCase()) {
+          case "traditional" -> TRADITIONAL;
+          case "mystery" -> MYSTERY;
+          case "multi" -> MULTI;
           default -> INVALID;
         };
     }
