@@ -274,7 +274,7 @@ public class MinecachingAPI {
      * @since 0.2.0.0
      */
     public boolean deleteMinecache(Minecache minecache, UUID initiator) {
-        createNotification(minecache.author(), initiator, NotificationType.DELETION, minecache);
+        if (!minecache.author().equals(initiator)) createNotification(minecache.author(), initiator, NotificationType.DELETION, minecache);
         return (PlayerStorage.getInstance().deleteMinecache(minecache) && MinecacheStorage.getInstance().deleteMinecache(minecache));
     }
 
@@ -289,7 +289,7 @@ public class MinecachingAPI {
 
         Utils.createLog(player, minecache, LogType.PUBLISH, reason, false);
 
-        createNotification(minecache.author(), player, NotificationType.PUBLISH, minecache);
+        if (!minecache.author().equals(player)) createNotification(minecache.author(), player, NotificationType.PUBLISH, minecache);
         return saveMinecache(minecache, false);
     }
 
@@ -304,7 +304,7 @@ public class MinecachingAPI {
 
         Utils.createLog(player, minecache, LogType.ARCHIVE, reason, false);
 
-        createNotification(minecache.author(), player, NotificationType.ARCHIVAL, minecache);
+        if (!minecache.author().equals(player)) createNotification(minecache.author(), player, NotificationType.ARCHIVAL, minecache);
         return saveMinecache(minecache, false);
     }
 
@@ -319,7 +319,7 @@ public class MinecachingAPI {
 
         Utils.createLog(player, minecache, LogType.DISABLE, reason, false);
 
-        createNotification(minecache.author(), player, NotificationType.DISABLE, minecache);
+        if (!minecache.author().equals(player)) createNotification(minecache.author(), player, NotificationType.DISABLE, minecache);
         return saveMinecache(minecache, false);
     }
 
@@ -414,17 +414,18 @@ public class MinecachingAPI {
 
     /**
      * Creates and adds a notification to a Player
-     * @param uuid
-     * @param initiator
-     * @param type
-     * @param cache
+     * @param uuid The {@link UUID} of the Player
+     * @param initiator The UUID of the initiator
+     * @param type The {@link NotificationType} of the notification
+     * @param cache The {@link Minecache} that was affected
      * @return {@code true} if succeeded, {@code false} if not
+     * @since o.2.2.2
      */
-    private boolean createNotification(UUID uuid, UUID initiator, NotificationType type, Minecache cache) {
+    public boolean createNotification(UUID uuid, UUID initiator, NotificationType type, Minecache cache) {
         try {
             PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(uuid);
 
-            if (pdo.getPlayer().isOnline()) MCMessages.sendMsg(pdo.getPlayer().getPlayer(), type.getTranslationKey(), ChatColor.ITALIC, ChatColor.GRAY, cache.id(), Utils.uuidName(initiator));
+            if (pdo.getPlayer().isOnline()) MCMessages.sendMsg(pdo.getPlayer().getPlayer(), type.getTranslationKey(), ChatColor.GRAY, cache.id(), Utils.uuidName(initiator));
             else pdo.addNotification(new Notification(Utils.generateRandomString(5), initiator, type, cache, LocalDateTime.now()));
             return true;
         } catch (Exception e) {

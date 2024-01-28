@@ -132,6 +132,10 @@ public class PlayerDataObject {
         saveData();
     }
 
+    public boolean hasNotification(String id) {
+        return this.yaml.contains("notifications." + id);
+    }
+
     public void setCache(Minecache newCache) {
         this.newCache = newCache;
         saveData();
@@ -187,6 +191,11 @@ public class PlayerDataObject {
                 notification.toYaml(yaml, "notifications." + notification.getId());
             }
         } else yaml.set("notifications", null);
+
+        if (hasNotification("initiator")) yaml.set("notifications.initiator", null);
+        if (hasNotification("type")) yaml.set("notifications.type", null);
+        if (hasNotification("cache_id")) yaml.set("notifications.cache_id", null);
+        if (hasNotification("time")) yaml.set("notifications.time", null);
 
         save();
         update();

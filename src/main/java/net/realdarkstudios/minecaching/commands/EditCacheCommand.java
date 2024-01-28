@@ -159,6 +159,10 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                         return true;
                     }
 
+                    if ((sender instanceof Player plr && !plr.getUniqueId().equals(cache.author())) || !(sender instanceof Player)) {
+                        MinecachingAPI.get().createNotification(cache.author(), sender instanceof Player player ? player.getUniqueId() : Utils.EMPTY_UUID, NotificationType.EDIT, cache);
+                    }
+
                     MinecachingAPI.get().saveMinecache(cache, false);
                     MCMessages.sendMsg(sender, "editcache.save", ChatColor.LIGHT_PURPLE, cache.id(), cache.name());
                     cache = Minecache.EMPTY;

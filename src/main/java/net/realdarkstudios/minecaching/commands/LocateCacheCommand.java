@@ -32,7 +32,7 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
         if (args.length < 1) {
             MCMessages.incorrectUsage(sender);
             MCMessages.usage(sender, "locatecache", command, label);
-            return false;
+            return true;
         }
 
         PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(plr);
@@ -141,7 +141,12 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
     }
 
     private void cancelTask(Minecache cache, Location cacheLocation, Player plr, boolean fromCancel, boolean gettingNewCompass) {
-        StopLocatingMinecacheEvent event = new StopLocatingMinecacheEvent(cache, plr, plr.getLocation(), plr.getLocation().distance(cacheLocation), fromCancel);
+        StopLocatingMinecacheEvent event;
+        try {
+            event = new StopLocatingMinecacheEvent(cache, plr, plr.getLocation(), plr.getLocation().distance(cacheLocation), fromCancel);
+        } catch (IllegalArgumentException e) {
+            event = new StopLocatingMinecacheEvent(cache, plr, plr.getLocation(), -1, fromCancel);
+        }
         Bukkit.getPluginManager().callEvent(event);
 
         if (Config.getInstance().useLodestoneBasedLocating()) {

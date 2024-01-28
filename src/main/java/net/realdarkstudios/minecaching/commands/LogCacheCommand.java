@@ -32,8 +32,10 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
         String type = args[0];
         LogType logType = LogType.get(type);
 
-        if (logType.equals(LogType.INVALID)) {
+        if (logType.equals(LogType.INVALID) || logType.equals(LogType.PUBLISH) || logType.equals(LogType.DISABLE) || logType.equals(LogType.ARCHIVE)) {
             MCMessages.incorrectUsage(sender, "logcache.logtype");
+            MCMessages.usage(sender, "logcache", command, label);
+            return true;
         }
 
         if (logType.equals(LogType.FOUND) && args.length < 2) {
@@ -51,9 +53,6 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
             MCMessages.usage(sender, "locatecache", Minecaching.getInstance().getCommand("locatecache"), "locatecache");
             return true;
         }
-
-
-        String code = args[1];
 
         Minecache cache = MinecachingAPI.get().getMinecache(id);
 
@@ -90,11 +89,10 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
         String logMsg = logMessage.toString().trim();
 
         if (cache.type().equals(MinecacheType.TRADITIONAL) || cache.type().equals(MinecacheType.MYSTERY)) {
-            if (cache.code().equals(code) || !logType.equals(LogType.FOUND)) {
+            if (!logType.equals(LogType.FOUND) || cache.code().equals(args[1])) {
                 if (plr.getLocation().distance(cache.location()) < 25) {
                     boolean isFTF = pdo.isFTF(cache);
                     if (logType.equals(LogType.FOUND)) {
-
                         // Emit MinecacheFoundEvent
                         MinecacheFoundEvent foundEvent = new MinecacheFoundEvent(cache, plr, pdo.isFTF(cache));
                         Bukkit.getPluginManager().callEvent(foundEvent);
@@ -118,7 +116,11 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
 
                         MCMessages.sendMsg(sender, "logcache.find", ChatColor.GREEN, cache.id(), cache.name());
                         MCMessages.sendMsg(sender, isFTF ? "logcache.findcount.ftf" : "logcache.findcount", ChatColor.GREEN, pdo.getFinds().size(), isFTF ? pdo.getFTFs().size() : null);
+                    } else {
+                        MCMessages.sendMsg(sender, "logcache.log", ChatColor.GREEN, cache.id(), cache.name());
                     }
+
+                    if (logType.equals(LogType.FLAG) && !plr.getUniqueId().equals(cache.author())) MinecachingAPI.get().createNotification(cache.author(), plr.getUniqueId(), NotificationType.FLAG, cache);
 
                     Log log = Utils.createLog(plr, cache, logType, logMsg, isFTF);
                 } else {
@@ -137,10 +139,10 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player plr)) return List.of();
         return switch (args.length) {
-            case 0 -> List.of("found", "dnf", "note", "requestreview", "maintenance", "archive", "disable", "publish");
+            case 0 -> List.of("found", "dnf", "note", "flag", "maintenance");
             case 1 -> switch (args[0]) {
-                case "found", "dnf", "note", "requestreview", "maintenance", "archive", "disable", "publish" -> List.of();
-                default -> List.of("found", "dnf", "note", "requestreview", "maintenance", "archive", "disable", "publish").stream().filter(s -> s.contains(args[0])).toList();
+                case "found", "dnf", "note", "flag", "maintenance" -> List.of();
+                default -> List.of("found", "dnf", "note", "flag", "maintenance").stream().filter(s -> s.contains(args[0])).toList();
             };
             default -> List.of();
         };
