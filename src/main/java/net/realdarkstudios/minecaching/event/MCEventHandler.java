@@ -32,14 +32,14 @@ public class MCEventHandler implements Listener {
                     }
                 }
 
-                //pdo.purgeNotifications();
+                pdo.purgeNotifications();
             }
         }.runTaskLater(Minecaching.getInstance(), 40L);
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        Minecaching.getInstance().getLogger().info(event.getAction().name());
+        // Minecaching.getInstance().getLogger().info(event.getAction().name());
         if (event.getCurrentItem() != null && event.getCurrentItem().hasItemMeta() && Objects.requireNonNull(event.getCurrentItem().getItemMeta()).getPersistentDataContainer().has(new NamespacedKey(Minecaching.getInstance(), "attachedMinecacheId"), PersistentDataType.STRING)) {
             if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) event.setCancelled(true);
         }

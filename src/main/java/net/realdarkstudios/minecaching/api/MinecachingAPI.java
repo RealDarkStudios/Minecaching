@@ -30,6 +30,10 @@ public class MinecachingAPI {
      * Defines the expected Logbook Data Version
      */
     private static final int LOGBOOK_DATA_VERSION = 1;
+    /**
+     * Defines the Minecaching Localization Provider
+     */
+    private static Localization MINECACHING_LOCALIZATION;
 
     private MinecachingAPI() {
     }
@@ -70,6 +74,10 @@ public class MinecachingAPI {
         return LOGBOOK_DATA_VERSION;
     }
 
+    public static Localization getLocalization() {
+        return MINECACHING_LOCALIZATION;
+    }
+
     /**
      * Logs all the messages at the INFO level
      * @param messages The messages to log
@@ -82,11 +90,11 @@ public class MinecachingAPI {
     }
 
     public static void tInfo(String key) {
-        Minecaching.getInstance().getLogger().info(LocalizationProvider.getInstance().getTranslation(key));
+        Minecaching.getInstance().getLogger().info(MINECACHING_LOCALIZATION.getTranslation(key));
     }
 
     public static void tInfo(String key, Object... substitutions) {
-        Minecaching.getInstance().getLogger().info(LocalizationProvider.getInstance().getTranslation(key, substitutions));
+        Minecaching.getInstance().getLogger().info(MINECACHING_LOCALIZATION.getTranslation(key, substitutions));
     }
 
     /**
@@ -101,11 +109,11 @@ public class MinecachingAPI {
     }
 
     public static void tWarning(String key) {
-        Minecaching.getInstance().getLogger().warning(LocalizationProvider.getInstance().getTranslation(key));
+        Minecaching.getInstance().getLogger().warning(MINECACHING_LOCALIZATION.getTranslation(key));
     }
 
     public static void tWarning(String key, Object... substitutions) {
-        Minecaching.getInstance().getLogger().warning(LocalizationProvider.getInstance().getTranslation(key, substitutions));
+        Minecaching.getInstance().getLogger().warning(MINECACHING_LOCALIZATION.getTranslation(key, substitutions));
     }
 
     /**
@@ -472,7 +480,7 @@ public class MinecachingAPI {
         Minecaching minecaching = Minecaching.getInstance();
 
         Config.getInstance().load();
-        LocalizationProvider.getInstance().load();
+        MINECACHING_LOCALIZATION = LocalizationProvider.getInstance().load(minecaching);
 
         tInfo("plugin.load", "Config");
         if (Config.getInstance().getConfigVersion() < CONFIG_DATA_VERSION) {

@@ -18,7 +18,7 @@ public enum LogType  {
 
     LogType(String id, ChatColor color) {
         this.id = id;
-        this.msg = LocalizationProvider.getInstance().getTranslation("plugin.log." + id);
+        this.msg = MinecachingAPI.getLocalization().getTranslation("plugin.log." + id);
         this.color = color;
     }
 

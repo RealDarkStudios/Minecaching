@@ -2,7 +2,7 @@ package net.realdarkstudios.minecaching.util;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.realdarkstudios.minecaching.api.LocalizationProvider;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -17,13 +17,18 @@ public class MCMessages {
             .color(ChatColor.RED)
             .build();
 
+    /**
+     * 
+     * @param source The 
+     * @return
+     */
     public static TextComponent noPermission(String source) {
-        if (LocalizationProvider.getInstance().hasTranslation("permission.none." + source)) return TextComponentBuilder.fromTranslation("permission.none." + source).color(ChatColor.DARK_RED).bold().build();
+        if (MinecachingAPI.getLocalization().hasTranslation("permission.none." + source)) return TextComponentBuilder.fromTranslation("permission.none." + source).color(ChatColor.DARK_RED).bold().build();
         else return NO_PERMISSION;
     }
 
     public static TextComponent noPermission(String source, Object... substitutions) {
-        if (LocalizationProvider.getInstance().hasTranslation("permission.none." + source)) return TextComponentBuilder.fromTranslation("permission.none." + source, substitutions).color(ChatColor.DARK_RED).bold().build();
+        if (MinecachingAPI.getLocalization().hasTranslation("permission.none." + source)) return TextComponentBuilder.fromTranslation("permission.none." + source, substitutions).color(ChatColor.DARK_RED).bold().build();
         else return NO_PERMISSION;
     }
 
@@ -40,13 +45,13 @@ public class MCMessages {
     }
 
     public static String incorrectUsage(String source) {
-        if (LocalizationProvider.getInstance().hasTranslation("error.usage." + source)) return ChatColor.RED + LocalizationProvider.getInstance().getTranslation("error.usage." + source);
-        else return ChatColor.RED + LocalizationProvider.getInstance().getTranslation("error.usage");
+        if (MinecachingAPI.getLocalization().hasTranslation("error.usage." + source)) return ChatColor.RED + MinecachingAPI.getLocalization().getTranslation("error.usage." + source);
+        else return ChatColor.RED + MinecachingAPI.getLocalization().getTranslation("error.usage");
     }
 
     public static String incorrectUsage(String source, Object... substitutions) {
-        if (LocalizationProvider.getInstance().hasTranslation("error.usage." + source)) return ChatColor.RED + LocalizationProvider.getInstance().getTranslation("error.usage." + source, substitutions);
-        else return ChatColor.RED + LocalizationProvider.getInstance().getTranslation("error.usage");
+        if (MinecachingAPI.getLocalization().hasTranslation("error.usage." + source)) return ChatColor.RED + MinecachingAPI.getLocalization().getTranslation("error.usage." + source, substitutions);
+        else return ChatColor.RED + MinecachingAPI.getLocalization().getTranslation("error.usage");
     }
 
     public static void incorrectUsage(CommandSender sender) {
@@ -62,12 +67,12 @@ public class MCMessages {
     }
 
     public static String usage(String source, Command command) {
-        if (LocalizationProvider.getInstance().hasTranslation("usage." + source)) return ChatColor.RED + LocalizationProvider.getInstance().getTranslation("usage." + source);
+        if (MinecachingAPI.getLocalization().hasTranslation("usage." + source)) return ChatColor.RED + MinecachingAPI.getLocalization().getTranslation("usage." + source);
         else return ChatColor.RED + command.getUsage();
     }
 
     public static String usage(String source, Command command, Object... substitutions) {
-        if (LocalizationProvider.getInstance().hasTranslation("usage." + source)) return ChatColor.RED + LocalizationProvider.getInstance().getTranslation("usage." + source, substitutions);
+        if (MinecachingAPI.getLocalization().hasTranslation("usage." + source)) return ChatColor.RED + MinecachingAPI.getLocalization().getTranslation("usage." + source, substitutions);
         else return ChatColor.RED + command.getUsage();
     }
 
@@ -80,22 +85,22 @@ public class MCMessages {
     }
 
     public static void sendErrorMsg(CommandSender sender) {
-        sender.sendMessage(ChatColor.RED + LocalizationProvider.getInstance().getTranslation("error"));
+        sender.sendMessage(ChatColor.RED + MinecachingAPI.getLocalization().getTranslation("error"));
     }
 
     public static void sendErrorMsg(CommandSender sender, String key) {
-        sender.sendMessage(ChatColor.RED + LocalizationProvider.getInstance().getTranslation("error." + key));
+        sender.sendMessage(ChatColor.RED + MinecachingAPI.getLocalization().getTranslation("error." + key));
     }
 
     public static void sendErrorMsg(CommandSender sender, String key, Object... substitutions) {
-        sender.sendMessage(ChatColor.RED + LocalizationProvider.getInstance().getTranslation("error." + key, substitutions));
+        sender.sendMessage(ChatColor.RED + MinecachingAPI.getLocalization().getTranslation("error." + key, substitutions));
     }
 
     public static void sendMsg(CommandSender sender, String key) {
-        sender.sendMessage(LocalizationProvider.getInstance().getTranslation(key));
+        sender.sendMessage(MinecachingAPI.getLocalization().getTranslation(key));
     }
 
     public static void sendMsg(CommandSender sender, String key, Object... substitutions) {
-        sender.sendMessage(LocalizationProvider.getInstance().getTranslation(key, substitutions));
+        sender.sendMessage(MinecachingAPI.getLocalization().getTranslation(key, substitutions));
     }
 }

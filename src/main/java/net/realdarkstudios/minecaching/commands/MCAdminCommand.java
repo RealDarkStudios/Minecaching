@@ -2,7 +2,6 @@ package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.api.Config;
-import net.realdarkstudios.minecaching.api.LocalizationProvider;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
@@ -46,7 +45,7 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
             }
 
             MCMessages.sendMsg(sender, "mcadmin.version.mcversion",Minecaching.getInstance().getDescription().getVersion(), Bukkit.getBukkitVersion().split("-")[0]);
-            MCMessages.sendMsg(sender, "mcadmin.version.serverlang", LocalizationProvider.getInstance().getTranslation("locale.name"));
+            MCMessages.sendMsg(sender, "mcadmin.version.serverlang", MinecachingAPI.getLocalization().getTranslation("locale.name"));
             MCMessages.sendMsg(sender, "mcadmin.version.configversion", Config.getInstance().getConfigVersion());
             MCMessages.sendMsg(sender, "mcadmin.version.mcdataversion", Config.getInstance().getMinecacheDataVersion());
             MCMessages.sendMsg(sender, "mcadmin.version.plrdataversion", Config.getInstance().getPlayerDataVersion());

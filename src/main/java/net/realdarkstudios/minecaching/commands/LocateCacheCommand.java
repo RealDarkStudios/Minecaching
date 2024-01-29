@@ -100,7 +100,7 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
         meta.setLodestone(lodeLocation);
         meta.setLodestoneTracked(true);
         meta.setDisplayName(cache.id() + ": " + cache.name());
-        meta.setLore(List.of(LocalizationProvider.getInstance().getTranslation("locatecache.compass.lore", cache.id())));
+        meta.setLore(List.of(MinecachingAPI.getLocalization().getTranslation("locatecache.compass.lore", cache.id())));
         meta.getPersistentDataContainer().set(new NamespacedKey(Minecaching.getInstance(), "attachedMinecacheId"), PersistentDataType.STRING, cache.id());
         compass.setItemMeta(meta);
 

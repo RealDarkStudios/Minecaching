@@ -22,6 +22,7 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
         if (args.length != 1) {
             MCMessages.incorrectUsage(sender);
             MCMessages.usage(sender, "deletecache", command, label);
+            return true;
         }
 
         String id = args[0].trim();

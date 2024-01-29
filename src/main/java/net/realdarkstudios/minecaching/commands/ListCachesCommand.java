@@ -26,7 +26,8 @@ public class ListCachesCommand implements CommandExecutor, TabExecutor {
             page = args.length == 0 ? 0 : Math.max(Integer.parseInt(args[0]) - 1, 0);
         } catch (NumberFormatException e) {
             MCMessages.incorrectUsage(sender, "listcaches.page", args[0]);
-            return false;
+            MCMessages.usage(sender, "listcaches", command, label);
+            return true;
         }
 
         List<Minecache> caches = MinecachingAPI.get().getFilteredCaches(m -> !(sender instanceof Player plr) || m.world().equals(plr.getWorld()));
