@@ -1,5 +1,6 @@
 package net.realdarkstudios.minecaching;
 
+import net.realdarkstudios.minecaching.api.AutoUpdater;
 import net.realdarkstudios.minecaching.api.Config;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.commands.*;
@@ -9,6 +10,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Path;
 
 public final class Minecaching extends JavaPlugin {
     private final String VERSION = getDescription().getVersion();
@@ -46,7 +53,7 @@ public final class Minecaching extends JavaPlugin {
             getCommand("logcache").setExecutor(new LogCacheCommand());
             getCommand("logbook").setExecutor(new LogbookCommand());
 
-            if (Config.getInstance().getDebugEvents()) MinecachingAPI.tInfo("mcadmin.version.debugevents.on", Config.getInstance().getDebugEventsLevel());
+            if (Config.getInstance().debugEvents()) MinecachingAPI.tInfo("mcadmin.version.debugevents.on", Config.getInstance().getDebugEventsLevel());
             else MinecachingAPI.tInfo("mcadmin.version.debugevents.off");
 
             // Must register regardless of if Debug Events are enabled, in case someone decides to enable it while running.
@@ -63,6 +70,28 @@ public final class Minecaching extends JavaPlugin {
         // Plugin shutdown logic
         getLogger().info("Minecaching is disabling...");
         MinecachingAPI.get().save();
+        if (AutoUpdater.doUpdate()) {
+            getLogger().info("Applying update...");
+            String newVersion = AutoUpdater.getNewVer();
+            try {
+                URL download = new URL("https://maven.digitalunderworlds.com/releases/net/realdarkstudios/Minecaching/" + newVersion + "/Minecaching-" + newVersion + ".jar");
+                ReadableByteChannel rbc = Channels.newChannel(download.openStream());
+                File file = new File(Path.of(getDataFolder().toURI()).getParent().toString() + "/Minecaching-" + newVersion + ".jar");
+                FileOutputStream fos = new FileOutputStream(file);
+                fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+                fos.close();
+
+                Method getFileMethod = JavaPlugin.class.getDeclaredMethod("getFile");
+                getFileMethod.setAccessible(true);
+                File curfile = (File) getFileMethod.invoke(this);
+                getLogger().info("Update applied, this plugin file will be deleted on process exit!");
+                curfile.deleteOnExit();
+            } catch (Exception e) {
+                MinecachingAPI.warning("Unable to complete auto update!");
+                e.printStackTrace();
+            }
+
+        }
         getLogger().info("Minecaching has been disabled");
     }
 

@@ -14,33 +14,44 @@ LOGBOOK_DATA_VERSION: 1
 # Defaults: en-US
 LOCALE: en-US
 
-# Determines whether or not event messages are logged.
+# Determines whether the plugin will automatically update
+# Defaults: true
+AUTO_UPDATE: true
+# Determines the branch to use for the auto updater
+# release: Release versions, such as 0.2.2.1, 0.2.2.2, 0.2.2.3
+# snapshot: Snapshot versions, such as 0.2.2.3-SNAPSHOT-1, 0.2.2.3-SNAPSHOT-2, 0.2.2.3
+# Defaults: release
+UPDATE_BRANCH: release
+# Determines whether experimental features are enabled
+# Defaults: false
+EXPERIMENTAL_FEATURES: false
+# Determines whether or not event messages are logged
 # Defaults: false
 DEBUG_EVENTS: false
-# Defines the amount of information being outputted.
+# Defines the amount of information being outputted
 # 0 provides a basic overview of the event
 # 1 provides the basic overview along with the most important event data
-# 2 provides the basic overview along with all event data.
+# 2 provides the basic overview along with all event data
 # Defaults: 0
 DEBUG_EVENTS_LEVEL: 0
 
-# Determines the boundaries for where a Minecache can be placed in the Y direction.
-# Only recommended to change this if you have custom terrain generation or have differing world heights from vanilla.
+# Determines the boundaries for where a Minecache can be placed in the Y direction
+# Only recommended to change this if you have custom terrain generation or have differing world heights from vanilla
 # Defaults: 319 for Max, -64 for Min.
 MAX_Y: 319
 MIN_Y: -64
 
-# Determines the boundaries for where a Minecache can be placed in the XZ plane.
-# Only recommended to change this if you have custom terrain generation or have differing world heights from vanilla.
+# Determines the boundaries for where a Minecache can be placed in the XZ plane
+# Only recommended to change this if you have custom terrain generation or have differing world heights from vanilla
 # Defaults: 30000000 for Max, -30000000 for Min.
 MAX_X: 30000000
 MIN_X: -30000000
 MAX_Z: 30000000
 MIN_Z: -30000000
 
-# Determines the maximum distance a cache lodestone can be from the cache.
+# Determines the maximum distance a cache lodestone can be from the cache
 MAX_LODESTONE_DISTANCE: 50
-# Determines how far away from a cache lodestone the compass will be removed. Default is 25.
+# Determines how far away from a cache lodestone the compass will be removed. Default is 25
 FIND_LODESTONE_DISTANCE: 25
 # Determines whether to use lodestone-based locating or coordinate-based locating
 # Coordinate-based is stable, it tells the player the rough coordinates of the cache
@@ -48,7 +59,7 @@ FIND_LODESTONE_DISTANCE: 25
 # Defaults: false (Coordinate-based)
 USE_LODESTONE_BASED_LOCATING: false
 
-# Determines which types are enabled on the server.
+# Determines which types are enabled on the server
 ENABLED_TYPES:
   - TRADITIONAL
   - MYSTERY

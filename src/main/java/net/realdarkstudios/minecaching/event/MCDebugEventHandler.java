@@ -67,7 +67,7 @@ public class MCDebugEventHandler implements Listener {
     }
 
     private void sendDebugMessage(String basicMsg, String importantEventData, String otherEventData) {
-        if (!Config.getInstance().getDebugEvents()) return;
+        if (!Config.getInstance().debugEvents()) return;
 
         switch (Config.getInstance().getDebugEventsLevel()) {
             case 1: Minecaching.getInstance().getLogger().info("DEBUG: " + basicMsg + "\nEvent Data: " + importantEventData ); break;

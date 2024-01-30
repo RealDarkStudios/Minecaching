@@ -17,7 +17,7 @@ public class MinecachingAPI {
     /**
      * Defines the expected Config Data Version
      */
-    private static final int CONFIG_DATA_VERSION = 7;
+    private static final int CONFIG_DATA_VERSION = 8;
     /**
      * Defines the expected Minecache Data Version
      */
@@ -489,6 +489,8 @@ public class MinecachingAPI {
             else tWarning("plugin.data.update.notattempting", "Config");
         }
 
+        AutoUpdater.startCheck();
+
         MinecachingAPI.tInfo("plugin.load", "Localization");
 
         tInfo("plugin.load", "Minecache Data");
@@ -514,6 +516,10 @@ public class MinecachingAPI {
             if (attemptUpdates) LogbookStorage.getInstance().attemptUpdate();
             else tWarning("plugin.data.update.notattempting", "Logbook Data");
         }
+    }
+
+    public void checkForUpdate() {
+
     }
 
     /**

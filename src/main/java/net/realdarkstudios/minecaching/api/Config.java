@@ -74,7 +74,19 @@ public class Config {
         return Locale.forLanguageTag(yaml.getString("LOCALE"));
     }
 
-    public boolean getDebugEvents() {
+    public boolean autoUpdate() {
+        return yaml.getBoolean("AUTO_UPDATE");
+    }
+
+    public String getUpdateBranch() {
+        return yaml.getString("UPDATE_BRANCH", "release").equals("snapshot") ? "snapshot" : "release";
+    }
+
+    public boolean experimentalFeatures() {
+        return yaml.getBoolean("EXPERIMENTAL_FEATURES");
+    }
+
+    public boolean debugEvents() {
         return yaml.getBoolean("DEBUG_EVENTS");
     }
 
@@ -133,8 +145,12 @@ public class Config {
 
             Locale serverLocale = configVersion < 7 ? Locale.US : getServerLocale();
 
-            boolean debugEvents = configVersion >= 5 && getDebugEvents();
+            boolean autoUpdate = configVersion >=8 && autoUpdate();
+            String updateBranch = getUpdateBranch();
+            boolean experimentalFeatures = configVersion >=8 && experimentalFeatures();
+            boolean debugEvents = configVersion >= 5 && debugEvents();
             int debugEventsLevel = configVersion < 5 ? 0 : getDebugEventsLevel();
+
             int maxY = getMaxY();
             int minY = getMinY();
             int maxX = getMaxX();
@@ -155,6 +171,9 @@ public class Config {
             yaml.set("PLAYER_DATA_VERSION", playerDataVersion);
             yaml.set("LOGBOOK_DATA_VERSION", logbookDataVersion);
             yaml.set("LOCALE", serverLocale.toLanguageTag());
+            yaml.set("AUTO_UPDATE", autoUpdate);
+            yaml.set("UPDATE_BRANCH", updateBranch);
+            yaml.set("EXPERIMENTAL_FEATURES", experimentalFeatures);
             yaml.set("DEBUG_EVENTS", debugEvents);
             yaml.set("DEBUG_EVENTS_LEVEL", debugEventsLevel);
             yaml.set("MAX_Y", maxY);

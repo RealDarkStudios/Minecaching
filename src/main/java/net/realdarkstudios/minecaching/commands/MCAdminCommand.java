@@ -50,7 +50,7 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
             MCMessages.sendMsg(sender, "mcadmin.version.mcdataversion", Config.getInstance().getMinecacheDataVersion());
             MCMessages.sendMsg(sender, "mcadmin.version.plrdataversion", Config.getInstance().getPlayerDataVersion());
             MCMessages.sendMsg(sender, "mcadmin.version.logbookdataversion", Config.getInstance().getLogbookDataVersion());
-            if (Config.getInstance().getDebugEvents()) MCMessages.sendMsg(sender, "mcadmin.version.debugevents.on", Config.getInstance().getDebugEventsLevel());
+            if (Config.getInstance().debugEvents()) MCMessages.sendMsg(sender, "mcadmin.version.debugevents.on", Config.getInstance().getDebugEventsLevel());
             else MCMessages.sendMsg(sender, "mcadmin.version.debugevents.off");
         } else return false;
 

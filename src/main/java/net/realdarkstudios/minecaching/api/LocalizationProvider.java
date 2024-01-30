@@ -15,7 +15,7 @@ public class LocalizationProvider {
     private final Gson gson = new Gson();
     private Locale serverLocale;
     private JsonObject json;
-    private HashMap<Plugin, Localization> pluginMap;
+    private final HashMap<Plugin, Localization> pluginMap = new HashMap<>();
     private LocalizationProvider() {
     }
 
