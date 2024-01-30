@@ -5,10 +5,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerStorage {
 
@@ -65,7 +62,7 @@ public class PlayerStorage {
 
         if (yaml.getList("PLAYERS") == null) MinecachingAPI.warning("Player list is empty!");
         else {
-            for (String key: (List<String>) yaml.getList("PLAYERS")) {
+            for (String key: (List<String>) yaml.get("PLAYERS")) {
                 UUID uuid;
                 try {
                     uuid = UUID.fromString(key);
@@ -86,7 +83,7 @@ public class PlayerStorage {
 
     boolean deletePlayerData(PlayerDataObject plr) {
         try {
-            List<String> plrs = (List<String>) yaml.get("PLAYERS");
+            List<String> plrs = yaml.get("PLAYERS") == null ? new ArrayList<>() : (List<String>) yaml.get("PLAYERS");
             plrs.removeAll(Collections.singleton(plr.getUniqueID().toString()));
 
             yaml.set("PLAYERS", plrs);
@@ -101,7 +98,7 @@ public class PlayerStorage {
 
     boolean deletePlayerData(Player plr) {
         try {
-            List<String> plrs = (List<String>) yaml.get("PLAYERS");
+            List<String> plrs = yaml.get("PLAYERS") == null ? new ArrayList<>() : (List<String>) yaml.get("PLAYERS");
             plrs.removeAll(Collections.singleton(plr.getUniqueId().toString()));
 
             yaml.set("PLAYERS", plrs);
@@ -116,7 +113,7 @@ public class PlayerStorage {
 
     boolean deletePlayerData(UUID uuid) {
         try {
-            List<String> plrs = (List<String>) yaml.get("PLAYERS");
+            List<String> plrs = yaml.get("PLAYERS") == null ? new ArrayList<>() : (List<String>) yaml.get("PLAYERS");
             plrs.removeAll(Collections.singleton(uuid.toString()));
 
             yaml.set("PLAYERS", plrs);
@@ -130,23 +127,25 @@ public class PlayerStorage {
     }
 
     PlayerDataObject createPlayerData(Player plr) {
-        List<String> plrs = (List<String>) yaml.get("PLAYERS");
+        List<String> plrs = yaml.get("PLAYERS") == null ? new ArrayList<>() : (List<String>) yaml.get("PLAYERS");
         plrs.add(plr.getUniqueId().toString());
+        yaml.set("PLAYERS", plrs);
 
         save();
         updateMaps();
 
-        return getPlayerData(plr);
+        return PlayerDataObject.get(plr.getUniqueId());
     }
 
     PlayerDataObject createPlayerData(UUID uuid) {
-        List<String> plrs = (List<String>) yaml.get("PLAYERS");
+        List<String> plrs = yaml.get("PLAYERS") == null ? new ArrayList<>() : (List<String>) yaml.get("PLAYERS");
         plrs.add(uuid.toString());
+        yaml.set("PLAYERS", plrs);
 
         save();
         updateMaps();
 
-        return getPlayerData(uuid);
+        return PlayerDataObject.get(uuid);
     }
 
     boolean hasPlayerData(Player plr) {

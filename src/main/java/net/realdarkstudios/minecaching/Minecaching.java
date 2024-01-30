@@ -23,12 +23,6 @@ public final class Minecaching extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        File playerFolder = new File(getDataFolder() + "/player/");
-        if (!playerFolder.exists()) playerFolder.mkdirs();
-
-        File logFolder = new File(getDataFolder() + "/logbook/");
-        if (!logFolder.exists()) logFolder.mkdirs();
-
         getLogger().info("Checking server version...");
         getLogger().info("Server Version: " + Bukkit.getBukkitVersion());
         String[] serverVersion = Bukkit.getBukkitVersion().split("-")[0].split("\\.");

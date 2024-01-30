@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -478,6 +479,12 @@ public class MinecachingAPI {
      */
     public void load(boolean attemptUpdates) {
         Minecaching minecaching = Minecaching.getInstance();
+
+        File playerFolder = new File(minecaching.getDataFolder() + "/player/");
+        if (!playerFolder.exists()) playerFolder.mkdirs();
+
+        File logFolder = new File(minecaching.getDataFolder() + "/logbook/");
+        if (!logFolder.exists()) logFolder.mkdirs();
 
         Config.getInstance().load();
         MINECACHING_LOCALIZATION = LocalizationProvider.getInstance().load(minecaching);
