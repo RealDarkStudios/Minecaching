@@ -63,19 +63,22 @@ public class PlayerStorage {
     void updateMaps() {
         HashMap<UUID, PlayerDataObject> players = new HashMap<>();
 
-        for (String key: (List<String>) yaml.getList("PLAYERS")) {
-            UUID uuid;
-            try {
-                uuid = UUID.fromString(key);
-            } catch (Exception e) {
-                MinecachingAPI.tWarning("error.plugin.parseuuid", key);
-                continue;
+        if (yaml.getList("PLAYERS") == null) MinecachingAPI.warning("Player list is empty!");
+        else {
+            for (String key: (List<String>) yaml.getList("PLAYERS")) {
+                UUID uuid;
+                try {
+                    uuid = UUID.fromString(key);
+                } catch (Exception e) {
+                    MinecachingAPI.tWarning("error.plugin.parseuuid", key);
+                    continue;
+                }
+
+                PlayerDataObject plr = PlayerDataObject.get(uuid);
+
+                plr.load();
+                players.put(uuid, plr);
             }
-
-            PlayerDataObject plr = PlayerDataObject.get(uuid);
-
-            plr.load();
-            players.put(uuid, plr);
         }
 
         this.playerStorage = players;
