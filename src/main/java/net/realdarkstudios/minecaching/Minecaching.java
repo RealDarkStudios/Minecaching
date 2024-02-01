@@ -1,12 +1,15 @@
 package net.realdarkstudios.minecaching;
 
-import net.realdarkstudios.minecaching.api.AutoUpdater;
-import net.realdarkstudios.minecaching.api.Config;
+import net.realdarkstudios.minecaching.api.misc.AutoUpdater;
+import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.menu.impl.MCMenuHolder;
 import net.realdarkstudios.minecaching.commands.*;
 import net.realdarkstudios.minecaching.event.MCDebugEventHandler;
 import net.realdarkstudios.minecaching.event.MCEventHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -63,8 +66,16 @@ public final class Minecaching extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         getLogger().info("Minecaching is disabling...");
+        for (Player player: Bukkit.getOnlinePlayers()) {
+            if (player.getOpenInventory() != null) {
+                Inventory inv = player.getOpenInventory().getTopInventory();
+                if (inv.getHolder() instanceof MCMenuHolder) player.closeInventory();
+            }
+        }
+
         MinecachingAPI.get().save();
-        if (AutoUpdater.doUpdate()) {
+
+        if (AutoUpdater.hasUpdate()) {
             getLogger().info("Applying update...");
             String newVersion = AutoUpdater.getNewVer();
             try {

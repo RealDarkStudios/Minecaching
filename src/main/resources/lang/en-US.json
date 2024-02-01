@@ -102,6 +102,8 @@
   "plugin.enabled": "Minecaching v%s enabled!",
   "plugin.reloading": "Reloading...",
   "plugin.reloaded": "Reloaded Minecaching",
+  "plugin.update": "%sMinecaching v%s is available!",
+  "plugin.update.auto": "%sMinecaching v%s is available! It will be applied after the next restart!",
   "plugin.load": "Loading %s...",
   "plugin.save": "Saving %s...",
   "plugin.log.found": "Found on",

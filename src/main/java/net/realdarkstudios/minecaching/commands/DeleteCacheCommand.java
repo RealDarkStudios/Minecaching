@@ -1,9 +1,9 @@
 package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Utils;
-import net.realdarkstudios.minecaching.api.Minecache;
+import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.event.MinecacheDeletedEvent;
+import net.realdarkstudios.minecaching.event.minecache.MinecacheDeletedEvent;
 import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

@@ -2,10 +2,18 @@ package net.realdarkstudios.minecaching.event;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.Utils;
-import net.realdarkstudios.minecaching.api.*;
+import net.realdarkstudios.minecaching.api.log.Notification;
+import net.realdarkstudios.minecaching.api.log.NotificationType;
+import net.realdarkstudios.minecaching.api.menu.impl.MCMenuHolder;
+import net.realdarkstudios.minecaching.api.minecache.Minecache;
+import net.realdarkstudios.minecaching.api.misc.AutoUpdater;
+import net.realdarkstudios.minecaching.api.misc.Config;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
@@ -22,6 +30,10 @@ public class MCEventHandler implements Listener {
     public void onPlayerLogin(PlayerJoinEvent event) {
         new BukkitRunnable() {
             public void run() {
+                if (AutoUpdater.hasUpdate() && event.getPlayer().hasPermission("minecaching.admin")) {
+                    MCMessages.sendMsg(event.getPlayer(), Config.getInstance().autoUpdate() ? "plugin.update.auto" : "plugin.update", ChatColor.GREEN, AutoUpdater.getNewVer());
+                }
+
                 PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(event.getPlayer().getUniqueId());
 
                 if (!pdo.getNotifications().isEmpty()) {
@@ -42,6 +54,11 @@ public class MCEventHandler implements Listener {
         // Minecaching.getInstance().getLogger().info(event.getAction().name());
         if (event.getCurrentItem() != null && event.getCurrentItem().hasItemMeta() && Objects.requireNonNull(event.getCurrentItem().getItemMeta()).getPersistentDataContainer().has(new NamespacedKey(Minecaching.getInstance(), "attachedMinecacheId"), PersistentDataType.STRING)) {
             if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) event.setCancelled(true);
+        }
+
+        if (event.getWhoClicked() instanceof Player && event.getInventory().getHolder() instanceof MCMenuHolder) {
+            event.setCancelled(true);
+            ((MCMenuHolder) event.getInventory().getHolder()).getMenu().onInventoryClick(event);
         }
     }
 

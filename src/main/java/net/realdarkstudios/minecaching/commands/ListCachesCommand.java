@@ -2,9 +2,9 @@ package net.realdarkstudios.minecaching.commands;
 
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.realdarkstudios.minecaching.api.Minecache;
-import net.realdarkstudios.minecaching.api.MinecacheStatus;
-import net.realdarkstudios.minecaching.api.MinecacheType;
+import net.realdarkstudios.minecaching.api.minecache.Minecache;
+import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
+import net.realdarkstudios.minecaching.api.minecache.MinecacheType;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.util.MCMessages;
 import net.realdarkstudios.minecaching.util.TextComponentBuilder;
