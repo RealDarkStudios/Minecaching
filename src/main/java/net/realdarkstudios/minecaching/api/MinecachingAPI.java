@@ -472,6 +472,7 @@ public class MinecachingAPI {
     public void save() {
         tInfo("plugin.save", "Config");
         Config.getInstance().save();
+        LocalizationProvider.getInstance().clear();
         tInfo("plugin.save", "Minecache Data");
         MinecacheStorage.getInstance().save();
         tInfo("plugin.save", "Player Data");
@@ -507,7 +508,12 @@ public class MinecachingAPI {
             else tWarning("plugin.data.update.notattempting", "Config");
         }
 
-        AutoUpdater.startCheck();
+        AutoUpdater.updateBranch(Config.getInstance().getUpdateBranch());
+        if (Config.getInstance().experimentalFeatures()) {
+            MinecachingAPI.tInfo("plugin.experimental");
+            AutoUpdater.startExperimentalCheck();
+        }
+        else AutoUpdater.startCheck();
 
         MinecachingAPI.tInfo("plugin.load", "Localization");
 

@@ -1,10 +1,12 @@
 package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Minecaching;
-import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.misc.AutoUpdater;
+import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -44,7 +46,10 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
                 return true;
             }
 
-            MCMessages.sendMsg(sender, "mcadmin.version.mcversion",Minecaching.getInstance().getDescription().getVersion(), Bukkit.getBukkitVersion().split("-")[0]);
+            int v = AutoUpdater.startExperimentalCheck();
+
+            MCMessages.sendMsg(sender, "mcadmin.version.mcversion", Minecaching.getInstance().getDescription().getVersion(), Bukkit.getBukkitVersion().split("-")[0]);
+            MCMessages.sendMsg(sender, "mcadmin.version.checkingversion", v == 0 ? "UP-TO-DATE" : v == 1 ? "AHEAD" : v == -1 ? "BEHIND" : "ERROR");
             MCMessages.sendMsg(sender, "mcadmin.version.serverlang", MinecachingAPI.getLocalization().getTranslation("locale.name"));
             MCMessages.sendMsg(sender, "mcadmin.version.configversion", Config.getInstance().getConfigVersion());
             MCMessages.sendMsg(sender, "mcadmin.version.mcdataversion", Config.getInstance().getMinecacheDataVersion());
@@ -52,6 +57,8 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
             MCMessages.sendMsg(sender, "mcadmin.version.logbookdataversion", Config.getInstance().getLogbookDataVersion());
             if (Config.getInstance().debugEvents()) MCMessages.sendMsg(sender, "mcadmin.version.debugevents.on", Config.getInstance().getDebugEventsLevel());
             else MCMessages.sendMsg(sender, "mcadmin.version.debugevents.off");
+
+            if (v == -1) MCMessages.sendMsg(sender, Config.getInstance().autoUpdate() ? "plugin.update.auto" : "plugin.update", ChatColor.RED, AutoUpdater.getNewVer());
         } else return false;
 
         return true;

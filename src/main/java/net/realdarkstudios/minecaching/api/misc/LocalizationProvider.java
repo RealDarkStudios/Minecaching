@@ -83,6 +83,12 @@ public class LocalizationProvider {
         return pluginMap.get(plugin);
     }
 
+    public void clear() {
+        this.json = null;
+        this.serverLocale = null;
+        this.pluginMap.clear();
+    }
+
     /**
      * Gets the {@link LocalizationProvider} instance
      * @return The LocalizationProvider instance
