@@ -85,6 +85,10 @@ public class LogbookDataObject {
         this.logMap = logMap;
     }
 
+    boolean delete() {
+        return file.delete();
+    }
+
     public void saveData() {
         save();
         update();

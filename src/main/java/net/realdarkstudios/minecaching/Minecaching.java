@@ -25,7 +25,7 @@ public final class Minecaching extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
+        // Server version check
         getLogger().info("Checking server version...");
         getLogger().info("Server Version: " + Bukkit.getBukkitVersion());
         String[] serverVersion = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
@@ -35,8 +35,10 @@ public final class Minecaching extends JavaPlugin {
             MinecachingAPI.get().load(false);
             onDisable();
         } else {
+            // Load plugin data
             MinecachingAPI.get().load(true);
 
+            // Register commands
             getLogger().info("Registering commands...");
             getCommand("addcache").setExecutor(new AddCacheCommand());
             getCommand("archivecache").setExecutor(new ArchiveCacheCommand());
@@ -50,6 +52,7 @@ public final class Minecaching extends JavaPlugin {
             getCommand("logcache").setExecutor(new LogCacheCommand());
             getCommand("logbook").setExecutor(new LogbookCommand());
 
+            // Debug Events check
             if (Config.getInstance().debugEvents()) MinecachingAPI.tInfo("mcadmin.version.debugevents.on", Config.getInstance().getDebugEventsLevel());
             else MinecachingAPI.tInfo("mcadmin.version.debugevents.off");
 
@@ -64,7 +67,7 @@ public final class Minecaching extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        // Close all open MCMenus
         MinecachingAPI.tInfo("plugin.disabling");
         for (Player player: Bukkit.getOnlinePlayers()) {
             if (player.getOpenInventory() != null) {
@@ -73,9 +76,10 @@ public final class Minecaching extends JavaPlugin {
             }
         }
 
-        if (AutoUpdater.hasUpdate()) {
-            AutoUpdater.startExperimentalCheck();
-            String newVersion = AutoUpdater.getNewVer();
+        // Performs auto-update if there is a newer plugin version and the config AUTO_UPDATE option is true
+        if (AutoUpdater.hasUpdate() && Config.getInstance().autoUpdate()) {
+            AutoUpdater.checkForUpdate();
+            String newVersion = AutoUpdater.getNewestVersion();
             MinecachingAPI.tInfo("plugin.update.getting", newVersion);
             try {
                 URL download = new URL("https://maven.digitalunderworlds.com/" + Config.getInstance().getUpdateBranch() + "s/net/realdarkstudios/Minecaching/" + newVersion + "/Minecaching-" + newVersion + ".jar");
@@ -97,6 +101,7 @@ public final class Minecaching extends JavaPlugin {
             }
         } else MinecachingAPI.info("Not applying update!");
 
+        // Save all plugin data
         String disabledMsg = MinecachingAPI.getLocalization().getTranslation("plugin.disabled", VERSION);
         MinecachingAPI.get().save();
         getLogger().info(disabledMsg);

@@ -2,7 +2,7 @@ package net.realdarkstudios.minecaching.event.minecache;
 
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.commands.DeleteCacheCommand;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 public class MinecacheDeletedEvent extends MinecacheEvent {
     /**
@@ -11,20 +11,20 @@ public class MinecacheDeletedEvent extends MinecacheEvent {
      * @see DeleteCacheCommand
      * @since 0.2.0.2
      */
-    private final Player author;
+    private final OfflinePlayer author;
 
     /**
      * Create a new MinecacheDeletedEvent
      *
      * @param minecache The deleted {@link Minecache}
-     * @param author The {@link Player} that owns that Minecache
+     * @param author The {@link OfflinePlayer} that owns that Minecache
      */
-    public MinecacheDeletedEvent(Minecache minecache, Player author) {
+    public MinecacheDeletedEvent(Minecache minecache, OfflinePlayer author) {
         this.minecache = minecache;
         this.author = author;
     }
 
-    public Player getAuthor() {
+    public OfflinePlayer getAuthor() {
         return author;
     }
 }

@@ -34,7 +34,7 @@ public class MCDebugEventHandler implements Listener {
 
     @EventHandler
     public void onMinecacheDeleted(MinecacheDeletedEvent event) {
-        sendDebugMessage("Minecache " + event.getCache().id() + " was deleted", "cacheId - " + event.getCache().id(), "cacheAuthor - " + event.getAuthor().getDisplayName());
+        sendDebugMessage("Minecache " + event.getCache().id() + " was deleted", "cacheId - " + event.getCache().id(), "cacheAuthor - " + event.getAuthor().getName());
     }
 
     @EventHandler

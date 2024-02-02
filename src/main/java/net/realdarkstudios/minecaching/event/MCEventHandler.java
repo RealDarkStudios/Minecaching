@@ -31,7 +31,7 @@ public class MCEventHandler implements Listener {
         new BukkitRunnable() {
             public void run() {
                 if (AutoUpdater.hasUpdate() && event.getPlayer().hasPermission("minecaching.admin")) {
-                    MCMessages.sendMsg(event.getPlayer(), Config.getInstance().autoUpdate() ? "plugin.update.auto" : "plugin.update", ChatColor.GREEN, AutoUpdater.getNewVer());
+                    MCMessages.sendMsg(event.getPlayer(), Config.getInstance().autoUpdate() ? "plugin.update.auto" : "plugin.update", ChatColor.GREEN, AutoUpdater.getNewestVersion());
                 }
 
                 PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(event.getPlayer().getUniqueId());

@@ -1,9 +1,9 @@
 package net.realdarkstudios.minecaching.api.log;
 
-import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStorage;
+import net.realdarkstudios.minecaching.api.misc.Config;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +13,7 @@ import java.util.List;
 public class LogbookStorage {
     private final static LogbookStorage INSTANCE = new LogbookStorage();
     private HashMap<String, LogbookDataObject> logStorage;
-    private List<String> logIDs;
+    private List<String> logIDs = new ArrayList<>();
 
     private LogbookStorage() {
     }
@@ -52,49 +52,30 @@ public class LogbookStorage {
     }
 
     public boolean deleteLogbook(LogbookDataObject log) {
-        try {
-            logIDs.removeAll(Collections.singleton(log.id()));
-
-            save();
-            updateMaps();
-
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        return deleteLogbook(log.id());
     }
 
     public boolean deleteLogbook(Minecache cache) {
-        try {
-            logIDs.removeAll(Collections.singleton(cache.id()));
-
-            save();
-            updateMaps();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        return deleteLogbook(cache.id());
     }
 
     public boolean deleteLogbook(String id){
         try {
+            getLogbook(id).delete();
             logIDs.removeAll(Collections.singleton(id));
 
             save();
             updateMaps();
+
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
 
     public LogbookDataObject createLogbook(Minecache cache) {
-        logIDs.add(cache.id());
-
-        save();
-        updateMaps();
-
-        return getLogbook(cache);
+        return createLogbook(cache.id());
     }
 
     public LogbookDataObject createLogbook(String id) {
@@ -107,7 +88,7 @@ public class LogbookStorage {
     }
 
     public boolean hasLogbook(Minecache cache) {
-        return logStorage.containsKey(cache.id());
+        return hasLogbook(cache.id());
     }
 
     public boolean hasLogbook(String id) {
@@ -115,7 +96,7 @@ public class LogbookStorage {
     }
 
     public LogbookDataObject getLogbook(Minecache cache) {
-        return logStorage.get(cache.id());
+        return getLogbook(cache.id());
     }
 
     public LogbookDataObject getLogbook(String id) {
@@ -123,8 +104,7 @@ public class LogbookStorage {
     }
 
     public LogbookDataObject getOrCreateLogbook(Minecache cache) {
-        if (hasLogbook(cache)) return getLogbook(cache);
-        else return createLogbook(cache);
+        return getOrCreateLogbook(cache.id());
     }
 
     public LogbookDataObject getOrCreateLogbook(String id) {

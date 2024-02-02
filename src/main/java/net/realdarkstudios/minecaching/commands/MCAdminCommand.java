@@ -46,7 +46,7 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
                 return true;
             }
 
-            int v = AutoUpdater.startExperimentalCheck();
+            int v = AutoUpdater.checkForUpdate();
 
             MCMessages.sendMsg(sender, "mcadmin.version.mcversion", Minecaching.getInstance().getDescription().getVersion(), Bukkit.getBukkitVersion().split("-")[0]);
             MCMessages.sendMsg(sender, "mcadmin.version.checkingversion", v == 0 ? "UP-TO-DATE" : v == 1 ? "AHEAD" : v == -1 ? "BEHIND" : "ERROR");
@@ -58,7 +58,7 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
             if (Config.getInstance().debugEvents()) MCMessages.sendMsg(sender, "mcadmin.version.debugevents.on", Config.getInstance().getDebugEventsLevel());
             else MCMessages.sendMsg(sender, "mcadmin.version.debugevents.off");
 
-            if (v == -1) MCMessages.sendMsg(sender, Config.getInstance().autoUpdate() ? "plugin.update.auto" : "plugin.update", ChatColor.RED, AutoUpdater.getNewVer());
+            if (v == -1) MCMessages.sendMsg(sender, Config.getInstance().autoUpdate() ? "plugin.update.auto" : "plugin.update", ChatColor.RED, AutoUpdater.getNewestVersion());
         } else return false;
 
         return true;

@@ -294,6 +294,7 @@ public class MinecachingAPI {
      * @since 0.2.0.0
      */
     public boolean deleteMinecache(Minecache minecache, UUID initiator) {
+        deleteLogbook(minecache);
         if (!minecache.author().equals(initiator)) createNotification(minecache.author(), initiator, NotificationType.DELETION, minecache);
         return (PlayerStorage.getInstance().deleteMinecache(minecache) && MinecacheStorage.getInstance().deleteMinecache(minecache));
     }
@@ -511,9 +512,8 @@ public class MinecachingAPI {
         AutoUpdater.updateBranch(Config.getInstance().getUpdateBranch());
         if (Config.getInstance().experimentalFeatures()) {
             MinecachingAPI.tInfo("plugin.experimental");
-            AutoUpdater.startExperimentalCheck();
         }
-        else AutoUpdater.startCheck();
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(minecaching, AutoUpdater::checkForUpdate, 0L,12000L);
 
         MinecachingAPI.tInfo("plugin.load", "Localization");
 

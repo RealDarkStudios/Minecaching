@@ -13,6 +13,7 @@ import org.bukkit.inventory.meta.BookMeta;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class LogbookGenerator {
     private final Minecache minecache;
@@ -25,7 +26,9 @@ public class LogbookGenerator {
 
     public LogbookGenerator(Minecache minecache) {
         this.minecache = minecache;
-        for (Log log : MinecachingAPI.get().getLogbook(minecache.id()).getLogsSorted(Comparator.comparing(Log::time))) addEntry(log);
+        if (MinecachingAPI.get().hasLogbook(minecache.id()) && !MinecachingAPI.get().getLogbook(minecache.id()).getLogs().isEmpty()) {
+            for (Log log : MinecachingAPI.get().getLogbook(minecache.id()).getLogsSorted(Comparator.comparing(Log::time))) addEntry(log);
+        }
     }
 
     private void addEntry(Log log) {
@@ -58,7 +61,8 @@ public class LogbookGenerator {
         // and on.
         int lPage = Math.max(100 * (bookNumber - 1), 0);
 
-        bookMeta.setPages(pages.subList(lPage, Math.min(lPage + 100, numPages)));
+        if (!pages.isEmpty()) bookMeta.setPages(pages.subList(lPage, Math.min(lPage + 100, numPages)));
+        else bookMeta.setPages(List.of("No logs to show."));
         bookMeta.setTitle(minecache.id() + " Logbook");
         bookMeta.setAuthor("Minecaching Log");
         book.setItemMeta(bookMeta);
