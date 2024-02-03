@@ -1,10 +1,10 @@
-package net.realdarkstudios.minecaching.api.menu.impl;
+package net.realdarkstudios.minecaching.api.menu.impl.item;
 
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -15,10 +15,10 @@ public class MenuItem {
     private final ItemStack item;
     private final List<String> description;
 
-    public MenuItem(String name, ItemStack item) {
+    public MenuItem(String name, ItemStack item, String... lore) {
         this.name = name;
         this.item = item;
-        this.description = new ArrayList<>();
+        this.description = Arrays.stream(lore).toList();
     }
 
     public String getName() {
@@ -41,10 +41,10 @@ public class MenuItem {
         // Does nothing by default
     }
 
-    private ItemStack applyText(ItemStack stack) {
+    protected ItemStack applyText(ItemStack stack) {
         ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(name);
-        if (!description.isEmpty()) meta.setLore(description);
+        meta.setDisplayName(getName());
+        if (!getDescription().isEmpty()) meta.setLore(getDescription());
         stack.setItemMeta(meta);
         return stack;
     }

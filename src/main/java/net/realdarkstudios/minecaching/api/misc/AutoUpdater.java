@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 public class AutoUpdater {
     private static String readURL = "https://maven.digitalunderworlds.com/" + Config.getInstance().getUpdateBranch() + "s/net/realdarkstudios/Minecaching/maven-metadata.xml";
     private static boolean doUpdate = false;
+    private static int lastUpdateCheck = 10000;
     private static String newVer = "";
 
     /**
@@ -84,6 +85,10 @@ public class AutoUpdater {
         return newVer;
     }
 
+    public static int getLastCheckResult() {
+        return lastUpdateCheck;
+    }
+
     /**
      * Checks for the latest version.
      * This version actually takes {@link Config#getUpdateBranch()} into account.
@@ -128,16 +133,19 @@ public class AutoUpdater {
                             MinecachingAPI.tInfo("plugin.update.behind");
                             doUpdate = true;
                             newVer = laterV;
+                            lastUpdateCheck = -1;
                             return -1;
                         }
                         case 0 -> {
                             // UP-TO-DATE
                             MinecachingAPI.tInfo("plugin.update.up_to_date");
+                            lastUpdateCheck = 0;
                             return 0;
                         }
                         case 1 -> {
                             // AHEAD
                             MinecachingAPI.tInfo("plugin.update.ahead");
+                            lastUpdateCheck = 1;
                             return 1;
                         }
                     }

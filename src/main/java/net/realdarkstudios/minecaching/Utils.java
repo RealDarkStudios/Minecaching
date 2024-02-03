@@ -9,6 +9,7 @@ import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.event.minecache.LogCreatedEvent;
 import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -121,6 +122,10 @@ public class Utils {
         } catch (NumberFormatException e) {
             return (a.equals("X") ? Config.getInstance().getMaxX() : a.equals("Y") ? Config.getInstance().getMaxY() : Config.getInstance().getMaxZ()) + 1;
         }
+    }
+
+    public static String formatLocation(String beginning, Location location) {
+        return String.format("%s: (%d, %d, %d)", beginning, location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     public static String commandSenderName(CommandSender commandSender) {

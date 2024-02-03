@@ -61,6 +61,8 @@
   "addcache.lodecoords": "%sSet lodestone coords to [%s](%d, %d, %d)",
   "addcache.name": "%sSet name to \"%s\"",
   "addcache.type": "%sSet type to %s",
+  "addcache.menu.name": "Click to set the cache name",
+  "addcache.menu.code": "Click to set the cache code",
   "archivecache.archive": "%sArchived %s",
   "deletecache": "%sDeleted Minecache with ID %s",
   "disablecache.disable": "%sDisabled %s",
@@ -137,7 +139,12 @@
   "plugin.notification.publish": "%s%s was published by %s",
   "plugin.notification.invalid": "%s%s was modified by %s",
 
+  "minecache.type.traditional": "Traditional",
+  "minecache.type.mystery": "Mystery",
+  "minecache.type.multi": "Multi",
+
   "permission.none": "You do not have permission to use this command!",
+  "permission.none.editcache": "You do not have permission to edit this cache!",
   "permission.none.mcadmin": "You do not have permission to use the /mcadmin command!",
   "permission.none.mcadmin.reload": "You do not have permission to reload Minecaching!",
   "permission.none.mcadmin.version": "You do not have permission to see the Minecaching version!",

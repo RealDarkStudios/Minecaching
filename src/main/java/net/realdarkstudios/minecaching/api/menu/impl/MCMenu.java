@@ -1,5 +1,6 @@
 package net.realdarkstudios.minecaching.api.menu.impl;
 
+import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -20,7 +21,7 @@ public class MCMenu {
     private MenuItem[] items;
     private MCMenu parent;
 
-    private static final MenuItem EMPTY_SLOT_ITEM = new MenuItem("", new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, 1, DyeColor.GRAY.getDyeData()));
+    private static final MenuItem EMPTY_SLOT_ITEM = new MenuItem("", new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1, DyeColor.GRAY.getDyeData()));
 
     public MCMenu(String name, MenuSize size, JavaPlugin plugin, MCMenu parent) {
         this.plugin = plugin;
@@ -59,6 +60,13 @@ public class MCMenu {
         return this;
     }
 
+    public MCMenu clearAllSlots() {
+        for (int i = 0; i < size.getSlotCount(); i++) {
+            items[i] = null;
+        }
+        return this;
+    }
+
     public MCMenu fillEmptySlots(MenuItem item) {
         for (int i = 0; i < items.length; i++) {
             if (items[i] == null) items[i] = item;
@@ -71,9 +79,13 @@ public class MCMenu {
     }
 
     public void open(Player player) {
-        Inventory inv = Bukkit.createInventory(new MCMenuHolder(this, Bukkit.createInventory(player, size.getSlotCount())), size.getSlotCount(), name);
+        Inventory inv = Bukkit.createInventory(new MCMenuHolder(this, Bukkit.createInventory(player, size.getSlotCount())), size.getSlotCount(), getName());
         apply(inv, player);
         player.openInventory(inv);
+    }
+
+    public void close(Player player) {
+        player.closeInventory();
     }
 
     public void update(Player player) {

@@ -513,7 +513,7 @@ public class MinecachingAPI {
         if (Config.getInstance().experimentalFeatures()) {
             MinecachingAPI.tInfo("plugin.experimental");
         }
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(minecaching, AutoUpdater::checkForUpdate, 0L,12000L);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(minecaching, AutoUpdater::checkForUpdate, 0L,36000L);
 
         MinecachingAPI.tInfo("plugin.load", "Localization");
 

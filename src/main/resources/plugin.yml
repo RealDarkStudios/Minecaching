@@ -97,3 +97,5 @@ permissions:
     default: op
   minecaching.admin.reload:
     default: op
+  minecaching.admin.edit:
+    default: op

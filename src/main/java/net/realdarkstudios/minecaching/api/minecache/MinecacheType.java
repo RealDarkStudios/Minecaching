@@ -1,5 +1,6 @@
 package net.realdarkstudios.minecaching.api.minecache;
 
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import org.bukkit.ChatColor;
 
 public enum MinecacheType {
@@ -33,8 +34,14 @@ public enum MinecacheType {
         return color;
     }
 
+    public String getTranslation() {
+        return MinecachingAPI.getLocalization().getTranslation("minecache.type." + id);
+    }
+
     @Override
     public String toString() {
         return id.replace("_", "");
     }
+
+
 }

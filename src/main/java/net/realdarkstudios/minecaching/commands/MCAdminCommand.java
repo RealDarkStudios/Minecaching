@@ -46,7 +46,7 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
                 return true;
             }
 
-            int v = AutoUpdater.checkForUpdate();
+            int v = AutoUpdater.getLastCheckResult();
 
             MCMessages.sendMsg(sender, "mcadmin.version.mcversion", Minecaching.getInstance().getDescription().getVersion(), Bukkit.getBukkitVersion().split("-")[0]);
             MCMessages.sendMsg(sender, "mcadmin.version.checkingversion", v == 0 ? "UP-TO-DATE" : v == 1 ? "AHEAD" : v == -1 ? "BEHIND" : "ERROR");
