@@ -12,7 +12,7 @@ public class MultiStateMenuItem extends MenuItem {
     private final HashMap<String, Integer> idMap = new HashMap<>();
     private int pointer = 0;
     public MultiStateMenuItem(MenuItemState... items) {
-        super(items[0].name(), items[0].stack());
+        super(items[0].name(), items[0].stack(), (String) null);
         this.states = items;
         int i = 0;
         for (MenuItemState state: states) {

@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.api.menu.item.addcache;
+package net.realdarkstudios.minecaching.api.menu.item;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItemState;

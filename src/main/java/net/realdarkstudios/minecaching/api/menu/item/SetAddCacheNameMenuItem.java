@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.api.menu.item.editcache;
+package net.realdarkstudios.minecaching.api.menu.item;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -8,14 +8,14 @@ import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import net.realdarkstudios.minecaching.util.TextComponentBuilder;
 import org.bukkit.inventory.ItemStack;
 
-public class SetEditCacheNameMenuItem extends MenuItem {
-    public SetEditCacheNameMenuItem(String name, ItemStack item) {
-        super(name, item);
+public class SetAddCacheNameMenuItem extends MenuItem {
+    public SetAddCacheNameMenuItem(String name, ItemStack item, String... lore) {
+        super(name, item, lore);
     }
 
     @Override
     public void onItemClick(MenuItemClickEvent event) {
-        TextComponent msg = TextComponentBuilder.fromTranslation("addcache.menu.name").color(ChatColor.LIGHT_PURPLE).underline().clickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/ec name ").build();
+        TextComponent msg = TextComponentBuilder.fromTranslation("addcache.menu.name").color(ChatColor.LIGHT_PURPLE).underline().clickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/ac name ").build();
 
         event.setClose(true);
         event.getPlayer().spigot().sendMessage(msg);

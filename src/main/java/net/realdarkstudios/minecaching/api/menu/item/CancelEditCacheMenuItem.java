@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.api.menu.item.editcache;
+package net.realdarkstudios.minecaching.api.menu.item;
 
 import net.md_5.bungee.api.ChatColor;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;

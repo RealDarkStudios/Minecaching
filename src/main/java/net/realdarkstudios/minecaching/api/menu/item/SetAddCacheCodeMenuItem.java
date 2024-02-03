@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.api.menu.item.addcache;
+package net.realdarkstudios.minecaching.api.menu.item;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -9,8 +9,8 @@ import net.realdarkstudios.minecaching.util.TextComponentBuilder;
 import org.bukkit.inventory.ItemStack;
 
 public class SetAddCacheCodeMenuItem extends MenuItem {
-    public SetAddCacheCodeMenuItem(String name, ItemStack item) {
-        super(name, item);
+    public SetAddCacheCodeMenuItem(String name, ItemStack item, String... lore) {
+        super(name, item, lore);
     }
 
     @Override
