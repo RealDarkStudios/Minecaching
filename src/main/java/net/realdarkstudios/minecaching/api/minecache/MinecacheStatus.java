@@ -1,5 +1,6 @@
 package net.realdarkstudios.minecaching.api.minecache;
 
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import org.bukkit.ChatColor;
 
 public enum MinecacheStatus {
@@ -28,6 +29,10 @@ public enum MinecacheStatus {
             case "reviewing" -> REVIEWING;
             default -> INVALID;
         };
+    }
+
+    public String getTranslation() {
+        return MinecachingAPI.getLocalization().getTranslation("minecache.status." + id);
     }
 
     public ChatColor getColor() {

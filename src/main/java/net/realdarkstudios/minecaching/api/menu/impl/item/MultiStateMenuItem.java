@@ -1,6 +1,7 @@
 package net.realdarkstudios.minecaching.api.menu.impl.item;
 
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -31,12 +32,12 @@ public class MultiStateMenuItem extends MenuItem {
     }
 
     @Override
-    public List<String> getDescription() {
+    public List<String> getLore() {
         return getCurrentState().description();
     }
 
     @Override
-    public ItemStack getIcon() {
+    public ItemStack getIcon(Player player) {
         return applyText(getCurrentState().stack());
     }
 
@@ -54,7 +55,7 @@ public class MultiStateMenuItem extends MenuItem {
     protected ItemStack applyText(ItemStack stack) {
         ItemMeta meta = stack.getItemMeta();
         meta.setDisplayName(getName());
-        if (!getDescription().isEmpty()) meta.setLore(getDescription());
+        if (!getLore().isEmpty()) meta.setLore(getLore());
         stack.setItemMeta(meta);
         return stack;
     }

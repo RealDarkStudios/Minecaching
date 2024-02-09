@@ -14,11 +14,6 @@ public class DeleteAddCacheMenuItem extends MenuItem {
     }
 
     @Override
-    public ItemStack getIcon() {
-        return super.getIcon();
-    }
-
-    @Override
     public void onItemClick(MenuItemClickEvent event) {
         PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(event.getPlayer());
 

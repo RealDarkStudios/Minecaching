@@ -3,6 +3,7 @@ package net.realdarkstudios.minecaching.api.menu;
 import net.md_5.bungee.api.ChatColor;
 import net.realdarkstudios.minecaching.Utils;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.item.CloseMenuItem;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItemState;
 import net.realdarkstudios.minecaching.api.menu.item.*;
@@ -16,11 +17,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 
-public class AddCacheMenu extends CacheDataMenu {
-    PlayerDataObject author;
+public class AddCacheMenu extends MCMenu {
+    private final PlayerDataObject author;
+    private Minecache cache;
+
     public AddCacheMenu(Minecache cache, PlayerDataObject author, JavaPlugin plugin) {
-        super("Creating Cache", cache, plugin);
+        super("Creating Cache", MenuSize.FOUR_ROW, plugin);
         this.author = author;
+        this.cache = cache;
 
         update(author.getPlayer().getPlayer());
     }

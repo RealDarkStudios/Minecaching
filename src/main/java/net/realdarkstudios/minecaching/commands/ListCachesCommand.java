@@ -2,10 +2,13 @@ package net.realdarkstudios.minecaching.commands;
 
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.menu.CacheListMenu;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheType;
-import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.util.MCMessages;
 import net.realdarkstudios.minecaching.util.TextComponentBuilder;
 import org.bukkit.ChatColor;
@@ -21,6 +24,13 @@ import java.util.List;
 public class ListCachesCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (Config.getInstance().experimentalFeatures() && sender instanceof Player plr) {
+            CacheListMenu menu = new CacheListMenu("Server Caches", Minecaching.getInstance());
+            menu.open(plr);
+            
+            return true;
+        }
+
         int page;
         try {
             page = args.length == 0 ? 0 : Math.max(Integer.parseInt(args[0]) - 1, 0);

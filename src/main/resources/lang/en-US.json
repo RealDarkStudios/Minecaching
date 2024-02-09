@@ -142,6 +142,13 @@
   "minecache.type.traditional": "Traditional",
   "minecache.type.mystery": "Mystery",
   "minecache.type.multi": "Multi",
+  "minecache.type.invalid": "Invalid",
+  "minecache.status.published": "Published",
+  "minecache.status.needs_maintenance": "Needs Maintenance",
+  "minecache.status.disabled": "Disabled",
+  "minecache.status.archived": "Archived",
+  "minecache.status.reviewing": "Reviewing",
+  "minecache.status.invalid": "Invalid",
 
   "permission.none": "You do not have permission to use this command!",
   "permission.none.editcache": "You do not have permission to edit this cache!",

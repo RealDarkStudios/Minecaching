@@ -21,7 +21,7 @@ public class MCMenu {
     private MenuItem[] items;
     private MCMenu parent;
 
-    private static final MenuItem EMPTY_SLOT_ITEM = new MenuItem("", new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1, DyeColor.GRAY.getDyeData()));
+    public static final MenuItem EMPTY_SLOT_ITEM = new MenuItem("", new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1, DyeColor.GRAY.getDyeData()));
 
     public MCMenu(String name, MenuSize size, JavaPlugin plugin, MCMenu parent) {
         this.plugin = plugin;
@@ -39,6 +39,10 @@ public class MCMenu {
         return name;
     }
 
+    public String getName(Player player) {
+       return getName();
+    }
+
     public MenuSize getSize() {
         return size;
     }
@@ -49,6 +53,10 @@ public class MCMenu {
 
     public boolean hasParent() {
         return parent != null;
+    }
+
+    public MCMenu getParent() {
+        return parent;
     }
 
     public void setParent(MCMenu parent) {
@@ -100,7 +108,7 @@ public class MCMenu {
 
     private void apply(Inventory inventory, Player player) {
         for (int i = 0; i < items.length; i++) {
-            if (items[i] != null) inventory.setItem(i, items[i].getIcon());
+            if (items[i] != null) inventory.setItem(i, items[i].getIcon(player));
             else inventory.setItem(i, null);
         }
     }
@@ -109,9 +117,12 @@ public class MCMenu {
         if (event.getClick() == ClickType.LEFT) {
             int slot = event.getRawSlot();
             if (slot >= 0 && slot < size.getSlotCount() && items[slot] != null) {
+                MenuItem item = items[slot];
+
                 Player player = (Player) event.getWhoClicked();
                 MenuItemClickEvent clickEvent = new MenuItemClickEvent(player);
-                items[slot].onItemClick(clickEvent);
+                item.onItemClick(clickEvent);
+                item.playClickSound(player);
                 if (clickEvent.update()) {
                     update(player);
                 } else {
