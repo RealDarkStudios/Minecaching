@@ -23,7 +23,10 @@ public class Localization {
      * @return The translated message
      */
     public String getTranslation(String key) {
-        if (!hasTranslation(key)) return "Translation Not Found";
+        if (!hasTranslation(key)) {
+            if (!hasTranslation("plugin.localization.missing")) return "Translation Not Found!";
+            else return getTranslation("plugin.localization.missing");
+        }
         String translation = json.get(key).toString();
         // The substring removes the quotation marks around the result
         return translation.substring(1, translation.length() - 1).replace("\\n", "\n").replace("\\\"", "\"");

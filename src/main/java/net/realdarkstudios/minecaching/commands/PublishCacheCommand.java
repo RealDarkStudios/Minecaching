@@ -1,6 +1,6 @@
 package net.realdarkstudios.minecaching.commands;
 
-import net.realdarkstudios.minecaching.Utils;
+import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;

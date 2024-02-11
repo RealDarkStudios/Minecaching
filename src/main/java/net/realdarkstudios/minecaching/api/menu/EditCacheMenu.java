@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.api.menu;
 
 import net.md_5.bungee.api.ChatColor;
-import net.realdarkstudios.minecaching.Utils;
+import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
 import net.realdarkstudios.minecaching.api.menu.item.*;

@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.util.LogbookGenerator;
+import net.realdarkstudios.minecaching.api.log.LogbookGenerator;
 import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

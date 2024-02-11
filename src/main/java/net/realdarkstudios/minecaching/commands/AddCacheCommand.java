@@ -1,6 +1,6 @@
 package net.realdarkstudios.minecaching.commands;
 
-import net.realdarkstudios.minecaching.Utils;
+import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.AddCacheMenu;
 import net.realdarkstudios.minecaching.api.menu.MCMenus;

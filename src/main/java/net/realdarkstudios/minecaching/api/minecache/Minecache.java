@@ -1,6 +1,6 @@
 package net.realdarkstudios.minecaching.api.minecache;
 
-import net.realdarkstudios.minecaching.Utils;
+import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;

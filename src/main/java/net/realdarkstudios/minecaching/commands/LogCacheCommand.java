@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Minecaching;
-import net.realdarkstudios.minecaching.Utils;
+import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.log.Log;
 import net.realdarkstudios.minecaching.api.log.LogType;
 import net.realdarkstudios.minecaching.api.log.NotificationType;
@@ -128,7 +128,7 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
 
                     if (logType.equals(LogType.FLAG) && !plr.getUniqueId().equals(cache.author())) MinecachingAPI.get().createNotification(cache.author(), plr.getUniqueId(), NotificationType.FLAG, cache);
 
-                    Log log = Utils.createLog(plr, cache, logType, logMsg, isFTF);
+                    Log log = Utils.createLog(plr.getUniqueId(), cache, logType, logMsg, isFTF);
                 } else {
                     MCMessages.sendErrorMsg(sender, "logcache.distance");
                 }

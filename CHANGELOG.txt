@@ -8,6 +8,25 @@ VERSION
 
 CHANGELOG:
 
+0.3.0.3-SNAPSHOT-2
+Added:
+- "plugin.localization.missing" in en-US.json
+- MCMessages javadocs
+- Utils javadocs
+- Utils#sortHashMap
+
+Removed:
+- Utils#sortCachesByTime
+
+Refactors:
+- net.realdarkstudios.minecaching.Utils -> net.realdarkstudios.minecaching.util.Utils
+- net.realdarkstudios.minecaching.util.LogbookGenerator -> net.realdarkstudios.minecaching.api.log.LogbookGenerator
+
+Changes:
+- Updated the data values in config.yml (oops)
+- Updated Localization#getTranslation to return a localized "Translation Not Found" (if one exists)
+- Updated README.md
+
 0.3.0.3-SNAPSHOT-1
 Added:
 - CHANGELOG.txt

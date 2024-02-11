@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.api;
 
 import net.realdarkstudios.minecaching.Minecaching;
-import net.realdarkstudios.minecaching.Utils;
+import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.log.*;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;

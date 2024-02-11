@@ -1,9 +1,8 @@
-package net.realdarkstudios.minecaching.util;
+package net.realdarkstudios.minecaching.api.log;
 
-import net.realdarkstudios.minecaching.Utils;
-import net.realdarkstudios.minecaching.api.log.Log;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

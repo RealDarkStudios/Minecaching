@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.event;
 
 import net.realdarkstudios.minecaching.Minecaching;
-import net.realdarkstudios.minecaching.Utils;
+import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.event.minecache.*;
 import org.bukkit.event.EventHandler;

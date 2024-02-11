@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.event;
 
 import net.realdarkstudios.minecaching.Minecaching;
-import net.realdarkstudios.minecaching.Utils;
+import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.log.Notification;
 import net.realdarkstudios.minecaching.api.log.NotificationType;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenuHolder;

@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.api.minecache;
 
 import net.realdarkstudios.minecaching.Minecaching;
-import net.realdarkstudios.minecaching.Utils;
+import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import org.bukkit.Location;
@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -59,7 +60,7 @@ public class MinecacheStorage {
         caches.sort(Minecache::compareByTime);
 
         this.minecaches = caches;
-        this.idToMinecache = Utils.sortCachesByTime(idMap);
+        this.idToMinecache = Utils.sortHashMap(idMap, Comparator.comparing(m -> m.getValue().hidden()));
         this.mcLocations = locationMap;
     }
     public void save() {

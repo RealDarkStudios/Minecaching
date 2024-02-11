@@ -4,9 +4,9 @@
 # +-------------+
 
 # Do not touch!
-CONFIG_VERSION: 5
-MINECACHE_DATA_VERSION: 3
-PLAYER_DATA_VERSION: 3
+CONFIG_VERSION: 8
+MINECACHE_DATA_VERSION: 4
+PLAYER_DATA_VERSION: 4
 LOGBOOK_DATA_VERSION: 1
 
 # Determines the Locale to use for plugin messages
