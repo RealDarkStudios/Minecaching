@@ -54,7 +54,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                             for (int i = 1; i < args.length; i++) {
                                 name.append(args[i]).append(" ");
                             }
-                            pdo.setCache(pdo.getCache().setName(name.toString().trim()));
+                            pdo.setCreatingCache(pdo.getCreatingCache().setName(name.toString().trim()));
                             menu.open(plr);
                             menu.update(plr);
                         }
@@ -65,7 +65,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                             MCMessages.usage(sender, "addcache.code", command, label);
                             return true;
                         } else {
-                            pdo.setCache(pdo.getCache().setCode(args[1].trim()));
+                            pdo.setCreatingCache(pdo.getCreatingCache().setCode(args[1].trim()));
                             menu.open(plr);
                             menu.update(plr);
                         }
@@ -73,13 +73,13 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                 }
             }
         } else {
-            Minecache cache = pdo.getCache();
+            Minecache cache = pdo.getCreatingCache();
             if (args.length < 1 && (cache != null && !cache.id().equals("NULL"))) {
                 MCMessages.sendErrorMsg(sender, "addcache.alreadycreating");
                 return true;
             } else if (args.length < 1) {
                 MCMessages.sendMsg(sender, "addcache.create", ChatColor.LIGHT_PURPLE);
-                pdo.setCache(Minecache.EMPTY.setID(Utils.generateID(5)));
+                pdo.setCreatingCache(Minecache.EMPTY.setID(Utils.generateCacheID(5)));
                 return true;
             }
 
@@ -127,41 +127,41 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                 case "lodecoords" -> {
                     int x, y, z;
                     if (args.length == 1) {
-                        x = Utils.validateCoordinate(String.valueOf(plr.getLocation().getBlockX()), plr, "x");
-                        y = Utils.validateCoordinate(String.valueOf(plr.getLocation().getBlockY()), plr, "y");
-                        z = Utils.validateCoordinate(String.valueOf(plr.getLocation().getBlockZ()), plr, "z");
+                        x = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockX()), plr, "x");
+                        y = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockY()), plr, "y");
+                        z = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockZ()), plr, "z");
                     } else if (args.length == 4) {
-                        x = Utils.validateCoordinate(args[1], plr, "x");
-                        y = Utils.validateCoordinate(args[2], plr, "y");
-                        z = Utils.validateCoordinate(args[3], plr, "z");
+                        x = Utils.interpretCoordinate(args[1], plr, "x");
+                        y = Utils.interpretCoordinate(args[2], plr, "y");
+                        z = Utils.interpretCoordinate(args[3], plr, "z");
                     } else {
                         MCMessages.incorrectUsage(sender, "argcount", command);
                         MCMessages.usage(sender, "addcache.lodecoords", command, label, label);
                         return true;
                     }
 
-                    if (!Utils.validateLocation(plr, x, y, z)) return true;
+                    if (Utils.locationInvalid(plr, x, y, z)) return true;
 
-                    cache.setLodeLocation(new Location(plr.getWorld(), x, y, z));
+                    cache.setNavLocation(new Location(plr.getWorld(), x, y, z));
                     MCMessages.sendMsg(sender, "addcache.lodecoords", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z);
                 }
                 case "coords" -> {
                     int x, y, z;
                     if (args.length == 1) {
-                        x = Utils.validateCoordinate(String.valueOf(plr.getLocation().getBlockX()), plr, "x");
-                        y = Utils.validateCoordinate(String.valueOf(plr.getLocation().getBlockY()), plr, "y");
-                        z = Utils.validateCoordinate(String.valueOf(plr.getLocation().getBlockZ()), plr, "z");
+                        x = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockX()), plr, "x");
+                        y = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockY()), plr, "y");
+                        z = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockZ()), plr, "z");
                     } else if (args.length == 4) {
-                        x = Utils.validateCoordinate(args[1], plr, "x");
-                        y = Utils.validateCoordinate(args[2], plr, "y");
-                        z = Utils.validateCoordinate(args[3], plr, "z");
+                        x = Utils.interpretCoordinate(args[1], plr, "x");
+                        y = Utils.interpretCoordinate(args[2], plr, "y");
+                        z = Utils.interpretCoordinate(args[3], plr, "z");
                     } else {
                         MCMessages.incorrectUsage(sender, "argcount");
                         MCMessages.usage(sender, "addcache.coords", command, label, label);
                         return true;
                     }
 
-                    if (!Utils.validateLocation(plr, x, y, z)) return true;
+                    if (Utils.locationInvalid(plr, x, y, z)) return true;
 
                     cache.setLocation(new Location(plr.getWorld(), x, y, z));
                     MCMessages.sendMsg(sender, "addcache.coords", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z);
@@ -183,16 +183,16 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     } else if (cache.x() == 0 && cache.y() == 0 && cache.z() == 0) {
                         MCMessages.sendErrorMsg(sender, "addcache.nocoords");
                         MCMessages.usage(sender, "addcache.coords", command, label);
-                    } else if (cache.lx() == 0 && cache.ly() == 0 && cache.lz() == 0) {
+                    } else if (cache.nx() == 0 && cache.ny() == 0 && cache.nz() == 0) {
                         MCMessages.sendErrorMsg(sender, "addcache.nolodecoords");
                         MCMessages.usage(sender, "addcache.lodecoords", command, label);
-                    } else if (cache.lodeLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
+                    } else if (cache.navLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
                         MCMessages.sendErrorMsg(sender, "addcache.lodetoofar");
                     } else if (cache.code() == null || cache.code().isEmpty()) {
                         MCMessages.sendErrorMsg(sender, "addcache.nocode");
                         MCMessages.usage(sender, "addcache.code", command, label);
                     } else {
-                        cache.setStatus(MinecacheStatus.REVIEWING).setAuthor(plr.getUniqueId()).setBlockType(cache.lodeLocation().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(Utils.EMPTY_UUID);
+                        cache.setStatus(MinecacheStatus.REVIEWING).setAuthor(plr.getUniqueId()).setBlockType(cache.navLocation().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(Utils.EMPTY_UUID);
 
                         MinecacheCreatedEvent event = new MinecacheCreatedEvent(cache, plr);
                         Bukkit.getPluginManager().callEvent(event);
@@ -204,7 +204,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                         MinecachingAPI.get().saveMinecache(cache, true);
 
                         pdo.addHide(cache.id());
-                        pdo.setCache(Minecache.EMPTY.setID("NULL"));
+                        pdo.setCreatingCache(Minecache.EMPTY.setID("NULL"));
 
                         MinecachingAPI.get().save();
                         MinecachingAPI.get().update();
@@ -215,10 +215,10 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
                     }
                 }
                 case "data" ->
-                        sender.sendMessage(String.format("ID: %s, Name: %s, Type: %s, Lode Coords: (%d, %d, %d), Cache Coords: (%d, %d, %d), Code: %s", cache.id(), cache.name(), cache.type().getId(), cache.lx(), cache.ly(), cache.lz(), cache.x(), cache.y(), cache.z(), cache.code()));
+                        sender.sendMessage(String.format("ID: %s, Name: %s, Type: %s, Lode Coords: (%d, %d, %d), Cache Coords: (%d, %d, %d), Code: %s", cache.id(), cache.name(), cache.type().getId(), cache.nx(), cache.ny(), cache.nz(), cache.x(), cache.y(), cache.z(), cache.code()));
             }
 
-            pdo.setCache(cache);
+            pdo.setCreatingCache(cache);
         }
         return true;
     }
@@ -233,7 +233,7 @@ public class AddCacheCommand implements CommandExecutor, TabExecutor {
         PlayerDataObject plrdata = MinecachingAPI.get().getPlayerData(plr);
 
         return switch (args.length) {
-            case 1 -> plrdata.getCache() == null || plrdata.getCache().id().equals("NULL") ? List.of() : Stream.of("cancel", "code", "name", "lodecoords", "coords", "save", "data", "type").filter(s -> s.contains(args[0])).toList();
+            case 1 -> plrdata.getCreatingCache() == null || plrdata.getCreatingCache().id().equals("NULL") ? List.of() : Stream.of("cancel", "code", "name", "lodecoords", "coords", "save", "data", "type").filter(s -> s.contains(args[0])).toList();
             case 2 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", "~ ~", "~ ~ ~", target.getX() + "", String.format("%d %d %d", target.getX(), target.getY(), target.getZ())) : args[0].equals("type") ? List.of("Traditional", "Multi", "Mystery") : List.of();
             case 3 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", "~ ~", target.getY() + "", String.format("%d %d", target.getY(), target.getZ())) : List.of();
             case 4 -> args[0].equals("lodecoords") || args[0].equals("coords") ? List.of("~", target.getZ() + "") : List.of();

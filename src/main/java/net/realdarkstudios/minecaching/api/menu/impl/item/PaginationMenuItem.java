@@ -13,7 +13,7 @@ public class PaginationMenuItem extends MenuItem {
     private final int index;
 
     public PaginationMenuItem(PaginationMenu menu, int index) {
-        super(MCMenu.EMPTY_SLOT_ITEM.getName(), MCMenu.EMPTY_SLOT_ITEM.getItem());
+        super(MCMenu.EMPTY_SLOT_ITEM.getName(), MCMenu.EMPTY_SLOT_ITEM.getItem(), MCMenu.EMPTY_SLOT_ITEM.getLore());
         this.menu = menu;
         this.index = index;
     }

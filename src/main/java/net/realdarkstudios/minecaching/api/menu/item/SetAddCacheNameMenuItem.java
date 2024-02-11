@@ -8,8 +8,10 @@ import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import net.realdarkstudios.minecaching.util.TextComponentBuilder;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class SetAddCacheNameMenuItem extends MenuItem {
-    public SetAddCacheNameMenuItem(String name, ItemStack item, String... lore) {
+    public SetAddCacheNameMenuItem(String name, ItemStack item, List<String> lore) {
         super(name, item, lore);
     }
 

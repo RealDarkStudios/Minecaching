@@ -44,13 +44,13 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
         boolean gettingNewCompass = id.equalsIgnoreCase("compass");
 
         if (id.equalsIgnoreCase("coords") && !Config.getInstance().useLodestoneBasedLocating()) {
-            Location lodeLocation = MinecachingAPI.get().getMinecache(MinecachingAPI.get().getPlayerData(plr).getLocatingId()).lodeLocation();
+            Location lodeLocation = MinecachingAPI.get().getMinecache(MinecachingAPI.get().getPlayerData(plr).getLocatingId()).navLocation();
             plr.sendMessage(String.format("%sHead to (%d, %d, %d)!", ChatColor.AQUA, lodeLocation.getBlockX(), lodeLocation.getBlockY(), lodeLocation.getBlockZ()));
             return true;
         }
 
         if (id.equalsIgnoreCase("cancel") && !pdo.getLocatingId().equals("NULL")) {
-            cancelTask(MinecachingAPI.get().getMinecache(pdo.getLocatingId()), MinecachingAPI.get().getMinecache(pdo.getLocatingId()).lodeLocation(), plr, true, false);
+            cancelTask(MinecachingAPI.get().getMinecache(pdo.getLocatingId()), MinecachingAPI.get().getMinecache(pdo.getLocatingId()).navLocation(), plr, true, false);
             return true;
         }
 
@@ -58,7 +58,7 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
 
         if (gettingNewCompass && !pdo.getLocatingId().equals("NULL") && Config.getInstance().useLodestoneBasedLocating()) {
             c = MinecachingAPI.get().getMinecache(pdo.getLocatingId());
-            cancelTask(c, c.lodeLocation(), plr, false, true);
+            cancelTask(c, c.navLocation(), plr, false, true);
         }
 
         Minecache cache = c;
@@ -78,7 +78,7 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        Location lodeLocation = cache.lodeLocation();
+        Location lodeLocation = cache.navLocation();
         Location cacheLocationC = lodeLocation.clone();
         cacheLocationC.setY(plr.getLocation().getY());
         if (plr.getLocation().distance(cacheLocationC) < Config.getInstance().getFindLodestoneDistance()) {

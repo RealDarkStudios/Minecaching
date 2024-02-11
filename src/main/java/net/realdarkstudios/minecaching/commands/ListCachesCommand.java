@@ -25,7 +25,7 @@ public class ListCachesCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (Config.getInstance().experimentalFeatures() && sender instanceof Player plr) {
-            CacheListMenu menu = new CacheListMenu("Server Caches", Minecaching.getInstance());
+            CacheListMenu menu = new CacheListMenu(MinecachingAPI.getLocalization().getTranslation("menu.list.title"), Minecaching.getInstance());
             menu.open(plr);
             
             return true;

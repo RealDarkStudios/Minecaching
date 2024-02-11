@@ -8,8 +8,10 @@ import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class DeleteAddCacheMenuItem extends MenuItem {
-    public DeleteAddCacheMenuItem(String name, ItemStack item, String... lore) {
+    public DeleteAddCacheMenuItem(String name, ItemStack item, List<String> lore) {
         super(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + name, item, lore);
     }
 
@@ -17,7 +19,7 @@ public class DeleteAddCacheMenuItem extends MenuItem {
     public void onItemClick(MenuItemClickEvent event) {
         PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(event.getPlayer());
 
-        pdo.setCache(Minecache.EMPTY.setID("NULL"));
+        pdo.setCreatingCache(Minecache.EMPTY.setID("NULL"));
         event.setUpdate(true);
 
         super.onItemClick(event);

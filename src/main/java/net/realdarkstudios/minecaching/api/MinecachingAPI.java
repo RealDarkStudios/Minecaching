@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -33,7 +34,7 @@ public class MinecachingAPI {
     /**
      * Defines the expected Minecache Data Version
      */
-    private static final int MINECACHE_DATA_VERSION = 3;
+    private static final int MINECACHE_DATA_VERSION = 4;
     /**
      * Defines the expected Player Data Version
      */
@@ -101,10 +102,21 @@ public class MinecachingAPI {
         }
     }
 
+    /**
+     * Logs the message using the Minecaching {@link Localization} at the INFO level
+     * @param key The requested key
+     * @since 0.2.2.1
+     */
     public static void tInfo(String key) {
         Minecaching.getInstance().getLogger().info(MINECACHING_LOCALIZATION.getTranslation(key));
     }
 
+    /**
+     * Logs the message using the Minecaching {@link Localization} (with substitutions) at the INFO level
+     * @param key The requested key
+     * @param substitutions The substitutions (or format args)
+     * @since 0.2.2.1
+     */
     public static void tInfo(String key, Object... substitutions) {
         Minecaching.getInstance().getLogger().info(MINECACHING_LOCALIZATION.getTranslation(key, substitutions));
     }
@@ -120,10 +132,21 @@ public class MinecachingAPI {
         }
     }
 
+    /**
+     * Logs the message using the Minecaching {@link Localization} at the WARN level
+     * @param key The requested key
+     * @since 0.2.2.1
+     */
     public static void tWarning(String key) {
         Minecaching.getInstance().getLogger().warning(MINECACHING_LOCALIZATION.getTranslation(key));
     }
 
+    /**
+     * Logs the message using the Minecaching {@link Localization} at the INFO level
+     * @param key The requested key
+     * @param substitutions The substitutions (or format args)
+     * @since 0.2.2.1
+     */
     public static void tWarning(String key, Object... substitutions) {
         Minecaching.getInstance().getLogger().warning(MINECACHING_LOCALIZATION.getTranslation(key, substitutions));
     }
@@ -150,7 +173,7 @@ public class MinecachingAPI {
 
     /**
      * Gets the list of {@link PlayerDataObject}s for all players that currently have data
-     * @return The list of PlayerDataObjects for all players that have data.
+     * @return The list of PlayerDataObjects for all players that have data
      * If you want a list of ALL players, use {@link Bukkit#getOfflinePlayers()} or {@link Bukkit#getOnlinePlayers()}
      * @since 0.2.1.0
      */
@@ -161,12 +184,23 @@ public class MinecachingAPI {
     /**
      * Gets the list of {@link PlayerDataObject}s for all players that currently have data and filters it by the predicate
      * @param predicate The method by which to filter out player data
-     * @return The filtered list of PlayerDataObjects for all players that have data.
+     * @return The filtered list of PlayerDataObjects for all players that have data
      * If you want a list of ALL players, use {@link Bukkit#getOfflinePlayers()} or {@link Bukkit#getOnlinePlayers()}
      * @since 0.2.1.0
      */
     public List<PlayerDataObject> getFilteredPlayers(Predicate<PlayerDataObject> predicate) {
-        return PlayerStorage.getInstance().getPlayers().stream().filter(predicate).toList();
+        return getAllKnownPlayers().stream().filter(predicate).toList();
+    }
+
+    /**
+     * Gets the list of {@link PlayerDataObject}s for all players that currently have data and sorts it by the comparator
+     * @param comparator The method by which to sort player data
+     * @return The sorted list of PlayerDataObjects for all players that have data
+     * If you want a list of ALL players, use {@link Bukkit#getOfflinePlayers()} or {@link Bukkit#getOnlinePlayers()}
+     * @since 0.3.0.3
+     */
+    public List<PlayerDataObject> getSortedPlayers(Comparator<PlayerDataObject> comparator) {
+        return getAllKnownPlayers().stream().sorted(comparator).toList();
     }
 
     /**
@@ -240,7 +274,7 @@ public class MinecachingAPI {
 
     /**
      * Gets the list of all known Minecache IDs
-     * @return A list of all Minecache IDs
+     * @return The list of all Minecache IDs
      * @since 0.2.0.0
      */
     public List<String> getAllKnownCacheIDs() {
@@ -249,7 +283,7 @@ public class MinecachingAPI {
 
     /**
      * Gets the list of all invalid Minecaches
-     * @return A list of all invalid Minecaches
+     * @return The list of all invalid Minecaches
      * @since 0.2.0.0
      */
     public List<Minecache> getAllInvalidCaches() {
@@ -259,7 +293,7 @@ public class MinecachingAPI {
     /**
      * Gets the list of all known caches and filters it by the predicate
      * @param predicate The method by which to filter out caches
-     * @return A list of all caches that met the predicate
+     * @return The filtered list of Minecaches.
      * @since 0.2.0.0
      */
     public List<Minecache> getFilteredCaches(Predicate<Minecache> predicate) {
@@ -269,12 +303,33 @@ public class MinecachingAPI {
     /**
      * Gets the list of all known cache IDs and filters it by the predicate
      * @param predicate The method by which to filter out cache IDs
-     * @return A list of all cache IDs that met the predicate
+     * @return The filtered list of Minecache IDs.
      * @since 0.2.0.0
      */
     public List<String> getFilteredCacheIDs(Predicate<String> predicate) {
         return getAllKnownCacheIDs().stream().filter(predicate).toList();
     }
+
+    /**
+     * Gets the list of all known caches and sorts it by the comparator
+     * @param comparator The method by which to sort caches
+     * @return The sorted list of Minecaches.
+     * @since 0.3.0.3
+     */
+    public List<Minecache> getSortedCaches(Comparator<Minecache> comparator) {
+        return getAllKnownCaches().stream().sorted(comparator).toList();
+    }
+
+    /**
+     * Gets the list of all known cache IDs and sorts it by the comparator
+     * @param comparator The method by which to sort cache IDs
+     * @return The sorted list of Minecache IDs.
+     * @since 0.3.0.3
+     */
+    public List<String> getSortedCacheIDs(Comparator<String> comparator) {
+        return getAllKnownCacheIDs().stream().sorted(comparator).toList();
+    }
+
 
     /**
      * Saves a minecache to the file system
@@ -513,7 +568,6 @@ public class MinecachingAPI {
         if (Config.getInstance().experimentalFeatures()) {
             MinecachingAPI.tInfo("plugin.experimental");
         }
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(minecaching, AutoUpdater::checkForUpdate, 0L,36000L);
 
         MinecachingAPI.tInfo("plugin.load", "Localization");
 
@@ -529,7 +583,7 @@ public class MinecachingAPI {
         PlayerStorage.getInstance().load();
         if (Config.getInstance().getPlayerDataVersion() < PLAYER_DATA_VERSION) {
             tWarning("plugin.data.update", "Player Data");
-            if (attemptUpdates) PlayerStorage.getInstance().attemptUpdate();
+            if (attemptUpdates) PlayerStorage.getInstance().updateData();
             else tWarning("plugin.data.update.notattempting", "Player Data");
         }
 
@@ -540,10 +594,6 @@ public class MinecachingAPI {
             if (attemptUpdates) LogbookStorage.getInstance().attemptUpdate();
             else tWarning("plugin.data.update.notattempting", "Logbook Data");
         }
-    }
-
-    public void checkForUpdate() {
-
     }
 
     /**

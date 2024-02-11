@@ -15,13 +15,13 @@ public class Minecache {
     private MinecacheType type;
     private UUID author, maintainer, ftf;
     private World world;
-    private int x, y, z, lx, ly, lz, finds;
+    private int x, y, z, nx, ny, nz, finds;
     private MinecacheStatus status;
     private LocalDateTime hidden;
     private Material blockType;
     private boolean invalidated;
 
-    public Minecache(String id, MinecacheType type, String name, UUID author, World world, int x, int y, int z, int lx, int ly, int lz, UUID ftf, MinecacheStatus status, LocalDateTime hidden, Material blockType, int finds, String code, boolean invalidated) {
+    public Minecache(String id, MinecacheType type, String name, UUID author, World world, int x, int y, int z, int nx, int ny, int nz, UUID ftf, MinecacheStatus status, LocalDateTime hidden, Material blockType, int finds, String code, boolean invalidated) {
         this.id = id;
         this.type = type;
         this.name = name;
@@ -30,9 +30,9 @@ public class Minecache {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.lx = lx;
-        this.ly = ly;
-        this.lz = lz;
+        this.nx = nx;
+        this.ny = ny;
+        this.nz = nz;
         this.ftf = ftf;
         this.status = status;
         this.hidden = hidden;
@@ -75,10 +75,10 @@ public class Minecache {
         return this;
     }
 
-    public Minecache setLodeLocation(Location loc) {
-        this.lx = loc.getBlockX();
-        this.ly = loc.getBlockY();
-        this.lz = loc.getBlockZ();
+    public Minecache setNavLocation(Location loc) {
+        this.nx = loc.getBlockX();
+        this.ny = loc.getBlockY();
+        this.nz = loc.getBlockZ();
         return this;
     }
 
@@ -149,23 +149,23 @@ public class Minecache {
         return z;
     }
 
-    public int lx() {
-        return lx;
+    public int nx() {
+        return nx;
     }
 
-    public int ly() {
-        return ly;
+    public int ny() {
+        return ny;
     }
 
-    public int lz() {
-        return lz;
+    public int nz() {
+        return nz;
     }
 
     public Location location() {
         return new Location(world, x, y, z);
     }
-    public Location lodeLocation() {
-        return new Location(world, lx, ly, lz);
+    public Location navLocation() {
+        return new Location(world, nx, ny, nz);
     }
 
     public UUID ftf() {
@@ -208,9 +208,24 @@ public class Minecache {
         int cX = yaml.getInt(key + ".x");
         int cY = yaml.getInt(key + ".y");
         int cZ = yaml.getInt(key + ".z");
-        int cLX = yaml.getInt(key + ".lx");
-        int cLY = yaml.getInt(key + ".ly");
-        int cLZ = yaml.getInt(key + ".lz");
+        int cNX, cNY, cNZ;
+
+        if (yaml.contains(".lx")) {
+            yaml.set(key + ".nx", yaml.getInt(key + ".lx"));
+            yaml.set(key + ".lx", null);
+        }
+        if (yaml.contains(".ly")) {
+            yaml.set(key + ".ny", yaml.getInt(key + ".ly"));
+            yaml.set(key + ".ly", null);
+        }
+        if (yaml.contains(".lz")) {
+            yaml.set(key + ".nz", yaml.getInt(key + ".lz"));
+            yaml.set(key + ".lz", null);
+        }
+
+        cNX = yaml.getInt(key + ".nx");
+        cNY = yaml.getInt(key + ".ny");
+        cNZ = yaml.getInt(key + ".nz");
         String status = yaml.getString(key + ".status");
         LocalDateTime cHidden;
         String blockType = yaml.getString(key + ".blocktype");
@@ -233,14 +248,14 @@ public class Minecache {
         if (cWorld == null) { cWorld = Bukkit.getWorlds().get(0); isInvalidated = true; }
         Config cfg = Config.getInstance();
         if (cX > cfg.getMaxX() || cX < cfg.getMinX() || cY > cfg.getMaxY() || cY < cfg.getMinY() || cZ > cfg.getMaxZ() || cZ < cfg.getMinZ()
-                || cLX > cfg.getMaxX() || cLX < cfg.getMinX() || cLY > cfg.getMaxY() || cLY < cfg.getMinY() || cLZ > cfg.getMaxZ() || cLZ < cfg.getMinZ()) {
+                || cNX > cfg.getMaxX() || cNX < cfg.getMinX() || cNY > cfg.getMaxY() || cNY < cfg.getMinY() || cNZ > cfg.getMaxZ() || cNZ < cfg.getMinZ()) {
             isInvalidated = true;
         }
-        if (new Location(cWorld, cLX, cLY, cLZ).distance(new Location(cWorld, cX, cY, cZ)) > Config.getInstance().getMaxLodestoneDistance()) {
+        if (new Location(cWorld, cNX, cNY, cNZ).distance(new Location(cWorld, cX, cY, cZ)) > Config.getInstance().getMaxLodestoneDistance()) {
             isInvalidated = true;
         }
 
-        return new Minecache(key, cType, cName, cAuthor, cWorld, cX, cY, cZ, cLX, cLY, cLZ, cFTF, cStatus, cHidden, cBlockType, cFinds, cCode, isInvalidated);
+        return new Minecache(key, cType, cName, cAuthor, cWorld, cX, cY, cZ, cNX, cNY, cNZ, cFTF, cStatus, cHidden, cBlockType, cFinds, cCode, isInvalidated);
     }
 
     public void toYaml(YamlConfiguration yaml, String key) {
@@ -252,14 +267,18 @@ public class Minecache {
         yaml.set(key + ".x", x());
         yaml.set(key + ".y", y());
         yaml.set(key + ".z", z());
-        yaml.set(key + ".lx", lx());
-        yaml.set(key + ".ly", ly());
-        yaml.set(key + ".lz", lz());
+        yaml.set(key + ".nx", nx());
+        yaml.set(key + ".ny", ny());
+        yaml.set(key + ".nz", nz());
         yaml.set(key + ".status", status().getId());
         yaml.set(key + ".hidden", hidden() != null ? hidden().toString() : LocalDateTime.now().toString());
         yaml.set(key + ".blocktype", blockType() != null ? blockType().toString() : "AIR");
         yaml.set(key + ".finds", finds());
         yaml.set(key + ".code", code());
+
+        if (yaml.contains(key + "lx")) yaml.set("lx", null);
+        if (yaml.contains(key + "ly")) yaml.set("ly", null);
+        if (yaml.contains(key + "lz")) yaml.set("lz", null);
     }
 
     public static int compareByTime(Minecache m1, Minecache m2) {

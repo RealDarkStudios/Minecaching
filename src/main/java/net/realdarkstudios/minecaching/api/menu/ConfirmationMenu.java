@@ -4,11 +4,12 @@ import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.item.GoBackMenuItem;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
 
 public class ConfirmationMenu extends MCMenu {
     private MenuItem confirmItem;
@@ -23,8 +24,13 @@ public class ConfirmationMenu extends MCMenu {
     @Override
     public void update(Player player) {
         setItem(11, confirmItem);
-        setItem(15, new GoBackMenuItem(ChatColor.RED + "" + ChatColor.BOLD + "Go Back", new ItemStack(Material.RED_CONCRETE)));
+        setItem(15, new GoBackMenuItem(translation("menu.goback"), new ItemStack(Material.RED_CONCRETE), List.of()));
 
         super.update(player);
+    }
+
+    @Override
+    protected String itemTranslation(String id, Object... substitutions) {
+        return null;
     }
 }

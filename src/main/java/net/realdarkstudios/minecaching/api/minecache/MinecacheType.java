@@ -42,6 +42,4 @@ public enum MinecacheType {
     public String toString() {
         return id.replace("_", "");
     }
-
-
 }

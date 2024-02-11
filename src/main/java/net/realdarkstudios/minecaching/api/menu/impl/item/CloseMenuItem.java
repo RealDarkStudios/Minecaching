@@ -5,9 +5,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class CloseMenuItem extends MenuItem {
-    public CloseMenuItem(String name, ItemStack item) {
-        super(ChatColor.RED + "" + ChatColor.BOLD + "Close", new ItemStack(Material.RED_CONCRETE));
+    public CloseMenuItem(String name, ItemStack item, List<String> lore) {
+        super(ChatColor.RED + "" + ChatColor.BOLD + "Close", new ItemStack(Material.RED_CONCRETE), lore);
     }
 
     @Override

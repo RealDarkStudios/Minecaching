@@ -1,9 +1,9 @@
 package net.realdarkstudios.minecaching.api.player;
 
 import net.realdarkstudios.minecaching.Minecaching;
-import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
+import net.realdarkstudios.minecaching.api.misc.Config;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -84,34 +84,23 @@ public class PlayerStorage {
         this.playerStorage = players;
     }
 
-    public boolean deletePlayerData(PlayerDataObject plr) {
-        try {
-            List<String> plrs = yaml.get("PLAYERS") == null ? new ArrayList<>() : (List<String>) yaml.get("PLAYERS");
-            plrs.removeAll(Collections.singleton(plr.getUniqueID().toString()));
+    public int
+    totalFinds() {
+        int finds = 0;
 
-            yaml.set("PLAYERS", plrs);
-
-            save();
-            updateMaps();
-            return true;
-        } catch (Exception e) {
-            return false;
+        for (PlayerDataObject pdo: getPlayers()) {
+            finds += pdo.getFinds().size();
         }
+
+        return finds;
+    }
+
+    public boolean deletePlayerData(PlayerDataObject plr) {
+        return deletePlayerData(plr.getUniqueID());
     }
 
     public boolean deletePlayerData(Player plr) {
-        try {
-            List<String> plrs = yaml.get("PLAYERS") == null ? new ArrayList<>() : (List<String>) yaml.get("PLAYERS");
-            plrs.removeAll(Collections.singleton(plr.getUniqueId().toString()));
-
-            yaml.set("PLAYERS", plrs);
-
-            save();
-            updateMaps();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        return deletePlayerData(plr.getUniqueId());
     }
 
     public boolean deletePlayerData(UUID uuid) {
@@ -130,14 +119,7 @@ public class PlayerStorage {
     }
 
     public PlayerDataObject createPlayerData(Player plr) {
-        List<String> plrs = yaml.get("PLAYERS") == null ? new ArrayList<>() : (List<String>) yaml.get("PLAYERS");
-        plrs.add(plr.getUniqueId().toString());
-        yaml.set("PLAYERS", plrs);
-
-        save();
-        updateMaps();
-
-        return PlayerDataObject.get(plr.getUniqueId());
+        return createPlayerData(plr.getUniqueId());
     }
 
     public PlayerDataObject createPlayerData(UUID uuid) {
@@ -152,7 +134,7 @@ public class PlayerStorage {
     }
 
     public boolean hasPlayerData(Player plr) {
-        return playerStorage.containsKey(plr.getUniqueId());
+        return hasPlayerData(plr.getUniqueId());
     }
 
     public boolean hasPlayerData(UUID uuid) {
@@ -160,7 +142,7 @@ public class PlayerStorage {
     }
 
     public PlayerDataObject getPlayerData(Player plr) {
-        return playerStorage.get(plr.getUniqueId());
+        return getPlayerData(plr.getUniqueId());
     }
 
     public PlayerDataObject getPlayerData(UUID uuid) {
@@ -168,8 +150,7 @@ public class PlayerStorage {
     }
 
     public PlayerDataObject getOrCreatePlayerData(Player plr) {
-        if (hasPlayerData(plr)) return getPlayerData(plr);
-        else return createPlayerData(plr);
+        return getOrCreatePlayerData(plr.getUniqueId());
     }
 
     public PlayerDataObject getOrCreatePlayerData(UUID uuid) {
@@ -201,11 +182,11 @@ public class PlayerStorage {
         return INSTANCE;
     }
 
-    public void attemptUpdate() {
+    public void updateData() {
         try {
             if (playerStorage != null) {
                 for (PlayerDataObject plr : playerStorage.values()) {
-                    plr.attemptUpdate();
+                    plr.updateData();
                 }
             }
 

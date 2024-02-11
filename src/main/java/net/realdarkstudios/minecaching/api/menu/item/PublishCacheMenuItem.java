@@ -11,11 +11,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class PublishCacheMenuItem extends MenuItem {
     private final Minecache cache;
     
     public PublishCacheMenuItem(Minecache cache) {
-        super(ChatColor.GREEN + "Publish " + cache.id(), new ItemStack(Material.GREEN_CONCRETE));
+        this(ChatColor.DARK_GREEN + translation("menu.data.item.publish") + cache.id(), new ItemStack(Material.GREEN_CONCRETE), List.of(), cache);
+    }
+
+    public PublishCacheMenuItem(String nameKey, ItemStack stack, List<String> lore, Minecache cache) {
+        super(nameKey, stack, lore);
         this.cache = cache;
     }
 

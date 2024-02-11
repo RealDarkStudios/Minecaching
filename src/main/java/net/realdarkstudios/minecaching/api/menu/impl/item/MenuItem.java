@@ -1,27 +1,27 @@
 package net.realdarkstudios.minecaching.api.menu.impl.item;
 
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
  *
  */
 public class MenuItem {
-    private static Sound buttonClickSound = Sound.UI_BUTTON_CLICK;
-    private final String name;
-    private final ItemStack item;
-    private final List<String> lore;
+    protected static final Sound buttonClickSound = Sound.UI_BUTTON_CLICK;
+    protected final String name;
+    protected final ItemStack item;
+    protected final List<String> lore;
 
-    public MenuItem(String name, ItemStack item, String... lore) {
+    public MenuItem(String name, ItemStack item, List<String> lore) {
         this.name = name;
         this.item = item;
-        this.lore = Arrays.stream(lore).toList();
+        this.lore = lore;
     }
 
     public String getName() {
@@ -54,5 +54,9 @@ public class MenuItem {
         if (!getLore().isEmpty()) meta.setLore(getLore());
         stack.setItemMeta(meta);
         return stack;
+    }
+
+    protected static String translation(String key, Object... substitutions) {
+        return MinecachingAPI.getLocalization().getTranslation(key, substitutions);
     }
 }

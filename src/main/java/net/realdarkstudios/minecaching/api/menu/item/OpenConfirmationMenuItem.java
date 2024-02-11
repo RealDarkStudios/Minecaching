@@ -6,13 +6,20 @@ import net.realdarkstudios.minecaching.api.menu.ConfirmationMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 public class OpenConfirmationMenuItem extends MenuItem {
     private final MenuItem confirmItem;
     private final MCMenu parent;
 
+    public OpenConfirmationMenuItem(String name, ItemStack stack, List<String> lore, MCMenu parent) {
+        this(new MenuItem(name, stack, lore), parent);
+    }
+
     public OpenConfirmationMenuItem(MenuItem confirmItem, MCMenu parent) {
-        super(confirmItem.getName(), confirmItem.getItem());
+        super(confirmItem.getName(), confirmItem.getItem(), confirmItem.getLore());
         this.confirmItem = confirmItem;
         this.parent = parent;
     }

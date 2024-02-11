@@ -11,12 +11,12 @@ public enum MinecacheStatus {
     REVIEWING("reviewing", "R", ChatColor.YELLOW),
     INVALID("invalid", "I", ChatColor.DARK_RED);
 
-    private final String id, strForm;
+    private final String id, character;
     private final ChatColor color;
 
-    MinecacheStatus(String id, String strForm, ChatColor color) {
+    MinecacheStatus(String id, String character, ChatColor color) {
         this.id = id;
-        this.strForm = strForm;
+        this.character = character;
         this.color = color;
     }
 
@@ -39,12 +39,16 @@ public enum MinecacheStatus {
         return color;
     }
 
+    public String getCharacter() {
+        return character;
+    }
+
     public String getId() {
         return id;
     }
 
     @Override
     public String toString() {
-        return strForm;
+        return character;
     }
 }

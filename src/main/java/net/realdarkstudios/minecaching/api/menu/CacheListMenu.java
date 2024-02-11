@@ -35,4 +35,9 @@ public class CacheListMenu extends PaginationMenu {
 
         return menuItems;
     }
+
+    @Override
+    protected String itemTranslation(String id, Object... substitutions) {
+        return null;
+    }
 }

@@ -18,7 +18,7 @@ public class CacheTypeMenuItem extends MultiStateMenuItem {
 
         PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(event.getPlayer());
 
-        pdo.setCache(pdo.getCache().setType(MinecacheType.get(getCurrentState().id())));
+        pdo.setCreatingCache(pdo.getCreatingCache().setType(MinecacheType.get(getCurrentState().id())));
         event.setUpdate(true);
     }
 }

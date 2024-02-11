@@ -22,7 +22,7 @@ public class PlayerDataObject {
     private ArrayList<String> finds, ftfs, hides;
     private ArrayList<Notification> notifications;
     private String locatingId;
-    private Minecache newCache, editingCache;
+    private Minecache creatingCache, editingCache;
     private YamlConfiguration yaml;
     private File file;
 
@@ -39,7 +39,7 @@ public class PlayerDataObject {
         this.hides = yHides;
         this.finds = yFinds;
         this.locatingId = yaml.getString("locating_id") == null ? "NULL" : yaml.getString("locating_id");
-        this.newCache = useEmptyMinecache ? Minecache.EMPTY : Minecache.fromYaml(yaml, "cache");
+        this.creatingCache = useEmptyMinecache ? Minecache.EMPTY : Minecache.fromYaml(yaml, "cache");
         this.editingCache = useEmptyMinecache ? Minecache.EMPTY : Minecache.fromYaml(yaml, "editing");
 
         ArrayList<Notification> yNotifs = new ArrayList<>();
@@ -82,8 +82,8 @@ public class PlayerDataObject {
         saveData();
     }
 
-    public Minecache getCache() {
-        return newCache;
+    public Minecache getCreatingCache() {
+        return creatingCache;
     }
     public Minecache getEditingCache() {
         return editingCache;
@@ -141,8 +141,8 @@ public class PlayerDataObject {
         return this.yaml.contains("notifications." + id);
     }
 
-    public void setCache(Minecache newCache) {
-        this.newCache = newCache;
+    public void setCreatingCache(Minecache creatingCache) {
+        this.creatingCache = creatingCache;
         saveData();
     }
 
@@ -166,7 +166,7 @@ public class PlayerDataObject {
         this.hides = yHides;
         this.finds = yFinds;
         this.locatingId = yaml.getString("locating_id") == null ? "NULL" : yaml.getString("locating_id");
-        this.newCache = Minecache.fromYaml(yaml, "cache");
+        this.creatingCache = Minecache.fromYaml(yaml, "creating");
         this.editingCache = Minecache.fromYaml(yaml, "editing");
 
         ArrayList<Notification> yNotifs = new ArrayList<>();
@@ -177,7 +177,7 @@ public class PlayerDataObject {
         }
         this.notifications = yNotifs;
 
-        newCache.setID(yaml.getString("cache_id") == null ? "NULL" : yaml.getString("cache_id"));
+        creatingCache.setID(yaml.getString("creating_id") == null ? "NULL" : yaml.getString("creating_id"));
         editingCache.setID(yaml.getString("editing_id") == null ? "NULL" : yaml.getString("editing_id"));
     }
 
@@ -186,8 +186,8 @@ public class PlayerDataObject {
         yaml.set("hides", this.hides);
         yaml.set("finds", this.finds);
         yaml.set("locating_id", this.locatingId);
-        yaml.set("cache_id", this.newCache.id());
-        newCache.toYaml(yaml, "cache");
+        yaml.set("creating_id", this.creatingCache.id());
+        creatingCache.toYaml(yaml, "creating");
         yaml.set("editing_id", this.editingCache.id());
         editingCache.toYaml(yaml, "editing");
 
@@ -221,8 +221,6 @@ public class PlayerDataObject {
         update();
     }
 
-
-
     public void save() {
         try {
             yaml.save(file);
@@ -231,8 +229,19 @@ public class PlayerDataObject {
         }
     }
 
-    public boolean attemptUpdate() {
+    public boolean updateData() {
         update();
+
+        // Accounts for the renaming from cache/cache_id -> creating/creating_id
+        if (yaml.contains("cache")) {
+            yaml.set("creating", yaml.get("cache"));
+            yaml.set("cache", null);
+        }
+
+        if (yaml.contains("cache_id")) {
+            yaml.set("creating_id", yaml.getString("cache_id"));
+            yaml.set("cache_id", null);
+        }
 
         get(uniqueID);
 
@@ -256,9 +265,9 @@ public class PlayerDataObject {
                 yaml.set("hides", List.of());
                 yaml.set("finds", List.of());
                 yaml.set("locating_id", "NULL");
-                Minecache.EMPTY.toYaml(yaml, "cache");
+                Minecache.EMPTY.toYaml(yaml, "creating");
                 Minecache.EMPTY.toYaml(yaml, "editing");
-                yaml.set("cache_id", "NULL");
+                yaml.set("creating_id", "NULL");
                 yaml.set("editing_id", "NULL");
             } catch (Exception e) {
                 MinecachingAPI.tWarning("error.plugin.createfile", uuid + ".yml");

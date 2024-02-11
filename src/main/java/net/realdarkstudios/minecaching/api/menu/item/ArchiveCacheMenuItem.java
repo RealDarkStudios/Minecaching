@@ -11,11 +11,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class ArchiveCacheMenuItem extends MenuItem {
     private final Minecache cache;
 
     public ArchiveCacheMenuItem(Minecache cache) {
-        super(ChatColor.DARK_GRAY + "Archive " + cache.id(), new ItemStack(Material.BLACK_CONCRETE));
+        this(ChatColor.DARK_GRAY + translation("menu.data.item.archive"), new ItemStack(Material.BLACK_CONCRETE), List.of(), cache);
+    }
+
+    public ArchiveCacheMenuItem(String name, ItemStack item, List<String> lore, Minecache cache) {
+        super(name, item, lore);
         this.cache = cache;
     }
 

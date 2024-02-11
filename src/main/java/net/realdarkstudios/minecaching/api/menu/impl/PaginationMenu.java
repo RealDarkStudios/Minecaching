@@ -32,9 +32,9 @@ public abstract class PaginationMenu extends MCMenu {
             setItem(i + 9, new PaginationMenuItem(this, i));
         }
 
-        setItem(0, new PaginationPageItem(this, "Back", -1));
-        setItem(7, new RefreshPaginationMenuItem(this, ChatColor.GRAY + "Refresh", new ItemStack(Material.LIGHT_GRAY_TERRACOTTA)));
-        setItem(8, new PaginationPageItem(this, "Next", 1));
+        setItem(0, new PaginationPageItem(this, translation("menu.list.prev"), -1));
+        setItem(7, new RefreshPaginationMenuItem(this, ChatColor.GRAY + translation("menu.list.refresh"), new ItemStack(Material.LIGHT_GRAY_TERRACOTTA), List.of()));
+        setItem(8, new PaginationPageItem(this, translation("menu.list.next"), 1));
         fillEmptySlots();
     }
 
@@ -62,5 +62,4 @@ public abstract class PaginationMenu extends MCMenu {
             pages.put(player.getUniqueId(), new AtomicInteger());
         }
     }
-
 }

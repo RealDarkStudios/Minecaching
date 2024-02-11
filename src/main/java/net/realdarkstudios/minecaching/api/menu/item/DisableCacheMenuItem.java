@@ -11,11 +11,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class DisableCacheMenuItem extends MenuItem {
     private final Minecache cache;
 
     public DisableCacheMenuItem(Minecache cache) {
-        super(ChatColor.GRAY + "Disable " + cache.id(), new ItemStack(Material.GRAY_CONCRETE));
+        this(ChatColor.GRAY + translation("menu.data.item.disable"), new ItemStack(Material.BLACK_CONCRETE), List.of(), cache);
+    }
+
+    public DisableCacheMenuItem(String name, ItemStack stack, List<String> lore, Minecache cache) {
+        super(name, stack, lore);
         this.cache = cache;
     }
 

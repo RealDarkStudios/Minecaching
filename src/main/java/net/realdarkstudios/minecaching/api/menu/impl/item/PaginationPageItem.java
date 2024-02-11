@@ -6,13 +6,15 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class PaginationPageItem extends MenuItem {
 
     private final PaginationMenu menu;
     private final int modifier;
 
     public PaginationPageItem(PaginationMenu menu, String name, int modifier) {
-        super(name, new ItemStack(Material.SPRUCE_BUTTON));
+        super(name, new ItemStack(Material.SPRUCE_BUTTON), List.of());
         this.menu = menu;
         this.modifier = modifier;
     }

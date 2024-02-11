@@ -5,9 +5,10 @@ import net.realdarkstudios.minecaching.api.menu.impl.item.GoBackMenuItem;
 import net.realdarkstudios.minecaching.api.menu.item.*;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
 
 public class CacheDataMenu extends MCMenu {
     protected Minecache cache;
@@ -16,32 +17,30 @@ public class CacheDataMenu extends MCMenu {
         super(title, MenuSize.THREE_ROW, plugin);
         this.cache = cache;
 
-        setItem(0, new GoBackMenuItem("Back", new ItemStack(Material.RED_CONCRETE)));
-        setItem(4, new CacheMenuItem(cache));
-        setItem(8, new DeleteCacheMenuItem("Delete", new ItemStack(Material.BLACK_CONCRETE), cache, "This WILL delete this cache FOREVER!"));
+        setItem(0, new GoBackMenuItem(translation("menu.goback"), new ItemStack(Material.RED_CONCRETE), List.of()));
+        setItem(4, new CacheMenuItem(itemTranslation("preview", cache.id(), cache.name()), cache));
+        setItem(8, new OpenConfirmationMenuItem(new DeleteCacheMenuItem(itemTranslation("delete"), new ItemStack(Material.BLACK_CONCRETE), List.of("This WILL delete this cache FOREVER!"), cache), this));
+        setItem(18, new EditCacheMenuItem(cache));
         switch(cache.status()) {
             case REVIEWING -> {
-                //publish, edit
-                setItem(18, new EditCacheMenuItem(cache));
-                setItem(22, new PublishCacheMenuItem(cache));
+                //publish
+                setItem(22, new OpenConfirmationMenuItem(new PublishCacheMenuItem(cache), this));
             }
             case PUBLISHED -> {
-                //edit, disable, archive
-                setItem(18, new EditCacheMenuItem(cache));
-                setItem(21, new DisableCacheMenuItem(cache));
-                setItem(23, new ArchiveCacheMenuItem(cache));
+                //disable, archive
+                setItem(21, new OpenConfirmationMenuItem(new DisableCacheMenuItem(cache), this));
+                setItem(23, new OpenConfirmationMenuItem(new ArchiveCacheMenuItem(cache), this));
             }
             case DISABLED -> {
-                //edit, publish, archive
-                setItem(18, new EditCacheMenuItem(cache));
-                setItem(21, new PublishCacheMenuItem(cache));
-                setItem(23, new ArchiveCacheMenuItem(cache));
+                //publish, archive
+                setItem(21, new OpenConfirmationMenuItem(new PublishCacheMenuItem(cache), this));
+                setItem(23, new OpenConfirmationMenuItem(new ArchiveCacheMenuItem(cache), this));
             }
         }
     }
 
     @Override
-    public void update(Player player) {
-
+    protected String itemTranslation(String id, Object... substitutions) {
+        return translation("menu.data.item." + id, substitutions);
     }
 }

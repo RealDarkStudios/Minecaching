@@ -1,9 +1,12 @@
 package net.realdarkstudios.minecaching.api.menu.impl;
 
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.menu.impl.item.ErrorMenuItem;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -12,31 +15,41 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
 import java.util.UUID;
 
-public class MCMenu {
+public abstract class MCMenu {
     private JavaPlugin plugin;
-    private String name;
+    private String name, titleKey;
     private MenuSize size;
     private MenuItem[] items;
     private MCMenu parent;
 
-    public static final MenuItem EMPTY_SLOT_ITEM = new MenuItem("", new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1, DyeColor.GRAY.getDyeData()));
+    public static final MenuItem EMPTY_SLOT_ITEM = new MenuItem("", new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1, DyeColor.GRAY.getDyeData()), List.of());
 
-    public MCMenu(String name, MenuSize size, JavaPlugin plugin, MCMenu parent) {
+    public static MenuItem errorItem(String nameKey, Object... substitutions) {
+        return new ErrorMenuItem(nameKey, new ItemStack(Material.BEDROCK), List.of());
+    }
+
+    public MCMenu(String titleKey, MenuSize size, JavaPlugin plugin, MCMenu parent, Object... substitutions) {
         this.plugin = plugin;
-        this.name = name;
+        this.titleKey = titleKey;
+        this.name = MinecachingAPI.getLocalization().getTranslation(titleKey, substitutions);
         this.size = size;
         this.items = new MenuItem[size.getSlotCount()];
         this.parent = parent;
     }
 
-    public MCMenu(String name, MenuSize size, JavaPlugin plugin) {
-        this(name, size, plugin, null);
+    public MCMenu(String titleKey, MenuSize size, JavaPlugin plugin, Object... substitutions) {
+        this(titleKey, size, plugin, null, substitutions);
+    }
+
+    public String getTitleKey() {
+        return titleKey;
     }
 
     public String getName() {
-        return name;
+        return name.equals("Translation Not Found") ? titleKey : name;
     }
 
     public String getName(Player player) {
@@ -171,6 +184,24 @@ public class MCMenu {
         public int getSlotCount() {
             return slotCount;
         }
+    }
+
+    protected boolean coordCheck(Location loc) {
+        return !loc.equals(new Location(loc.getWorld(), 0, 0, 0));
+    }
+
+    protected boolean stringCheck(String str) {
+        return str != null && !str.isEmpty();
+    }
+
+    abstract protected String itemTranslation(String id, Object... substitutions);
+
+    protected String dataTranslation(String id, Object... substitutions) {
+        return translation("menu.data.item." + id, substitutions);
+    }
+
+    protected String translation(String id, Object... substitutions) {
+        return MinecachingAPI.getLocalization().getTranslation(id, substitutions);
     }
 }
 

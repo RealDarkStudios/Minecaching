@@ -10,7 +10,6 @@ public class MCMenus {
     private static final MCMenus INSTANCE = new MCMenus();
     private final HashMap<PlayerDataObject, AddCacheMenu> addCacheMenus = new HashMap<>();
     private final HashMap<PlayerDataObject, EditCacheMenu> editCacheMenus = new HashMap<>();
-    private final HashMap<PlayerDataObject, CacheListMenu> cacheListMenus = new HashMap<>();
 
     private MCMenus() {
     }
@@ -39,19 +38,6 @@ public class MCMenus {
 
     public void releaseEditCacheMenu(PlayerDataObject pdo) {
         editCacheMenus.remove(pdo);
-    }
-
-    public CacheListMenu getCacheListMenu(PlayerDataObject pdo) {
-        if (cacheListMenus.containsKey(pdo)) return cacheListMenus.get(pdo);
-        else {
-            CacheListMenu menu = new CacheListMenu("Server Caches", Minecaching.getInstance());
-            cacheListMenus.put(pdo, menu);
-            return menu;
-        }
-    }
-
-    public void releaseCacheListMenu(PlayerDataObject pdo) {
-        cacheListMenus.remove(pdo);
     }
 
     public static MCMenus get() {

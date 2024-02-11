@@ -1,0 +1,442 @@
+HOW TO READ:
+
+VERSION
+- Changes listed
+
+{ UPDATE NAME (only 0.1.7.0 and up) }
+[edited text or clarifications]
+
+CHANGELOG:
+
+0.3.0.3-SNAPSHOT-1
+Added:
+- CHANGELOG.txt
+- ErrorMenuItem
+- MCMenu#errorItem
+- MCMenu#translation
+- MCMenu#dataTranslation
+- MCMenu#itemTranslation
+- MenuItem#translation
+- MinecachingAPI#getSortedCaches
+- MinecachingAPI#getSortedCacheIDs
+- MinecachingAPI#getSortedPlayers
+- MinecacheStatus#getCharacter
+- PlayerStorage#totalFinds
+
+Removed:
+- NumberIncreaseItem
+- LocalizationProvider.serverLocale
+- LogType.msg
+- MCMenus.cacheListMenus
+- MCMenus#getCacheListMenu
+- MCMenus#releaseCacheListMenu
+- NotificationType.translationKey
+
+Refactors:
+- AddCacheLodeCoordMenuItem -> AddCacheNavCoordMenuItem
+- EditCacheLodeCoordMenuItem -> EditCacheNavCoordMenuItem
+- PlayerDataObject#getCache -> PlayerDataObject#getCreatingCache
+- PlayerDataObject#setCache -> PlayerDataObject#setCreatingCache
+- Minecache#lx -> Minecache#nx
+- Minecache#ly -> Minecache#ny
+- Minecache#lz -> Minecache#nz
+- Minecache#lodeLocation -> Minecache#navLocation
+- Minecache#setLodeLocation -> Minecache#setNavLocation
+- Utils#generateID -> Utils#generateCacheID
+- Utils#validateCoordinate -> Utils#interpretCoordinate
+- Utils#validateLocation -> Utils#locationInvalid
+- MenuItem constructor (String, ItemStack, String...) -> (String, ItemStack, List<String>)
+
+Changes:
+- Made MCMenu abstract
+- All menu strings should now be translated
+- Changed /mca version to /mca data
+- Added more information to /mca data
+- Minecache Data Version is now 4
+- Changed 'String... lore' in MenuItem constructor to be a List<String>
+- Made publishing, disabled, and archiving confirmation menus in the cache context menu
+- Edit Cache Menus now say "Editing <ID>"
+- Other general code improvements
+
+0.3.0.2
+- Added /listcaches menu and cache context menu
+- Added archive, disable, and publish menu items
+- Added pagination menu
+- MenuItem#getIcon now takes a Player parameter
+- Added MinecacheStatus#getTranslation
+- Added button click sound
+
+0.3.0.2-SNAPSHOT-1
+- Auto Update checker now checks every 30m, instead of 10m
+- Made it so that /mcadmin does not request the database (for spam/attacks), instead it uses the 30m check result
+- GUI MENUS
+- /addcache and /editcache are now in menus (experimental features must be on)
+- All items now have the lore field because of ambiguity :sigh:
+
+0.3.0.1
+- (BUGFIX) Deleting a Minecache would not delete its logbook
+- (BUGFIX) MinecacheDeletedEvent would throw an error if using MinecacheDeletedEvent#getAuthor and the author was not online
+- AutoUpdater now checks for new versions every 10 minutes
+- Added comments
+- Renamed AutoUpdater#getNewestVersion
+- Added javadocs to AutoUpdater
+- Added deprecation notice to AutoUpdater#checkForUpdateOld
+
+0.3.0.1-SNAPSHOT-2
+- Added new auto-update version checker since the old one has some issues
+- /mcadmin command now checks for a new version when run
+- Auto-updater messages have been localized
+
+0.3.0.1-SNAPSHOT-1
+- All API classes have been further separated out into classes. The MinecachingAPI class still remains in the same spot, as to not majorly break things
+- All minecache-related events have been put in a minecache package
+- Renamed AutoUpdater#hasUpdate
+- Added update notification for players with the minecaching.admin permission
+- Added GUI Menu framework, no menus currently exist yet
+
+0.3.0.0
+- (BUGFIX) LocalizationProvider pluginMap being null
+- Added Auto-updater
+- Added config options AUTO_UPDATE (true), UPDATE_BRANCH (release), and EXPERIMENTAL_FEATURES (false)
+- Config version is now 8
+- Renamed Config#getDebugEvents to Config#debugEvents
+- (BUGFIX) Server could not start if player list was empty in players.yml
+- (BUGFIX) Player data was never properly created
+- (BUGFIX) Deleting all files and reloading the plugin caused it to throw an error
+
+{ GUI Menus & Enhancements }
+
+0.2.2.3
+- Fixed some usage messages showing up twice
+- Made LocalizationProvider multi-plugin compatible, opting to split getTranslation and hasTranslation into a Localization class.
+- Added MinecachingAPI#getLocalization
+- Removed action logging in MCEventHandler#onInventoryClick
+
+0.2.2.3-SNAPSHOT-2
+- Added notifications for edited/flagged caches
+- Fixed a usage error in LocateCacheCommand
+- Fixed multiple log/localization-related stuff in LogCacheCommand
+- MCEventHandler#onPlayerLogin code now runs 40 ticks later as to show up after the login/other messages
+- Made it so that if you publish/disable/archive/delete a cache, you do not get a notification
+- Added PlayerDataObject#hasNotification
+
+0.2.2.3-SNAPSHOT-1
+- Renamed MinecacheStatus#NEEDS_REVIEWING to REVIEWING
+- Added basic notification system, almost function except there is an issue with notifications sent to people who log on
+- Removed LogType messages, instead they are translated now
+- Added notifications field to PlayerDataObject
+- Player Data Version is now 4
+- Updated MinecachingAPI#deleteMinecache to add player field
+
+0.2.2.2
+- Added ArchiveCacheCommand and DisableCacheCommand
+- Renamed VerifyCacheCommand to PublishCacheCommand
+- MinecacheStatus#VERIFIED has been renamed to PUBLISHED, and the id from ACTIVE to PUBLISHED
+- Updated PublishCacheCommand
+- 2 new events, MinecacheArchivedEvent and MinecacheDisabledEvent
+- MinecacheVerifiedEvent has been renamed to MinecachePublishedEvent
+- Update @since versions in all events
+- Renamed MCPluginMessages to MCMessages
+- Added MinecachingAPI#archiveMinecache and MinecachingAPI#disableMinecache
+- Renamed MinecachingAPI#verifyMinecache to MinecachingAPI#publishMinecache
+
+0.2.2.1
+- Most, if not all plugin messages should be translated except those before the localization loads or when disabling
+
+0.2.2.1-SNAPSHOT-1
+- All commands should now be translation-based
+- Added LocalizationProvider#hasTranslation
+- Added LocalizationProvider#getTranslation with format argument support
+- Fixed Utils#validateCoordinate not properly validating lodestone x, y, and z coords
+- Added TextComponentBuilder#fromTranslation
+- Changed deletecache permission node from minecaching.delcache to minecaching.deletecache
+- Added a whole variety of methods to MCPluginMessages
+- Added MinecachingAPI#tInfo and MinecachingAPI#tWarning
+
+0.2.2.0
+- Added LocalizationProvider
+- New Config option: LOCALE
+- Config Version is now 7
+- MCAdminCommand now says the server version
+
+{ Notification & Localization Update }
+
+0.2.1.5
+- Changed Versioning Scheme [old was 2.0.1.5, new is 0.2.1.5 as these versions are still beta and should not be 1.0.0.0 or above]
+- Added v0.2.1 API documentation
+
+0.2.1.4
+- Add Config option for Lodestone-based Locating
+- Config Version is now 6
+- Changed LogType#REQUEST_REVIEW message to 'Flagged on'
+- MinecacheCreatedEvent should now set the cache correctly
+- Added Utils#uuidName
+- Verifying a cache now automatically adds a publish log
+- LogCreatedEvent now takes a UUID, rather than a Player. MCDebugEventHandler has been updated accordingly
+
+0.2.1.3
+- Added LogbookCommand
+- Updated README.md
+- Made author's name show as gold in logbooks
+- Fixed Logbook Book calculation
+
+0.2.1.2
+- Added LogbookGenerator
+- New Event, LogCreatedEvent
+- Updated logcache usage in plugin.yml
+- Renamed Utils#generateCode to Utils#generateRandomString
+- PlayerStorage#deletePlayerData now returns a boolean
+- LogbookStorage#deleteLogbook now returns a boolean
+- MinecachingAPI now holds the expected data versions, not Minecaching. Commands/Storages have been updated accordingly
+- Moved MinecachingAPI#deletePlayerData and Logbook-related methods
+- Permuted the arguments of Minecache, and Minecache.EMPTY is now invalid by default
+- Added LogType#PUBLISH and reworded some of the messages
+- Updated LogCacheCommand
+- Added LogbookDataObject methods
+- Added isFTF parameter to Log, and added constant Log.EMPTY
+- Update LocateCacheCommand
+- Made MULTIs disabled by default
+
+0.2.1.2-SNAPSHOT-1
+- Added MinecachingAPI#load and MinecachingAPI#save
+- Updated MinecachingAPI#update to include LogbookStorage
+- All load(), save(), and update() methods were made package-private. attemptUpdate() still remains public
+- Added /locate compass functionality
+- /locate now checks for a preexisting lodestone and if other players are locating that cache right now before placing/breaking the lodestone
+- Attempted to fix [Multiplayer Lodestone Issues]
+- Fixed some cases for [player getting rid of locate compass] , still have to look into it further
+- /mca version now says the server version
+- MinecachingAPI now has the expected data versions
+
+0.2.1.1
+- Rename [Logbook/Player]StorageObject to [Logbook/Player]DataObject
+- Update the [Logbook/Player]DataObject#attemptUpdate
+- Log data folder is now /logbook/ instead of /logs/
+
+0.2.1.0
+- Updated Log to make most fields final
+- Updated LogType to include color; this is for the logbook later
+
+{ Find V2 & Logbooks }
+
+0.2.0.7
+- Added README.md
+- Added javadoc to MCDebugEventHandler
+- Changed some permission nodes to make more sense with the others
+
+0.2.0.6
+- Added MinecacheEditedEvent
+- Added MinecacheEditedEvent documentation
+- Made it so that caches don't get verified if the event is cancelled
+
+0.2.0.5
+- Added MinecachingAPI#verifyMinecache documentation
+- Added MinecacheVerifiedEvent documentation
+
+0.2.0.5-SNAPSHOT-1
+- Added MinecacheVerifiedEvent
+- Added MinecachingAPI#verifyMinecache
+
+0.2.0.4
+- Switched order of parameters in MinecacheFoundEvent
+- Added StartLocatingMinecacheEvent and StopLocatingMinecacheEvent
+- Added BaseEvent, CancellableBaseEvent, and MinecacheEvent
+- PlayerDataObject's now have a locatingId field
+- Player Data Version is now 3
+- Added more checks to LocateCacheCommand, specifically with regard to the locatingId field
+- Added Javadocs to all events
+- MinecachingAPI#getMinecache now returns Minecache.EMPTY when cacheId is "NULL" (signifying that no cache is being stored in player data)
+
+0.2.0.3
+- Added new config options, DEBUG_EVENTS and DEBUG_EVENTS_LEVEL
+- Config version is now 5
+- /mca version now says the status of debug logging
+- MCDebugEventHandler (previously MCEventHandler) now only logs debug messages
+- Added maven deployment
+
+0.2.0.2
+- New event, MinecacheDeletedEvent
+
+0.2.0.1
+- New event, MinecacheCreatedEvent
+- Made MinecacheFoundEvent cancellable
+
+0.2.0.0
+- A dedicated class for API-type calls now exists, MinecachingAPI
+- MinecacheStorage and PlayerStorage's methods were largely made package-private, and commands have been updated to use the API instead
+- An experimental event has been created, MinecacheFoundEvent
+
+{ API & Events Update }
+
+0.1.8.0
+- /addcache should now correctly identify empty codes
+- /deletecache should now delete finds and ftfs for that cache
+- /findcache should now set the caches FTF field instantly
+- PlayerStorage null checks
+
+{ Bugfixing }
+
+0.1.7.3
+- Renamed the old /findcache command to /locatecache
+- Added (new) /findcache command
+- Added NEEDS_MAINTENANCE status
+- Added code null checks
+- Deleting a minecache should now remove it from the author's finds
+
+0.1.7.2
+- Added /editcache code tab completion
+
+0.1.7.1
+- Replace minecaches.yml during update attempt
+
+0.1.7.0:
+- Minecache Data Version is now 3
+- New Minecache field, code
+- Add permission check in /mcadmin
+- /deletecache should now delete the hide from the author
+- /findcache now points to the lodestone coordinates, instead of the cache coordinates
+- /findcache cleanup
+
+{ Finding Caches 2 }
+
+0.1.6.7
+- /editcache 1 argument check now only runs if the argument starts with "MC-"
+
+0.1.6.6
+- /editcache tab completion fix, was using PlayerStorageObject#getCache instead of PlayerStorageObject#getEditingCache
+
+0.1.6.5
+- /editcache tab completion and general fixes
+- config.yml now has player
+- PlayerStorage and MinecacheStorage now save config after attempted updates
+
+0.1.6.4
+- Add /editcache command
+- Make /findcache say ~X instead of within X blocks
+- Player Version is now 2
+- Updated MinecacheStatus.ACTIVE to VERIFIED
+
+0.1.6.3
+- Assign default value for FIND_LODESTONE_DISTANCE in Config#attemptUpdate
+
+0.1.6.2
+- Save config and player storage after update
+
+0.1.6.1
+- Reload config during attempted update
+
+0.1.6.0
+- Config update to Version 3
+  - Added FIND_LODESTONE_DISTANCE
+  - Added comments
+- /findcache now respects config FIND_LODESTONE_DISTANCE
+
+0.1.5.19
+- /addcache tab completion fix
+
+0.1.5.18
+- /addcache tab completion fix
+- /addcache fix cache null check
+
+0.1.5.17
+- Add PlayerStorage#getOrCreatePlayerData
+- Simplify /addcache
+- (hopefully) reset cache id when saving or cancelling
+
+0.1.5.16
+- Set cache ID to NULL upon completing creation
+
+0.1.5.15
+- Fix ClassCastException in PlayerStorageObject#<init>
+
+0.1.5.14
+- Fix ClassCastException in PlayerStorageObject#update
+
+0.1.5.13
+- Change all lists in PlayerStorageObject to be ArrayLists
+(Fixes UnsupportedOperationException)
+
+0.1.5.12
+- Add [PlayerStorageObject#saveData] calls
+
+0.1.5.11
+- (BUGFIX) Set ftfs, hides, and finds to be empty lists when the yaml doesn't contain them
+
+0.1.5.10
+- /addcache check for "NULL" cache id
+- Set ftfs, hides, and finds to be empty lists when the yaml doesn't contain them
+
+0.1.5.9
+- Minecache#fromYaml "measure distance to null world check"
+
+0.1.5.8
+- More Minecache#toYaml null checks
+
+0.1.5.7
+- Fix directory in Minecaching#onEnable
+- More [Minecache#toYaml] null checks
+
+0.1.5.6
+- Fix director in PlayerStorageObject#get
+- Set default UUIDs for Empty Minecache
+- Add playerStorage null checks
+
+0.1.5.5
+- Attempt cleanup + rewrite of per-player files (to hopefully make it work)
+
+0.1.5.4
+- Fix FileNotFoundException in loading a PlayerStorageObject (again x2 [could you guess?])
+
+0.1.5.3
+- Fix FileNotFoundException in loading a PlayerStorageObject (again)
+
+0.1.5.2
+- Fix FileNotFoundException in loading a PlayerStorageObject
+
+0.1.5.1
+- Add argument in PlayerStorageObject constructor to use an empty minecache (for creating new player data)
+- Set default PLAYERS array to empty
+- Update successful update message
+- Add world null check in Minecache#fromYaml
+
+0.1.5.0
+- Add framework  for updating config/minecache/players.yml from older versions
+- Added a PlayerStorageObject
+- Added a base file for per-player data, specifically right now for /addcache
+
+0.1.4.6-1
+- Fix /listcaches check
+- Adda a space in the lodestone distance checker in AddCacheCommand
+
+0.1.4.6
+- Update /listcaches to only give the find option to non-invalid caches
+- Update /find to only work with caches in the same world
+- Update MCEventHandler#blockBreak to only check if the world is the same
+- Add a space in the lodestone distance checker in AddCacheCommand
+
+0.1.4.5-1
+- Fix bug in AddCacheCommand#validateLocation
+
+0.1.4.5
+- Add the ability [in /addcache] to choose the Minecache Type
+
+0.1.4.4-3
+- Fix /addcache lodecoords with no arguments setting the cache location
+- More location parsing
+
+0.1.4.4-2
+- Update /addcache tab completion
+  - /addcache data was incorrectly named /addcache date
+- More /addcache location parsing
+
+0.1.4.4-1
+- Update /addcache tab completion
+
+0.1.4.4
+- Update /addcache tab completion and (lode)coords input
+
+0.1.4.3-3
+- Set lx, ly, and lz in Minecache constructor
+
+0.1.4.3-2
+- Oldest backup

@@ -14,12 +14,11 @@ public enum LogType  {
     PUBLISH("publish", ChatColor.DARK_GREEN),
     INVALID("invalid", ChatColor.DARK_RED);
 
-    private final String id, msg;
+    private final String id;
     private final ChatColor color;
 
     LogType(String id, ChatColor color) {
         this.id = id;
-        this.msg = MinecachingAPI.getLocalization().getTranslation("plugin.log." + id);
         this.color = color;
     }
 
@@ -42,7 +41,7 @@ public enum LogType  {
     }
 
     public String getMessage() {
-        return msg;
+        return MinecachingAPI.getLocalization().getTranslation("plugin.log." + id);
     }
 
     public ChatColor getColor() {
@@ -55,6 +54,6 @@ public enum LogType  {
     }
 
     public String toLogFormat() {
-        return color + msg + ChatColor.RESET;
+        return color + getMessage() + ChatColor.RESET;
     }
 }

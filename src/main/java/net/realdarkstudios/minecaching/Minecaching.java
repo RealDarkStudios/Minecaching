@@ -30,13 +30,14 @@ public final class Minecaching extends JavaPlugin {
         getLogger().info("Server Version: " + Bukkit.getBukkitVersion());
         String[] serverVersion = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
         if (!(Integer.parseInt(serverVersion[1]) >= 16)) {
-            getLogger().warning("This plugin can't run on versions below 1.16! Please update!");
             // Load Config and MCStorage so there's no warning about this.yaml not existing
             MinecachingAPI.get().load(false);
+            MinecachingAPI.tWarning("plugin.1_16_warning");
             onDisable();
         } else {
             // Load plugin data
             MinecachingAPI.get().load(true);
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, AutoUpdater::checkForUpdate, 0L,36000L);
 
             // Register commands
             getLogger().info("Registering commands...");
@@ -53,8 +54,8 @@ public final class Minecaching extends JavaPlugin {
             getCommand("logbook").setExecutor(new LogbookCommand());
 
             // Debug Events check
-            if (Config.getInstance().debugEvents()) MinecachingAPI.tInfo("mcadmin.version.debugevents.on", Config.getInstance().getDebugEventsLevel());
-            else MinecachingAPI.tInfo("mcadmin.version.debugevents.off");
+            if (Config.getInstance().debugEvents()) MinecachingAPI.tInfo("mcadmin.data.debugevents.on", Config.getInstance().getDebugEventsLevel());
+            else MinecachingAPI.tInfo("mcadmin.data.debugevents.off");
 
             // Must register regardless of if Debug Events are enabled, in case someone decides to enable it while running.
             // A check is performed in MCDebugEventHandler#sendDebugMessage
@@ -67,8 +68,9 @@ public final class Minecaching extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Close all open MCMenus
         MinecachingAPI.tInfo("plugin.disabling");
+
+        // Close all open MCMenus
         for (Player player: Bukkit.getOnlinePlayers()) {
             if (player.getOpenInventory() != null) {
                 Inventory inv = player.getOpenInventory().getTopInventory();
@@ -99,7 +101,7 @@ public final class Minecaching extends JavaPlugin {
                 MinecachingAPI.tWarning("plugin.update.fail");
                 e.printStackTrace();
             }
-        } else MinecachingAPI.info("Not applying update!");
+        } else MinecachingAPI.tInfo("plugin.update.disabled.download");
 
         // Save all plugin data
         String disabledMsg = MinecachingAPI.getLocalization().getTranslation("plugin.disabled", VERSION);

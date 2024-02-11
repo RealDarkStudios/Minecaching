@@ -138,49 +138,49 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                 case "lodecoords" -> {
                     int x, y, z;
                     if (args.length == 1 && sender instanceof Player plr) {
-                        x = Utils.validateCoordinate(String.valueOf(plr.getLocation().getBlockX()), plr, "x");
-                        y = Utils.validateCoordinate(String.valueOf(plr.getLocation().getBlockY()), plr, "y");
-                        z = Utils.validateCoordinate(String.valueOf(plr.getLocation().getBlockZ()), plr, "z");
+                        x = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockX()), plr, "x");
+                        y = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockY()), plr, "y");
+                        z = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockZ()), plr, "z");
                     } else if (args.length == 4 && sender instanceof Player plr) {
-                        x = Utils.validateCoordinate(args[1], plr, "x");
-                        y = Utils.validateCoordinate(args[2], plr, "y");
-                        z = Utils.validateCoordinate(args[3], plr, "z");
+                        x = Utils.interpretCoordinate(args[1], plr, "x");
+                        y = Utils.interpretCoordinate(args[2], plr, "y");
+                        z = Utils.interpretCoordinate(args[3], plr, "z");
                     } else if (args.length == 4) {
-                        x = Utils.validateCoordinate(args[1], "x");
-                        y = Utils.validateCoordinate(args[2], "y");
-                        z = Utils.validateCoordinate(args[3], "z");
+                        x = Utils.interpretCoordinate(args[1], "x");
+                        y = Utils.interpretCoordinate(args[2], "y");
+                        z = Utils.interpretCoordinate(args[3], "z");
                     } else {
                         MCMessages.incorrectUsage(sender, "argcount");
                         MCMessages.usage(sender, "editcache.lodecoords", command, label);
                         return true;
                     }
 
-                    if (!Utils.validateLocation(sender, x, y, z)) return true;
+                    if (Utils.locationInvalid(sender, x, y, z)) return true;
 
-                    cache.setLodeLocation(new Location(cache.world(), x, y, z));
+                    cache.setNavLocation(new Location(cache.world(), x, y, z));
                     MCMessages.sendMsg(sender, "editcache.lodecoords", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z);
                 }
                 case "coords" -> {
                     int x, y, z;
                     if (args.length == 1 && sender instanceof Player plr) {
-                        x = Utils.validateCoordinate(String.valueOf(plr.getLocation().getBlockX()), plr, "x");
-                        y = Utils.validateCoordinate(String.valueOf(plr.getLocation().getBlockY()), plr, "y");
-                        z = Utils.validateCoordinate(String.valueOf(plr.getLocation().getBlockZ()), plr, "z");
+                        x = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockX()), plr, "x");
+                        y = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockY()), plr, "y");
+                        z = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockZ()), plr, "z");
                     } else if (args.length == 4 && sender instanceof Player plr) {
-                        x = Utils.validateCoordinate(args[1], plr, "x");
-                        y = Utils.validateCoordinate(args[2], plr, "y");
-                        z = Utils.validateCoordinate(args[3], plr, "z");
+                        x = Utils.interpretCoordinate(args[1], plr, "x");
+                        y = Utils.interpretCoordinate(args[2], plr, "y");
+                        z = Utils.interpretCoordinate(args[3], plr, "z");
                     } else if (args.length == 4) {
-                        x = Utils.validateCoordinate(args[1], "x");
-                        y = Utils.validateCoordinate(args[2], "y");
-                        z = Utils.validateCoordinate(args[3], "z");
+                        x = Utils.interpretCoordinate(args[1], "x");
+                        y = Utils.interpretCoordinate(args[2], "y");
+                        z = Utils.interpretCoordinate(args[3], "z");
                     } else {
                         MCMessages.incorrectUsage(sender, "argcount");
                         MCMessages.usage(sender, "editcache.coords", command, label);
                         return true;
                     }
 
-                    if (!Utils.validateLocation(sender, x, y, z)) return true;
+                    if (Utils.locationInvalid(sender, x, y, z)) return true;
 
                     cache.setLocation(new Location(cache.world(), x, y, z));
                     MCMessages.sendMsg(sender, "editcache.coords", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z);
@@ -203,10 +203,10 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                     } else if (cache.x() == 0 && cache.y() == 0 && cache.z() == 0) {
                         MCMessages.sendErrorMsg(sender, "editcache.nocoords");
                         MCMessages.usage(sender, "editcache.coords", command, label);
-                    } else if (cache.lx() == 0 && cache.ly() == 0 && cache.lz() == 0) {
+                    } else if (cache.nx() == 0 && cache.ny() == 0 && cache.nz() == 0) {
                         MCMessages.sendErrorMsg(sender, "editcache.nolodecoords");
                         MCMessages.usage(sender, "editcache.lodecoords", command, label);
-                    } else if (cache.lodeLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
+                    } else if (cache.navLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
                         MCMessages.sendErrorMsg(sender, "editcache.lodetoofar");
                     } else if (cache.code() == null) {
                         MCMessages.sendErrorMsg(sender, "editcache.nocode");

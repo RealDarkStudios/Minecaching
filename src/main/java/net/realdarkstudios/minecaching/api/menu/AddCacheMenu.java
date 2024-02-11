@@ -1,6 +1,5 @@
 package net.realdarkstudios.minecaching.api.menu;
 
-import net.md_5.bungee.api.ChatColor;
 import net.realdarkstudios.minecaching.Utils;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
@@ -9,7 +8,7 @@ import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItemState;
 import net.realdarkstudios.minecaching.api.menu.item.*;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import org.bukkit.Location;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +21,7 @@ public class AddCacheMenu extends MCMenu {
     private Minecache cache;
 
     public AddCacheMenu(Minecache cache, PlayerDataObject author, JavaPlugin plugin) {
-        super("Creating Cache", MenuSize.FOUR_ROW, plugin);
+        super("menu.creating.title", MenuSize.FOUR_ROW, plugin);
         this.author = author;
         this.cache = cache;
 
@@ -31,35 +30,45 @@ public class AddCacheMenu extends MCMenu {
 
     @Override
     public void update(Player player) {
-        this.cache = author.getCache();
+        this.cache = author.getCreatingCache();
         clearAllSlots();
         fillEmptySlots();
 
-        boolean isReady = cache.name() != null && !cache.name().isEmpty() && !cache.lodeLocation().equals(new Location(cache.lodeLocation().getWorld(), 0, 0, 0))
-                && !cache.location().equals(new Location(cache.location().getWorld(), 0, 0, 0)) && cache.code() != null && !cache.code().isEmpty();
+        boolean ready = stringCheck(cache.name()) && stringCheck(cache.code()) && coordCheck(cache.navLocation()) && coordCheck(cache.location());
 
-        setItem(8, new CloseMenuItem("Exit", new ItemStack(Material.RED_CONCRETE)));
+        setItem(8, new CloseMenuItem(translation("menu.close"), new ItemStack(Material.RED_CONCRETE), List.of()));
 
-        if (author.getCache().id().equals("NULL")) {
-            setItem(13, new CreateCacheMenuItem("Create New Cache", new ItemStack(Material.GREEN_CONCRETE)));
+        if (author.getCreatingCache().id().equals("NULL")) {
+            setItem(13, new CreateCacheMenuItem(itemTranslation("create"), new ItemStack(Material.GREEN_CONCRETE), List.of()));
         } else {
-            setItem(0, new ResetAddCacheMenuItem("Reset Cache", new ItemStack(Material.LIGHT_GRAY_CONCRETE)));
-            setItem(4, new CachePreviewItem(cache.id() + ": " + (cache.name() != null ? cache.name() : "???"), new ItemStack(Material.SPYGLASS),
-                    "Type: " + cache.type().getTranslation(), Utils.formatLocation("Coords", cache.location()),
-                    Utils.formatLocation("Lode Coords", cache.lodeLocation())));
-            setItem(21, new AddCacheLodeCoordMenuItem(!cache.lodeLocation().equals(new Location(cache.lodeLocation().getWorld(), 0, 0, 0)) ? Utils.formatLocation("Lode Coords", cache.lodeLocation()) : "Cache Lode Coordinates", new ItemStack(!cache.lodeLocation().equals(new Location(cache.lodeLocation().getWorld(), 0, 0, 0)) ? Material.GREEN_WOOL : Material.RED_WOOL )));
-            setItem(23, new AddCacheCoordMenuItem(!cache.location().equals(new Location(cache.location().getWorld(), 0, 0, 0)) ? Utils.formatLocation("Coords", cache.location()) : "Cache Coordinates", new ItemStack(!cache.location().equals(new Location(cache.location().getWorld(), 0, 0, 0)) ? Material.GREEN_WOOL : Material.RED_WOOL )));
+
+            setItem(0, new ResetAddCacheMenuItem(itemTranslation("reset"), new ItemStack(Material.LIGHT_GRAY_CONCRETE), List.of()));
+            setItem(4, new CachePreviewItem(itemTranslation("preview", cache.id(), stringCheck(cache.name()) ? cache.name() : "???"), new ItemStack(Material.SPYGLASS), List.of(
+                    dataTranslation("preview.type", cache.type().getTranslation()),
+                    dataTranslation("preview.code", stringCheck(cache.code()) ? cache.code() : "???"),
+                    Utils.formatLocation(dataTranslation("preview.coords"), cache.location()),
+                    Utils.formatLocation(dataTranslation("preview.navcoords"), cache.navLocation()))));
+            setItem(21, new AddCacheNavCoordMenuItem(coordCheck(cache.navLocation()) ? itemTranslation("nav", Utils.formatLocation(dataTranslation("preview.navcoords"), cache.navLocation())) : itemTranslation("navcoords"),
+                    new ItemStack(coordCheck(cache.navLocation()) ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));
+            setItem(23, new AddCacheCoordMenuItem(coordCheck(cache.location()) ? itemTranslation("loc", Utils.formatLocation(dataTranslation("preview.coords"), cache.location())) : itemTranslation("loccoords"),
+                    new ItemStack(coordCheck(cache.location()) ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));
             setItem(27, new CacheTypeMenuItem(
-                    new MenuItemState("traditional", new ItemStack(Material.GREEN_TERRACOTTA), ChatColor.DARK_GREEN + "Traditional", List.of("A traditional cache.", "No mystery, no stages, no nothing.")),
-                    new MenuItemState("mystery", new ItemStack(Material.BLUE_TERRACOTTA), ChatColor.DARK_BLUE + "Mystery", List.of("A mystery cache.", "Solve a mystery to unlock the coordinates.")),
-                    new MenuItemState("multi", new ItemStack(Material.YELLOW_TERRACOTTA), ChatColor.YELLOW + "Multi", List.of("A multi cache.", "You must go to more than one place."))
-            ).fromId(MinecachingAPI.get().getPlayerData(player).getCache().type().getId()));
-            setItem(29, new SetAddCacheNameMenuItem(cache.name() != null && !cache.name().isEmpty() ? "Name: " + cache.name() : ChatColor.RESET + "Name", new ItemStack(cache.name() != null && !cache.name().isEmpty() ? Material.GREEN_WOOL : Material.RED_WOOL)));
-            setItem(31, new SaveAddCacheMenuItem(isReady ? ChatColor.DARK_GREEN + "Save" : ChatColor.RED + "Save", new ItemStack(isReady ? Material.LIME_CONCRETE : Material.BEDROCK)));
-            setItem(33, new SetAddCacheCodeMenuItem(cache.code() != null && !cache.code().isEmpty() ? "Code: " + cache.code() : ChatColor.RESET + "Code", new ItemStack(cache.code() != null && !cache.code().isEmpty() ? Material.GREEN_WOOL : Material.RED_WOOL)));
-            setItem(35, new DeleteAddCacheMenuItem("Cancel", new ItemStack(Material.GRAY_CONCRETE)));
+                    new MenuItemState("traditional", new ItemStack(Material.GREEN_TERRACOTTA), "menu.creating.type.traditional", List.of("menu.creating.type.traditional.lore1", "menu.creating.type.traditional.lore2"), ChatColor.GREEN),
+                    new MenuItemState("mystery", new ItemStack(Material.BLUE_TERRACOTTA), "menu.creating.type.mystery", List.of("menu.creating.type.mystery.lore1", "menu.creating.type.mystery.lore2"), ChatColor.DARK_BLUE),
+                    new MenuItemState("multi", new ItemStack(Material.YELLOW_TERRACOTTA), "menu.creating.type.multi", List.of("menu.creating.type.multi.lore1", "menu.creating.type.multi.lore2"), ChatColor.YELLOW)
+            ).fromId(MinecachingAPI.get().getPlayerData(player).getCreatingCache().type().getId()));
+            setItem(29, new SetAddCacheNameMenuItem(dataTranslation("cache.name", stringCheck(cache.name()) ? cache.name() : "???"),
+                    new ItemStack(stringCheck(cache.name()) ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));
+            setItem(31, new SaveAddCacheMenuItem(ready ? ChatColor.GREEN + translation("menu.save") : ChatColor.RED + translation("menu.save"), new ItemStack(ready ? Material.LIME_CONCRETE : Material.BEDROCK), List.of()));
+            setItem(33, new SetAddCacheCodeMenuItem(dataTranslation("cache.code", stringCheck(cache.code()) ? cache.code() : "???"),
+                    new ItemStack(stringCheck(cache.code()) ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));
+            setItem(35, new DeleteAddCacheMenuItem(translation("menu.cancel"), new ItemStack(Material.GRAY_CONCRETE), List.of()));
         }
 
         super.update(player);
+    }
+
+    protected String itemTranslation(String id, Object... substitutions) {
+        return translation("menu.creating.item." + id, substitutions);
     }
 }

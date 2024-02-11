@@ -14,7 +14,6 @@ import java.util.Locale;
 public class LocalizationProvider {
     private static final LocalizationProvider INSTANCE = new LocalizationProvider();
     private final Gson gson = new Gson();
-    private Locale serverLocale;
     private JsonObject json;
     private final HashMap<Plugin, Localization> pluginMap = new HashMap<>();
     private LocalizationProvider() {
@@ -85,7 +84,6 @@ public class LocalizationProvider {
 
     public void clear() {
         this.json = null;
-        this.serverLocale = null;
         this.pluginMap.clear();
     }
 

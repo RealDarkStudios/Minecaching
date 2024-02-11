@@ -19,18 +19,8 @@ public class Utils {
     public static final String EMPTY_UUID_STRING = "00000000-0000-0000-0000-000000000000";
     public static final UUID EMPTY_UUID = UUID.fromString(EMPTY_UUID_STRING);
 
-    public static String generateID(int length){
-        String alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-        int n = alphabet.length();
-
-        StringBuilder result = new StringBuilder("MC-");
-        Random r = new Random();
-
-        for (int i=0; i<length; i++)
-            result.append(alphabet.charAt(r.nextInt(n)));
-
-        return result.toString();
+    public static String generateCacheID(int length){
+        return "MC-" + generateRandomString(5);
     }
 
     public static String generateRandomString(int length){
@@ -47,7 +37,7 @@ public class Utils {
         return result.toString();
     }
 
-    public static HashMap<String, Minecache> sortByMinecache(HashMap<String, Minecache> hm)
+    public static HashMap<String, Minecache> sortCachesByTime(HashMap<String, Minecache> hm)
     {
         // Create a list from elements of HashMap
         List<Map.Entry<String, Minecache> > list = new LinkedList<>(hm.entrySet());
@@ -63,36 +53,36 @@ public class Utils {
         return temp;
     }
 
-    public static boolean validateLocation(CommandSender sender, int x, int y, int z) {
+    public static boolean locationInvalid(CommandSender sender, int x, int y, int z) {
         Config cfg = Config.getInstance();
         if (x > cfg.getMaxX()) {
             MCMessages.sendErrorMsg(sender, "coords.abovelimit", "X", x, cfg.getMaxX());
-            return false;
+            return true;
         }
         if (x < cfg.getMinX()) {
             MCMessages.sendErrorMsg(sender, "coords.belowlimit", "X", x, cfg.getMinX());
-            return false;
+            return true;
         }
         if (y > cfg.getMaxY()) {
             MCMessages.sendErrorMsg(sender, "coords.abovelimit", "Y", y, cfg.getMaxY());
-            return false;
+            return true;
         }
         if (y < cfg.getMinY()) {
             MCMessages.sendErrorMsg(sender, "coords.belowlimit", "Y", y, cfg.getMinY());
-            return false;
+            return true;
         }
         if (z > cfg.getMaxZ()) {
             MCMessages.sendErrorMsg(sender, "coords.abovelimit", "Z", z, cfg.getMaxZ());
-            return false;
+            return true;
         }
         if (z < cfg.getMinZ()) {
             MCMessages.sendErrorMsg(sender, "coords.belowlimit", "Z", z, cfg.getMinZ());
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
-    public static int validateCoordinate(String coord, Player plr, String axis) {
+    public static int interpretCoordinate(String coord, Player plr, String axis) {
         String a = axis.toUpperCase();
 
         if (coord.contains("~")) {
@@ -114,7 +104,7 @@ public class Utils {
         }
     }
 
-    public static int validateCoordinate(String coord, String axis) {
+    public static int interpretCoordinate(String coord, String axis) {
         String a = axis.toUpperCase();
 
         try {
@@ -137,13 +127,7 @@ public class Utils {
     }
 
     public static Log createLog(Player plr, Minecache cache, LogType logType, String message, boolean isFTF) {
-        LogbookDataObject logbook = MinecachingAPI.get().getLogbook(cache.id());
-        Log log = logbook.createLog(plr, logType, message, isFTF);
-
-        LogCreatedEvent logEvent = new LogCreatedEvent(cache, log.logId(), log.type(), plr);
-        Bukkit.getPluginManager().callEvent(logEvent);
-
-        return log;
+        return createLog(plr.getUniqueId(), cache, logType, message, isFTF);
     }
 
     public static Log createLog(UUID plr, Minecache cache, LogType logType, String message, boolean isFTF) {

@@ -14,9 +14,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class SaveEditCacheMenuItem extends MenuItem {
-    public SaveEditCacheMenuItem(String name, ItemStack item, String... lore) {
-        super(name, item, "All wool must be green to be able to save!");
+    public SaveEditCacheMenuItem(String name, ItemStack item, List<String> lore) {
+        super(name, item, List.of("All wool must be green to be able to save!"));
     }
 
     @Override
@@ -30,9 +32,9 @@ public class SaveEditCacheMenuItem extends MenuItem {
             MCMessages.sendErrorMsg(event.getPlayer(), "editcache.noname");
         } else if (cache.x() == 0 && cache.y() == 0 && cache.z() == 0) {
             MCMessages.sendErrorMsg(event.getPlayer(), "editcache.nocoords");
-        } else if (cache.lx() == 0 && cache.ly() == 0 && cache.lz() == 0) {
+        } else if (cache.nx() == 0 && cache.ny() == 0 && cache.nz() == 0) {
             MCMessages.sendErrorMsg(event.getPlayer(), "editcache.nolodecoords");
-        } else if (cache.lodeLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
+        } else if (cache.navLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
             MCMessages.sendErrorMsg(event.getPlayer(), "editcache.lodetoofar");
         } else if (cache.code() == null) {
             MCMessages.sendErrorMsg(event.getPlayer(), "editcache.nocode");
@@ -55,7 +57,6 @@ public class SaveEditCacheMenuItem extends MenuItem {
             cache.setID("NULL");
         }
 
-        event.setUpdate(true);
         event.setClose(true);
     }
 }

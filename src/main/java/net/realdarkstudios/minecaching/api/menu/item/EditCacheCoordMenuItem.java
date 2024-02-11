@@ -6,8 +6,10 @@ import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class EditCacheCoordMenuItem extends MenuItem {
-    public EditCacheCoordMenuItem(String name, ItemStack item, String... lore) {
+    public EditCacheCoordMenuItem(String name, ItemStack item, List<String> lore) {
         super(name, item, lore);
     }
 

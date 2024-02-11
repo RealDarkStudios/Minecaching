@@ -9,11 +9,10 @@ public enum NotificationType {
     PUBLISH("publish"),
     INVALID("invalid")
 ;
-    private final String id, translationKey;
+    private final String id;
 
     NotificationType(String id) {
         this.id = id;
-        this.translationKey = "plugin.notification." + id;
     }
 
     public static NotificationType get(String type) {
@@ -33,6 +32,6 @@ public enum NotificationType {
     }
 
     public String getTranslationKey() {
-        return translationKey;
+        return "plugin.notification." + id;
     }
 }

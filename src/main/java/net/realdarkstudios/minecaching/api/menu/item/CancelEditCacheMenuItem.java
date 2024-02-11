@@ -9,8 +9,10 @@ import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class CancelEditCacheMenuItem extends MenuItem {
-    public CancelEditCacheMenuItem(String name, ItemStack item, String... lore) {
+    public CancelEditCacheMenuItem(String name, ItemStack item, List<String> lore) {
         super(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + name, item, lore);
     }
 

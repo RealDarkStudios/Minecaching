@@ -6,8 +6,10 @@ import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class AddCacheLodeCoordMenuItem extends MenuItem {
-    public AddCacheLodeCoordMenuItem(String name, ItemStack item, String... lore) {
+import java.util.List;
+
+public class AddCacheNavCoordMenuItem extends MenuItem {
+    public AddCacheNavCoordMenuItem(String name, ItemStack item, List<String> lore) {
         super(name, item, lore);
     }
 
@@ -15,7 +17,7 @@ public class AddCacheLodeCoordMenuItem extends MenuItem {
     public void onItemClick(MenuItemClickEvent event) {
         PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(event.getPlayer());
 
-        pdo.setCache(pdo.getCache().setLodeLocation(event.getPlayer().getLocation()));
+        pdo.setCreatingCache(pdo.getCreatingCache().setNavLocation(event.getPlayer().getLocation()));
         event.setUpdate(true);
 
         super.onItemClick(event);

@@ -11,11 +11,17 @@ import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class EditCacheMenuItem extends MenuItem {
     private final Minecache cache;
 
     public EditCacheMenuItem(Minecache cache) {
-        super(ChatColor.LIGHT_PURPLE + "Edit Cache", new ItemStack(Material.PURPLE_CONCRETE));
+        this(ChatColor.LIGHT_PURPLE + translation("menu.data.item.edit"), new ItemStack(Material.PURPLE_CONCRETE), List.of(), cache);
+    }
+
+    public EditCacheMenuItem(String nameKey, ItemStack stack, List<String> lore, Minecache cache) {
+        super(nameKey, stack, lore);
         this.cache = cache;
     }
 

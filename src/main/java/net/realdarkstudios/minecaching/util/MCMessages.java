@@ -17,11 +17,6 @@ public class MCMessages {
             .color(ChatColor.RED)
             .build();
 
-    /**
-     * 
-     * @param source The 
-     * @return
-     */
     public static TextComponent noPermission(String source) {
         if (MinecachingAPI.getLocalization().hasTranslation("permission.none." + source)) return TextComponentBuilder.fromTranslation("permission.none." + source).color(ChatColor.DARK_RED).bold().build();
         else return NO_PERMISSION;

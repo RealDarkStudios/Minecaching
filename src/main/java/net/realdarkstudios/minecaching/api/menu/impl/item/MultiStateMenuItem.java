@@ -11,9 +11,9 @@ import java.util.List;
 public class MultiStateMenuItem extends MenuItem {
     private final MenuItemState[] states;
     private final HashMap<String, Integer> idMap = new HashMap<>();
-    private int pointer = 0;
+    protected int pointer = 0;
     public MultiStateMenuItem(MenuItemState... items) {
-        super(items[0].name(), items[0].stack(), (String) null);
+        super(items[0].nameKey(), items[0].stack(), items[0].lore());
         this.states = items;
         int i = 0;
         for (MenuItemState state: states) {
@@ -33,7 +33,7 @@ public class MultiStateMenuItem extends MenuItem {
 
     @Override
     public List<String> getLore() {
-        return getCurrentState().description();
+        return getCurrentState().lore();
     }
 
     @Override

@@ -59,7 +59,7 @@ public class MinecacheStorage {
         caches.sort(Minecache::compareByTime);
 
         this.minecaches = caches;
-        this.idToMinecache = Utils.sortByMinecache(idMap);
+        this.idToMinecache = Utils.sortCachesByTime(idMap);
         this.mcLocations = locationMap;
     }
     public void save() {
@@ -75,7 +75,7 @@ public class MinecacheStorage {
             int tries = 0;
 
             while (idToMinecache.containsKey(minecache.id()) && isNewCache) {
-                minecache.setID(Utils.generateID((int) (Math.floor((double) tries / 50) + 5)));
+                minecache.setID(Utils.generateCacheID((int) (Math.floor((double) tries / 50) + 5)));
                 tries++;
             }
 
