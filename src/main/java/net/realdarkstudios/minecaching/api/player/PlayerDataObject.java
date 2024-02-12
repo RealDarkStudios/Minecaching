@@ -1,20 +1,19 @@
 package net.realdarkstudios.minecaching.api.player;
 
 import net.realdarkstudios.minecaching.Minecaching;
-import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.log.Notification;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStorage;
+import net.realdarkstudios.minecaching.api.misc.Config;
+import net.realdarkstudios.minecaching.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerDataObject {
     private final UUID uniqueID;
@@ -25,31 +24,10 @@ public class PlayerDataObject {
     private Minecache creatingCache, editingCache;
     private YamlConfiguration yaml;
     private File file;
+    private CacheListMenuOptions clmOptions;
 
-    public PlayerDataObject(UUID uniqueID, YamlConfiguration yaml, File file, boolean useEmptyMinecache) {
+    public PlayerDataObject(UUID uniqueID, YamlConfiguration yaml, File file) {
         this.uniqueID = uniqueID;
-        this.banned = yaml.getBoolean("banned");
-        ArrayList<String> yFtfs = new ArrayList<>(), yHides = new ArrayList<>(), yFinds = new ArrayList<>();
-
-        if (yaml.contains("ftfs")) yFtfs.addAll((Collection<? extends String>) yaml.getList("ftfs"));
-        if (yaml.contains("hides")) yHides.addAll((Collection<? extends String>) yaml.getList("hides"));
-        if (yaml.contains("finds")) yFinds.addAll((Collection<? extends String>) yaml.getList("finds"));
-
-        this.ftfs = yFtfs;
-        this.hides = yHides;
-        this.finds = yFinds;
-        this.locatingId = yaml.getString("locating_id") == null ? "NULL" : yaml.getString("locating_id");
-        this.creatingCache = useEmptyMinecache ? Minecache.EMPTY : Minecache.fromYaml(yaml, "cache");
-        this.editingCache = useEmptyMinecache ? Minecache.EMPTY : Minecache.fromYaml(yaml, "editing");
-
-        ArrayList<Notification> yNotifs = new ArrayList<>();
-        if (yaml.contains("notifications")) {
-            for (String notificationID: yaml.getKeys(true).stream().filter(s -> s.startsWith("notifications.")).toList()) {
-                yNotifs.add(Notification.fromYaml(yaml, notificationID));
-            }
-        }
-        this.notifications = yNotifs;
-
         this.yaml = yaml;
         this.file = file;
     }
@@ -151,6 +129,45 @@ public class PlayerDataObject {
         saveData();
     }
 
+    public CacheListMenuOptions getCLMOptions() {
+        return clmOptions;
+    }
+
+    public void setCLMOptions(CacheListMenuOptions clmOptions) {
+        this.clmOptions = clmOptions;
+        saveData();
+    }
+
+    public List<Minecache> filterCLMenuCaches(Player player) {
+        List<Minecache> allCaches = MinecachingAPI.get().getAllKnownCaches();
+        List<Minecache> finalCaches = new ArrayList<>();
+
+        for (Minecache cache: allCaches) {
+            if (!clmOptions.getEnabledTypes().contains(cache.type())) {
+                continue;
+            }
+            if (!clmOptions.getEnabledStatuses().contains(cache.status())) {
+                continue;
+            }
+            if (clmOptions.ftfsOnly() && !cache.ftf().equals(Utils.EMPTY_UUID)) {
+                continue;
+            }
+            if (cache.finds() < clmOptions.getMinFinds()) {
+                continue;
+            }
+            if (clmOptions.getWithinBlocks() > cache.navLocation().distance(player.getLocation())) {
+                continue;
+            }
+
+            finalCaches.add(cache);
+        }
+
+        if (clmOptions.newestFirst()) finalCaches.sort(Comparator.comparing(Minecache::hidden).reversed());
+        else finalCaches.sort(Comparator.comparing(Minecache::hidden));
+
+        return finalCaches;
+    }
+
     public boolean isFTF(Minecache minecache) {
         return MinecacheStorage.getInstance().isFTF(uniqueID, minecache);
     }
@@ -161,6 +178,7 @@ public class PlayerDataObject {
         if (yaml.getList("ftfs") != null) yFtfs.addAll((Collection<? extends String>) yaml.getList("ftfs"));
         if (yaml.getList("hides") != null) yHides.addAll((Collection<? extends String>) yaml.getList("hides"));
         if (yaml.getList("finds") != null) yFinds.addAll((Collection<? extends String>) yaml.getList("finds"));
+        if (!yaml.contains("clm_options")) CacheListMenuOptions.DEFAULT_OPTIONS.toYaml(yaml, "clm_options");
 
         this.ftfs = yFtfs;
         this.hides = yHides;
@@ -168,6 +186,7 @@ public class PlayerDataObject {
         this.locatingId = yaml.getString("locating_id") == null ? "NULL" : yaml.getString("locating_id");
         this.creatingCache = Minecache.fromYaml(yaml, "creating");
         this.editingCache = Minecache.fromYaml(yaml, "editing");
+        this.clmOptions = CacheListMenuOptions.fromYaml(yaml, "clm_options");
 
         ArrayList<Notification> yNotifs = new ArrayList<>();
         if (yaml.contains("notifications")) {
@@ -190,6 +209,7 @@ public class PlayerDataObject {
         creatingCache.toYaml(yaml, "creating");
         yaml.set("editing_id", this.editingCache.id());
         editingCache.toYaml(yaml, "editing");
+        clmOptions.toYaml(yaml, "clm_options");
 
         if (!this.notifications.isEmpty()) {
             for (Notification notification : this.notifications) {
@@ -230,30 +250,30 @@ public class PlayerDataObject {
     }
 
     public boolean updateData() {
-        update();
+        try {
+            update();
 
-        // Accounts for the renaming from cache/cache_id -> creating/creating_id
-        if (yaml.contains("cache")) {
-            yaml.set("creating", yaml.get("cache"));
-            yaml.set("cache", null);
+            // Accounts for the renaming from cache/cache_id -> creating/creating_id
+            if (yaml.contains("cache")) {
+                yaml.set("creating", yaml.get("cache"));
+                yaml.set("cache", null);
+            }
+
+            if (yaml.contains("cache_id")) {
+                yaml.set("creating_id", yaml.getString("cache_id"));
+                yaml.set("cache_id", null);
+            }
+
+            get(uniqueID);
+
+            saveData();
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-
-        if (yaml.contains("cache_id")) {
-            yaml.set("creating_id", yaml.getString("cache_id"));
-            yaml.set("cache_id", null);
-        }
-
-        get(uniqueID);
-
-        saveData();
-        return true;
     }
 
     public static PlayerDataObject get(UUID uuid) {
-        return get(uuid, false);
-    }
-
-    public static PlayerDataObject get(UUID uuid, boolean useEmptyMinecache) {
         File plrFile = new File(Minecaching.getInstance().getDataFolder() + "/player/" + uuid + ".yml");
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(plrFile);
 
@@ -269,6 +289,7 @@ public class PlayerDataObject {
                 Minecache.EMPTY.toYaml(yaml, "editing");
                 yaml.set("creating_id", "NULL");
                 yaml.set("editing_id", "NULL");
+                CacheListMenuOptions.DEFAULT_OPTIONS.toYaml(yaml, "clm_options");
             } catch (Exception e) {
                 MinecachingAPI.tWarning("error.plugin.createfile", uuid + ".yml");
             }
@@ -281,6 +302,6 @@ public class PlayerDataObject {
             }
         }
 
-        return new PlayerDataObject(uuid, yaml, plrFile, useEmptyMinecache);
+        return new PlayerDataObject(uuid, yaml, plrFile);
     }
 }

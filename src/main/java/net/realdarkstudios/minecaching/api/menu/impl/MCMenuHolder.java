@@ -12,10 +12,18 @@ public class MCMenuHolder implements InventoryHolder {
         this.inventory = inventory;
     }
 
+    /**
+     * Gets the {@link MCMenu} associated with this holder
+     * @return The associated MCMenu
+     */
     public MCMenu getMenu() {
         return menu;
     }
 
+    /**
+     * Gets the {@link Inventory} associated with this holder
+     * @return The associated Inventory
+     */
     @Override
     public Inventory getInventory() {
         return inventory;

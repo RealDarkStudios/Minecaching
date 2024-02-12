@@ -16,7 +16,7 @@ public class CacheMenuItem extends MenuItem {
                 MinecachingAPI.getLocalization().getTranslation("menu.data.item.preview.type", cache.type().getTranslation()),
                 MinecachingAPI.getLocalization().getTranslation("menu.data.item.preview.status", cache.status().getTranslation()),
                 Utils.formatLocation(MinecachingAPI.getLocalization().getTranslation("menu.data.item.preview.coords"), cache.navLocation()),
-                MinecachingAPI.getLocalization().getTranslation("menu.data.item.preview.hidden", cache.hidden().format(DateTimeFormatter.ofPattern("MM/dd/yy hh:mm a"))),
+                MinecachingAPI.getLocalization().getTranslation("menu.data.item.preview.hidden", cache.hidden().format(DateTimeFormatter.ofPattern("MM/dd/yy hh:mma"))),
                 MinecachingAPI.getLocalization().getTranslation("menu.data.item.preview.finds", cache.finds())));
     }
 }

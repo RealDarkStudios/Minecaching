@@ -17,7 +17,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class PaginationMenu extends MCMenu {
-
     private final Map<UUID, AtomicInteger> pages = new HashMap<>();
 
     public PaginationMenu(String name, JavaPlugin plugin) {

@@ -12,10 +12,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.List;
 
 public class ConfirmationMenu extends MCMenu {
-    private MenuItem confirmItem;
+    private final MenuItem confirmItem;
 
     public ConfirmationMenu(PlayerDataObject initiator, MenuItem confirmItem, JavaPlugin plugin, MCMenu parent) {
-        super("Are you sure?", MenuSize.THREE_ROW, plugin, parent);
+        super("menu.confirmation.title", MenuSize.THREE_ROW, plugin, parent);
         this.confirmItem = confirmItem;
 
         update(initiator.getPlayer().getPlayer());

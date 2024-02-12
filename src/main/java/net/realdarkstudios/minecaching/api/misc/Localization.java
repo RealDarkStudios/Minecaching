@@ -25,7 +25,7 @@ public class Localization {
     public String getTranslation(String key) {
         if (!hasTranslation(key)) {
             if (!hasTranslation("plugin.localization.missing")) return "Translation Not Found!";
-            else return getTranslation("plugin.localization.missing");
+            else return String.format(getTranslation("plugin.localization.missing"), key);
         }
         String translation = json.get(key).toString();
         // The substring removes the quotation marks around the result

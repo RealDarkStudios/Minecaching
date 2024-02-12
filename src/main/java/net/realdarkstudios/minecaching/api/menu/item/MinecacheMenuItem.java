@@ -24,7 +24,7 @@ public class MinecacheMenuItem extends CacheMenuItem {
             case INVALID -> new ItemStack(Material.BEDROCK);
         };
 
-        CacheDataMenu dataMenu = new CacheDataMenu(translation("menu.data.title", cache.id()), cache, Minecaching.getInstance());
+        CacheDataMenu dataMenu = new CacheDataMenu("menu.data.title", cache, Minecaching.getInstance());
         dataMenu.setParent(menu);
 
         this.menu = dataMenu;

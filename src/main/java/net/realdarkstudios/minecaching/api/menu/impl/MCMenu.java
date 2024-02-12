@@ -1,6 +1,7 @@
 package net.realdarkstudios.minecaching.api.menu.impl;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.menu.AddCacheMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.item.ErrorMenuItem;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
@@ -14,10 +15,21 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.checkerframework.common.value.qual.IntRange;
 
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * The base Menu class. This handles the dimensions, title, and slots, as well as opening, closing, and updating the menu.
+ *
+ * @see MCMenu#open(Player)
+ * @see MCMenu#close(Player)
+ * @see MCMenu#update(Player)
+ * @see MCMenu#setItem(int, MenuItem)
+ * @see MCMenu#setParent(MCMenu)
+ * @since 0.3.0.0
+ */
 public abstract class MCMenu {
     private JavaPlugin plugin;
     private String name, titleKey;
@@ -25,12 +37,28 @@ public abstract class MCMenu {
     private MenuItem[] items;
     private MCMenu parent;
 
+    /**
+     * An empty slot item, with a gray stained glass pane and no title
+     */
     public static final MenuItem EMPTY_SLOT_ITEM = new MenuItem("", new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1, DyeColor.GRAY.getDyeData()), List.of());
 
-    public static MenuItem errorItem(String nameKey, Object... substitutions) {
-        return new ErrorMenuItem(nameKey, new ItemStack(Material.BEDROCK), List.of());
+    /**
+     * Creates an error item, a bedrock item with a custom name
+     * @param name The name of this item
+     * @return The error item
+     */
+    public static MenuItem errorItem(String name) {
+        return new ErrorMenuItem(name, new ItemStack(Material.BEDROCK), List.of());
     }
 
+    /**
+     * Creates a new MCMenu
+     * @param titleKey The translation key for the title of the menu
+     * @param size The {@link MenuSize} for this menu, {@link MenuSize#ONE_ROW} would have 9 slots (hotbar), while {@link MenuSize#SIX_ROW} would have 54 (double chest)
+     * @param plugin The plugin associated with this menu. Used mainly for {@link MCMenu#onInventoryClick(InventoryClickEvent)}
+     * @param parent The menu that 'owns' this menu, will be used if a {@link net.realdarkstudios.minecaching.api.menu.impl.item.GoBackMenuItem} is in this menu
+     * @param substitutions Substitutions for the title
+     */
     public MCMenu(String titleKey, MenuSize size, JavaPlugin plugin, MCMenu parent, Object... substitutions) {
         this.plugin = plugin;
         this.titleKey = titleKey;
@@ -40,47 +68,89 @@ public abstract class MCMenu {
         this.parent = parent;
     }
 
+    /**
+     * Creates a new MCMenu
+     * @param titleKey The translation key for the title of the menu
+     * @param size The {@link MenuSize} for this menu, {@link MenuSize#ONE_ROW} would have 9 slots (hotbar), while {@link MenuSize#SIX_ROW} would have 54 (double chest)
+     * @param plugin The plugin associated with this menu. Used mainly for {@link MCMenu#onInventoryClick(InventoryClickEvent)}
+     * @param substitutions Substitutions for the title
+     */
     public MCMenu(String titleKey, MenuSize size, JavaPlugin plugin, Object... substitutions) {
         this(titleKey, size, plugin, null, substitutions);
     }
 
+    /**
+     * Gets the title key of this menu
+     * @return The title key
+     */
     public String getTitleKey() {
         return titleKey;
     }
 
+    /**
+     * Gets the name of this menu
+     * @return The name
+     */
     public String getName() {
         return name.equals("Translation Not Found") ? titleKey : name;
     }
 
-    public String getName(Player player) {
-       return getName();
-    }
-
+    /**
+     * Gets the size of this menu
+     * @return The size
+     */
     public MenuSize getSize() {
         return size;
     }
 
+    /**
+     * Gets the slot count of this menu
+     * @return The slot count
+     */
     public int getSlotCount() {
         return size.getSlotCount();
     }
 
+    /**
+     * Checks if this menu has a parent
+     * @return {@code true} if this menu has a parent, {@code false} otherwise
+     */
     public boolean hasParent() {
         return parent != null;
     }
 
+    /**
+     * Gets the parent of this menu
+     * @return The parent ment
+     */
     public MCMenu getParent() {
         return parent;
     }
 
+    /**
+     * Sets the parent of this menu
+     * @param parent The parent menu
+     */
     public void setParent(MCMenu parent) {
         this.parent = parent;
     }
 
-    public MCMenu setItem(int slot, MenuItem item) {
-        items[slot] = item;
+    /**
+     * Sets an item in the specified slot index
+     * @param slot The index of the slot to set (0-indexed)
+     * @param item The {@link MenuItem} to put into this slot
+     * @return This menu
+     */
+    public MCMenu setItem(@IntRange(from=0, to=53) int slot, MenuItem item) {
+        if (slot <= size.getSlotCount() - 1) items[slot] = item;
+        else MinecachingAPI.tWarning("menu.item.outofbounds", slot, size.getSlotCount());
         return this;
     }
 
+    /**
+     * Clears all the slots in this menu
+     * @return This menu
+     */
     public MCMenu clearAllSlots() {
         for (int i = 0; i < size.getSlotCount(); i++) {
             items[i] = null;
@@ -88,6 +158,11 @@ public abstract class MCMenu {
         return this;
     }
 
+    /**
+     * Fills the empty slots with the specified item
+     * @param item The {@link MenuItem} to fill empty slots with
+     * @return This menu
+     */
     public MCMenu fillEmptySlots(MenuItem item) {
         for (int i = 0; i < items.length; i++) {
             if (items[i] == null) items[i] = item;
@@ -95,20 +170,36 @@ public abstract class MCMenu {
         return this;
     }
 
+    /**
+     * Fills the empty slots with {@link MCMenu#EMPTY_SLOT_ITEM}
+     * @return This menu
+     */
     public MCMenu fillEmptySlots() {
         return fillEmptySlots(EMPTY_SLOT_ITEM);
     }
 
+    /**
+     * Opens the menu for the given player
+     * @param player The {@link Player} to open this menu for
+     */
     public void open(Player player) {
         Inventory inv = Bukkit.createInventory(new MCMenuHolder(this, Bukkit.createInventory(player, size.getSlotCount())), size.getSlotCount(), getName());
         apply(inv, player);
         player.openInventory(inv);
     }
 
+    /**
+     * Closes the menu for the given player
+     * @param player The {@link Player} to close this menu for
+     */
     public void close(Player player) {
         player.closeInventory();
     }
 
+    /**
+     * Updates the menu for the given player
+     * @param player The {@link Player} to update this menu for
+     */
     public void update(Player player) {
         if (player.getOpenInventory() != null) {
             Inventory inv = player.getOpenInventory().getTopInventory();
@@ -119,6 +210,11 @@ public abstract class MCMenu {
         }
     }
 
+    /**
+     * Sets the items of the inventory
+     * @param inventory The {@link Inventory} to set the icons of
+     * @param player The {@link Player} to update the icons for
+     */
     private void apply(Inventory inventory, Player player) {
         for (int i = 0; i < items.length; i++) {
             if (items[i] != null) inventory.setItem(i, items[i].getIcon(player));
@@ -126,6 +222,10 @@ public abstract class MCMenu {
         }
     }
 
+    /**
+     * Called when a slot in the inventory is clicked
+     * @param event The {@link InventoryClickEvent} that was passed
+     */
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getClick() == ClickType.LEFT) {
             int slot = event.getRawSlot();
@@ -159,6 +259,9 @@ public abstract class MCMenu {
         }
     }
 
+    /**
+     * Deletes this menu
+     */
     public void delete() {
         plugin = null;
         name = null;
@@ -167,6 +270,64 @@ public abstract class MCMenu {
         parent = null;
     }
 
+    /**
+     * Checks if the given coordinates is not equal to the default (0, 0, 0)
+     * @param loc The {@link Location} to check
+     * @return {@code true} if the location is not the default, {@code false} otherwise
+     */
+    protected boolean coordCheck(Location loc) {
+        return !loc.equals(new Location(loc.getWorld(), 0, 0, 0));
+    }
+
+    /**
+     * Checks if the given string is not null or empty
+     * @param str The {@link String} to check
+     * @return {@code true} if the string is not null or empty, {@code false} otherwise
+     */
+    protected boolean stringCheck(String str) {
+        return str != null && !str.isEmpty();
+    }
+
+    /**
+     * Gets the translated name of the item with the given id with a prefix.
+     * Must be overriden by each instance of MCMenu to provide this prefix. You can view an example implementation at {@link AddCacheMenu}
+     * @param id The id to use
+     * @param substitutions Substitutions for the translation
+     * @return The translated string
+     */
+    abstract protected String itemTranslation(String id, Object... substitutions);
+
+    /**
+     * Gets the translated name of the data item with the given id.
+     * @param id The id to use
+     * @param substitutions Substitutions for the translation
+     * @return The translated string
+     */
+    protected String dataTranslation(String id, Object... substitutions) {
+        return translation("menu.data.item." + id, substitutions);
+    }
+
+    /**
+     * Gets the translation with the specified key
+     * @param key The key to use
+     * @param substitutions Substitutions for the translation
+     * @return The translated string
+     */
+    protected String translation(String key, Object... substitutions) {
+        return MinecachingAPI.getLocalization().getTranslation(key, substitutions);
+    }
+
+    /**
+     * An {@link Enum} with the different available menu sizes.
+     * <ul>
+     * <li>{@link MenuSize#ONE_ROW}: 9 slots (hotbar)</li>
+     * <li>{@link MenuSize#TWO_ROW}: 18 slots</li>
+     * <li>{@link MenuSize#THREE_ROW}: 27 slots (normal chest)</li>
+     * <li>{@link MenuSize#FOUR_ROW}: 36 slots (inventory + hotbar (no gap))</li>
+     * <li>{@link MenuSize#FIVE_ROW}: 45 slots</li>
+     * <li>{@link MenuSize#ONE_ROW}: 54 slots (double chest)</li>
+     * </ul>
+     */
     public enum MenuSize {
         ONE_ROW(9),
         TWO_ROW(18),
@@ -181,27 +342,13 @@ public abstract class MCMenu {
             this.slotCount = slotCount;
         }
 
+        /**
+         * Gets the slot count of the menu size
+         * @return The slot count
+         */
         public int getSlotCount() {
             return slotCount;
         }
-    }
-
-    protected boolean coordCheck(Location loc) {
-        return !loc.equals(new Location(loc.getWorld(), 0, 0, 0));
-    }
-
-    protected boolean stringCheck(String str) {
-        return str != null && !str.isEmpty();
-    }
-
-    abstract protected String itemTranslation(String id, Object... substitutions);
-
-    protected String dataTranslation(String id, Object... substitutions) {
-        return translation("menu.data.item." + id, substitutions);
-    }
-
-    protected String translation(String id, Object... substitutions) {
-        return MinecachingAPI.getLocalization().getTranslation(id, substitutions);
     }
 }
 
