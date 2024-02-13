@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.api.menu.item;
+package net.realdarkstudios.minecaching.api.menu.item.edit;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;

@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.api.menu.item;
+package net.realdarkstudios.minecaching.api.menu.item.misc;
 
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.item.GoBackMenuItem;

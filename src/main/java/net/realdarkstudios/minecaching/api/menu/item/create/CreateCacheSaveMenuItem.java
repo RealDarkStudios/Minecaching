@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.api.menu.item;
+package net.realdarkstudios.minecaching.api.menu.item.create;
 
 import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
@@ -18,8 +18,8 @@ import org.bukkit.inventory.ItemStack;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class SaveAddCacheMenuItem extends MenuItem {
-    public SaveAddCacheMenuItem(String name, ItemStack item, List<String> lore) {
+public class CreateCacheSaveMenuItem extends MenuItem {
+    public CreateCacheSaveMenuItem(String name, ItemStack item, List<String> lore) {
         super(name, item, List.of("All wool must be green to be able to save!"));
     }
 

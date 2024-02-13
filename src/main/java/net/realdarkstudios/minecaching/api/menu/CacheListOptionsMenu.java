@@ -3,7 +3,7 @@ package net.realdarkstudios.minecaching.api.menu;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.item.BooleanMenuItem;
-import net.realdarkstudios.minecaching.api.menu.item.GoBackAndUpdateMenuItem;
+import net.realdarkstudios.minecaching.api.menu.item.misc.GoBackAndUpdateMenuItem;
 import net.realdarkstudios.minecaching.api.menu.item.clm.*;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import org.bukkit.Material;

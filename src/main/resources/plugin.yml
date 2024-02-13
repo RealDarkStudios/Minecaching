@@ -61,6 +61,12 @@ commands:
     aliases: [mca]
     permission: minecaching.admin
     permission-message: "You do not have permission to use the admin utilities"
+  mcstats:
+    description: "Provides server statistics for Minecaching"
+    usage: "/mcstats"
+    aliases: [mcs, stats]
+    permission: minecaching.stats
+    permission-message: "You do not have permission to see the server statistics"
   archivecache:
     description: "Archives a minecache"
     usage: "/archivecache <id>"
@@ -99,3 +105,5 @@ permissions:
     default: op
   minecaching.admin.edit:
     default: op
+  minecaching.stats:
+    default: true

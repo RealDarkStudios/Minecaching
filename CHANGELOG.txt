@@ -8,6 +8,52 @@ VERSION
 
 CHANGELOG:
 
+0.3.0.4
+Added:
+- LocateCacheMenuItem
+- MCStatsCommand
+
+Refactors:
+- Moved Menu Items into different subpackages:
+  - item.clm (cache list menu & options)
+  - item.create (create new cache)
+  - item.data (cache data/context menu)
+  - item.edit (edit cache)
+  - item.misc
+- Renamed AddCache/EditCache Menu Items (ex. SetAddCacheCodeMenuItem -> CreateCacheSetCodeMenuItem, CancelEditCacheMenuItem -> EditCacheCancelMenuItem)
+
+Changes:
+- Server statistics in /mcadmin data have been moved to a separate /mcstats command
+- Added a locate option to the Cache Data Menu
+- Cache Data Menu Archive material is now GRAY_CONCRETE
+
+0.3.0.3
+Added:
+- BooleanMenuItem
+- All the CLM stuff, including:
+  - CacheListMenuOptions (options serializer)
+  - CacheListOptionsMenu (actual menu)
+  - OpenCLMOptionsMenuItem
+  - and all the menu items under net.realdarkstudios.minecaching.api.menu.item.clm
+- GoBackAndUpdateMenuItem
+- PlayerDataObject#getCLMOptions
+- PlayerDataObject#setCLMOptions
+- CLM Menu Translations in en-US.json
+- MCMenu javadocs
+- MCMenuHolder javadocs
+
+Removed:
+
+Refactors:
+
+Changes:
+- CacheMenuItem hidden format now say xx:xxAM instead of xx:xxAM (same with PM)
+- ConfirmationMenu constuctor now uses the correct translation key
+- CacheListMenu constuctor now uses the correct translation key
+- CacheDataMenu constuctor now uses the correct translation key
+- Formatted "plugin.localization.missing" with the missing key
+- PlayerDataObject constructor no longer sets all the values, due to values being set three times (yikes)
+
 0.3.0.3-SNAPSHOT-2
 Added:
 - "plugin.localization.missing" in en-US.json

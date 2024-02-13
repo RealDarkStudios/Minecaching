@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.api.menu.item;
+package net.realdarkstudios.minecaching.api.menu.item.create;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
@@ -8,8 +8,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class AddCacheCoordMenuItem extends MenuItem {
-    public AddCacheCoordMenuItem(String name, ItemStack item, List<String> lore) {
+public class CreateCacheNavCoordMenuItem extends MenuItem {
+    public CreateCacheNavCoordMenuItem(String name, ItemStack item, List<String> lore) {
         super(name, item, lore);
     }
 
@@ -17,7 +17,7 @@ public class AddCacheCoordMenuItem extends MenuItem {
     public void onItemClick(MenuItemClickEvent event) {
         PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(event.getPlayer());
 
-        pdo.setCreatingCache(pdo.getCreatingCache().setLocation(event.getPlayer().getLocation()));
+        pdo.setCreatingCache(pdo.getCreatingCache().setNavLocation(event.getPlayer().getLocation()));
         event.setUpdate(true);
 
         super.onItemClick(event);

@@ -4,8 +4,6 @@ import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.misc.AutoUpdater;
 import net.realdarkstudios.minecaching.api.misc.Config;
-import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.player.PlayerStorage;
 import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,7 +12,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class MCAdminCommand implements CommandExecutor, TabExecutor {
@@ -58,18 +55,6 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
             MCMessages.sendMsg(sender, "mcadmin.data.serverlang", MinecachingAPI.getLocalization().getTranslation("locale.name"));
             if (Config.getInstance().debugEvents()) MCMessages.sendMsg(sender, "mcadmin.data.debugevents.on", Config.getInstance().getDebugEventsLevel());
             else MCMessages.sendMsg(sender, "mcadmin.data.debugevents.off");
-
-            // Stats
-            int totalFinds = PlayerStorage.getInstance().totalFinds();
-            PlayerDataObject mostFindsPDO = MinecachingAPI.get().getSortedPlayers(Comparator.comparingInt(p -> p.getFinds().size())).get(MinecachingAPI.get().getAllKnownPlayers().size() - 1);
-            PlayerDataObject mostHidesPDO = MinecachingAPI.get().getSortedPlayers(Comparator.comparingInt(p -> p.getHides().size())).get(MinecachingAPI.get().getAllKnownPlayers().size() - 1);
-
-            MCMessages.sendMsg(sender, "mcadmin.data.statsheader");
-            MCMessages.sendMsg(sender, "mcadmin.data.caches", MinecachingAPI.get().getAllKnownCaches().size());
-            MCMessages.sendMsg(sender, "mcadmin.data.players", MinecachingAPI.get().getAllKnownPlayers().size());
-            MCMessages.sendMsg(sender, "mcadmin.data.finds", totalFinds);
-            MCMessages.sendMsg(sender, "mcadmin.data.mostfinds", mostFindsPDO.getPlayer().getName(), mostFindsPDO.getFinds().size());
-            MCMessages.sendMsg(sender, "mcadmin.data.mosthides", mostHidesPDO.getPlayer().getName(), mostHidesPDO.getHides().size());
 
             // Dev
             MCMessages.sendMsg(sender, "mcadmin.data.devheader");

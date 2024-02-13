@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.api.menu.item;
+package net.realdarkstudios.minecaching.api.menu.item.data;
 
 import net.md_5.bungee.api.ChatColor;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
@@ -17,7 +17,7 @@ public class PublishCacheMenuItem extends MenuItem {
     private final Minecache cache;
     
     public PublishCacheMenuItem(Minecache cache) {
-        this(ChatColor.DARK_GREEN + translation("menu.data.item.publish") + cache.id(), new ItemStack(Material.GREEN_CONCRETE), List.of(), cache);
+        this(ChatColor.DARK_GREEN + translation("menu.data.item.publish", cache.id()), new ItemStack(Material.GREEN_CONCRETE), List.of(), cache);
     }
 
     public PublishCacheMenuItem(String nameKey, ItemStack stack, List<String> lore, Minecache cache) {

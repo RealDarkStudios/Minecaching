@@ -1,8 +1,9 @@
-package net.realdarkstudios.minecaching.api.menu.item;
+package net.realdarkstudios.minecaching.api.menu.item.clm;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.api.menu.CacheDataMenu;
 import net.realdarkstudios.minecaching.api.menu.CacheListMenu;
+import net.realdarkstudios.minecaching.api.menu.item.misc.CacheMenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import org.bukkit.Material;

@@ -1,10 +1,13 @@
 package net.realdarkstudios.minecaching.api.menu;
 
 import net.md_5.bungee.api.ChatColor;
+import net.realdarkstudios.minecaching.api.menu.item.data.DeleteCacheMenuItem;
+import net.realdarkstudios.minecaching.api.menu.item.edit.*;
+import net.realdarkstudios.minecaching.api.menu.item.misc.CacheMenuItem;
+import net.realdarkstudios.minecaching.api.menu.item.misc.OpenConfirmationMenuItem;
 import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
-import net.realdarkstudios.minecaching.api.menu.item.*;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.util.MCMessages;
@@ -45,15 +48,15 @@ public class EditCacheMenu extends MCMenu {
 
         boolean ready = stringCheck(cache.name()) && stringCheck(cache.code()) && coordCheck(cache.navLocation()) && coordCheck(cache.location());
 
-        setItem(0, new ResetEditCacheMenuItem(itemTranslation("reset"), new ItemStack(Material.LIGHT_GRAY_CONCRETE), List.of(), cache));
+        setItem(0, new EditCacheResetMenuItem(itemTranslation("reset"), new ItemStack(Material.LIGHT_GRAY_CONCRETE), List.of(), cache));
         setItem(4, new CacheMenuItem(itemTranslation("preview", cache.id(), stringCheck(cache.name()) ? cache.name() : "???"), cache));
         setItem(21, new EditCacheNavCoordMenuItem(coordCheck(cache.navLocation()) ? itemTranslation("nav", Utils.formatLocation(dataTranslation("preview.navcoords"), cache.navLocation())) : itemTranslation("navcoords"), new ItemStack(coordCheck(cache.navLocation()) ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));
         setItem(23, new EditCacheCoordMenuItem(coordCheck(cache.location()) ? itemTranslation("loc", Utils.formatLocation(dataTranslation("preview.coords"), cache.navLocation())) : itemTranslation("loccoords"), new ItemStack(coordCheck(cache.location()) ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));
         setItem(27, new OpenConfirmationMenuItem(new DeleteCacheMenuItem(dataTranslation("delete"), new ItemStack(Material.BLACK_CONCRETE), List.of(dataTranslation("delete.lore")), cache), this));
-        setItem(29, new SetEditCacheNameMenuItem(dataTranslation("cache.name", stringCheck(cache.name()) ? cache.name() : "???"), new ItemStack(cache.name() != null && !cache.name().isEmpty() ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));
-        setItem(31, new SaveEditCacheMenuItem(ready ? ChatColor.GREEN + translation("menu.save") : ChatColor.RED + translation("menu.save"), new ItemStack(ready ? Material.LIME_CONCRETE : Material.BEDROCK), List.of()));
-        setItem(33, new SetEditCacheCodeMenuItem(dataTranslation("cache.code", stringCheck(cache.code()) ? cache.name() : "???"), new ItemStack(cache.code() != null && !cache.code().isEmpty() ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));
-        setItem(35, new CancelEditCacheMenuItem(itemTranslation("stopediting"), new ItemStack(Material.GRAY_CONCRETE), List.of(itemTranslation("stopediting.lore"))));
+        setItem(29, new EditCacheSetNameMenuItem(dataTranslation("cache.name", stringCheck(cache.name()) ? cache.name() : "???"), new ItemStack(cache.name() != null && !cache.name().isEmpty() ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));
+        setItem(31, new EditCacheSaveMenuItem(ready ? ChatColor.GREEN + translation("menu.save") : ChatColor.RED + translation("menu.save"), new ItemStack(ready ? Material.LIME_CONCRETE : Material.BEDROCK), List.of()));
+        setItem(33, new EditCacheSetCodeMenuItem(dataTranslation("cache.code", stringCheck(cache.code()) ? cache.name() : "???"), new ItemStack(cache.code() != null && !cache.code().isEmpty() ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));
+        setItem(35, new EditCacheCancelMenuItem(itemTranslation("stopediting"), new ItemStack(Material.GRAY_CONCRETE), List.of(itemTranslation("stopediting.lore"))));
 
         super.update(player);
     }

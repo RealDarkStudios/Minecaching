@@ -3,7 +3,7 @@ package net.realdarkstudios.minecaching.api.menu;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.impl.PaginationMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
-import net.realdarkstudios.minecaching.api.menu.item.MinecacheMenuItem;
+import net.realdarkstudios.minecaching.api.menu.item.clm.MinecacheMenuItem;
 import net.realdarkstudios.minecaching.api.menu.item.clm.OpenCLMOptionsMenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;

@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.api.menu.item;
+package net.realdarkstudios.minecaching.api.menu.item.data;
 
 import net.md_5.bungee.api.ChatColor;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
@@ -17,7 +17,7 @@ public class DisableCacheMenuItem extends MenuItem {
     private final Minecache cache;
 
     public DisableCacheMenuItem(Minecache cache) {
-        this(ChatColor.GRAY + translation("menu.data.item.disable"), new ItemStack(Material.BLACK_CONCRETE), List.of(), cache);
+        this(ChatColor.GRAY + translation("menu.data.item.disable", cache.id()), new ItemStack(Material.GRAY_CONCRETE), List.of(), cache);
     }
 
     public DisableCacheMenuItem(String name, ItemStack stack, List<String> lore, Minecache cache) {
