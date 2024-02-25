@@ -86,7 +86,9 @@ public class LogbookDataObject {
     }
 
     boolean delete() {
-        return file.delete();
+        File toDelete = file;
+        file = new File("");
+        return toDelete.delete();
     }
 
     public void saveData() {

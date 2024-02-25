@@ -5,7 +5,7 @@ Bring [Geocaching](https://www.geocaching.com) to your Minecraft server!
 
 This plugin allows players to hide and find Minecaches (or "Caches") around the server while allowing operators to manage it.
 
-> DEVELOPERS: v0.0.3.0 came with a lot of package and other changes! See the changelog for more information
+> DEVELOPERS: v0.3.0.0 came with a lot of package and other changes! See the changelog for more information
 
 ## For Server Owners
 

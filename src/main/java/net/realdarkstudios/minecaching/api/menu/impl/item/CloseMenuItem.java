@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CloseMenuItem extends MenuItem {
     public CloseMenuItem(String name, ItemStack item, List<String> lore) {
-        super(ChatColor.RED + "" + ChatColor.BOLD + "Close", new ItemStack(Material.RED_CONCRETE), lore);
+        super(ChatColor.RED + "" + ChatColor.BOLD + translation("menu.close"), new ItemStack(Material.RED_CONCRETE), lore);
     }
 
     @Override

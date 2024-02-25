@@ -14,7 +14,7 @@ import java.util.List;
 public class CLMMysteryTypeMenuItem extends MenuItem {
     public CLMMysteryTypeMenuItem(PlayerDataObject pdo, String name, ItemStack item, List<String> lore) {
         super((pdo.getCLMOptions().typeEnabled(MinecacheType.MYSTERY) ? ChatColor.GREEN : ChatColor.RED) + name,
-                (pdo.getCLMOptions().typeEnabled(MinecacheType.TRADITIONAL)) ? item : new ItemStack(Material.BEDROCK), lore);
+                (pdo.getCLMOptions().typeEnabled(MinecacheType.MYSTERY) ? item : new ItemStack(Material.BEDROCK)), lore);
     }
 
     @Override

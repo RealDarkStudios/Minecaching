@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.api.log;
+package net.realdarkstudios.minecaching.api.misc;
 
 import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;

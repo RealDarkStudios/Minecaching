@@ -27,7 +27,7 @@ public class EditCacheMenu extends MCMenu {
         this.author = author;
         this.cache = cache;
 
-        update(author.getPlayer().getPlayer());
+        update(author.getPlayer());
     }
 
     @Override
@@ -36,7 +36,6 @@ public class EditCacheMenu extends MCMenu {
 
         if (player.getUniqueId().equals(cache.author()) || player.hasPermission("minecaching.admin.edit")) {
             MinecachingAPI.get().getPlayerData(player).setEditingCache(cache);
-
         } else {
             MCMessages.noPermission(player, "editcache");
             MinecachingAPI.get().getPlayerData(player).setEditingCache(Minecache.EMPTY);
@@ -52,7 +51,7 @@ public class EditCacheMenu extends MCMenu {
         setItem(4, new CacheMenuItem(itemTranslation("preview", cache.id(), stringCheck(cache.name()) ? cache.name() : "???"), cache));
         setItem(21, new EditCacheNavCoordMenuItem(coordCheck(cache.navLocation()) ? itemTranslation("nav", Utils.formatLocation(dataTranslation("preview.navcoords"), cache.navLocation())) : itemTranslation("navcoords"), new ItemStack(coordCheck(cache.navLocation()) ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));
         setItem(23, new EditCacheCoordMenuItem(coordCheck(cache.location()) ? itemTranslation("loc", Utils.formatLocation(dataTranslation("preview.coords"), cache.navLocation())) : itemTranslation("loccoords"), new ItemStack(coordCheck(cache.location()) ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));
-        setItem(27, new OpenConfirmationMenuItem(new DeleteCacheMenuItem(dataTranslation("delete"), new ItemStack(Material.BLACK_CONCRETE), List.of(dataTranslation("delete.lore")), cache), this));
+        setItem(27, new OpenConfirmationMenuItem(new DeleteCacheMenuItem(dataTranslation("delete", cache.id()), new ItemStack(Material.BLACK_CONCRETE), List.of(dataTranslation("delete.lore")), cache), this));
         setItem(29, new EditCacheSetNameMenuItem(dataTranslation("cache.name", stringCheck(cache.name()) ? cache.name() : "???"), new ItemStack(cache.name() != null && !cache.name().isEmpty() ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));
         setItem(31, new EditCacheSaveMenuItem(ready ? ChatColor.GREEN + translation("menu.save") : ChatColor.RED + translation("menu.save"), new ItemStack(ready ? Material.LIME_CONCRETE : Material.BEDROCK), List.of()));
         setItem(33, new EditCacheSetCodeMenuItem(dataTranslation("cache.code", stringCheck(cache.code()) ? cache.name() : "???"), new ItemStack(cache.code() != null && !cache.code().isEmpty() ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));

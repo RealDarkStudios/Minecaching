@@ -61,11 +61,13 @@ public class LogbookStorage {
 
     public boolean deleteLogbook(String id){
         try {
-            getLogbook(id).delete();
+            LogbookStorage.getInstance().save();
+
+            boolean success = getLogbook(id).delete();
+            MinecachingAPI.tInfo(success ? "plugin.logbook.deleted" : "plugin.logbook.deleted.fail", id);
             logIDs.removeAll(Collections.singleton(id));
 
-            save();
-            updateMaps();
+            LogbookStorage.getInstance().updateMaps();
 
             return true;
         } catch (Exception e) {

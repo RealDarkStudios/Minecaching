@@ -19,13 +19,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class PaginationMenu extends MCMenu {
     private final Map<UUID, AtomicInteger> pages = new HashMap<>();
 
-    public PaginationMenu(String name, JavaPlugin plugin) {
-        this(name, plugin, null);
+    public PaginationMenu(String titleKey, JavaPlugin plugin) {
+        this(titleKey, plugin, null);
     }
 
 
-    public PaginationMenu(String name, JavaPlugin plugin, MCMenu parent) {
-        super(name, MenuSize.SIX_ROW, plugin, parent);
+    public PaginationMenu(String titleKey, JavaPlugin plugin, MCMenu parent) {
+        super(titleKey, MenuSize.SIX_ROW, plugin, parent);
 
         for (int i = 0; i < MenuSize.FIVE_ROW.getSlotCount(); i++) {
             setItem(i + 9, new PaginationMenuItem(this, i));

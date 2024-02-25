@@ -8,7 +8,6 @@ import net.realdarkstudios.minecaching.api.menu.CacheListMenu;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheType;
-import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.util.MCMessages;
 import net.realdarkstudios.minecaching.util.TextComponentBuilder;
 import org.bukkit.ChatColor;
@@ -24,7 +23,7 @@ import java.util.List;
 public class ListCachesCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (Config.getInstance().experimentalFeatures() && sender instanceof Player plr) {
+        if (sender instanceof Player plr) {
             CacheListMenu menu = new CacheListMenu("menu.list.title", Minecaching.getInstance(), plr);
             menu.open(plr);
             

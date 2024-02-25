@@ -1,19 +1,19 @@
 package net.realdarkstudios.minecaching.api;
 
+import com.google.common.collect.HashMultimap;
 import net.realdarkstudios.minecaching.Minecaching;
-import net.realdarkstudios.minecaching.util.Utils;
-import net.realdarkstudios.minecaching.api.log.*;
+import net.realdarkstudios.minecaching.api.log.LogType;
+import net.realdarkstudios.minecaching.api.log.LogbookDataObject;
+import net.realdarkstudios.minecaching.api.log.LogbookStorage;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStorage;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheType;
-import net.realdarkstudios.minecaching.api.misc.AutoUpdater;
-import net.realdarkstudios.minecaching.api.misc.Config;
-import net.realdarkstudios.minecaching.api.misc.Localization;
-import net.realdarkstudios.minecaching.api.misc.LocalizationProvider;
+import net.realdarkstudios.minecaching.api.misc.*;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.player.PlayerStorage;
 import net.realdarkstudios.minecaching.util.MCMessages;
+import net.realdarkstudios.minecaching.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -22,6 +22,7 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -38,7 +39,7 @@ public class MinecachingAPI {
     /**
      * Defines the expected Player Data Version
      */
-    private static final int PLAYER_DATA_VERSION = 4;
+    private static final int PLAYER_DATA_VERSION = 5;
     /**
      * Defines the expected Logbook Data Version
      */
@@ -349,9 +350,10 @@ public class MinecachingAPI {
      * @since 0.2.0.0
      */
     public boolean deleteMinecache(Minecache minecache, UUID initiator) {
-        deleteLogbook(minecache);
         if (!minecache.author().equals(initiator)) createNotification(minecache.author(), initiator, NotificationType.DELETION, minecache);
-        return (PlayerStorage.getInstance().deleteMinecache(minecache) && MinecacheStorage.getInstance().deleteMinecache(minecache));
+        boolean success = (PlayerStorage.getInstance().deleteMinecache(minecache) && MinecacheStorage.getInstance().deleteMinecache(minecache));
+        deleteLogbook(minecache);
+        return success;
     }
 
     /**
@@ -501,11 +503,45 @@ public class MinecachingAPI {
         try {
             PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(uuid);
 
-            if (pdo.getPlayer().isOnline()) MCMessages.sendMsg(pdo.getPlayer().getPlayer(), type.getTranslationKey(), ChatColor.GRAY, cache.id(), Utils.uuidName(initiator));
+            if (pdo.isOnline()) MCMessages.sendMsg(pdo.getPlayer(), type.getTranslationKey(), ChatColor.GRAY, cache.id(), Utils.uuidName(initiator));
             else pdo.addNotification(new Notification(Utils.generateRandomString(5), initiator, type, cache, LocalDateTime.now()));
             return true;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    /**
+     * Corrects server statistics by checking all {@link Minecache}s and {@link PlayerDataObject}s.
+     * <p></p>
+     * Accounts for hides, ftfs, caches where the owner finds them, and deleted caches.
+     * Note that due to the Minecache/PlayerDataObject implementation, there is no way to check for extra/lost finds as PlayerDataObject is the sole truth for finds (and by extension, the player file)
+     * @since 0.3.0.5
+     */
+    public void correctStats() {
+        List<Minecache> caches = getAllKnownCaches();
+        List<PlayerDataObject> players = getAllKnownPlayers();
+        HashMultimap<PlayerDataObject, String> findsToRemove = HashMultimap.create();
+
+        caches.forEach(c -> getPlayerData(c.author()).addHide(c.id()));
+        caches.forEach(c -> getPlayerData(c.ftf()).addFTF(c.id()));
+
+        try {
+            for (PlayerDataObject p: players) {
+                for (String f: p.getFinds()) {
+                    if (getMinecache(f).equals(Minecache.EMPTY) || getMinecache(f).author().equals(p.getUniqueID())) {
+                        findsToRemove.put(p, f);
+                    }
+                }
+            }
+
+            for (Map.Entry<PlayerDataObject, String> entry: findsToRemove.entries()) {
+                entry.getKey().removeFind(entry.getValue());
+            }
+
+            MinecachingAPI.tInfo("mcadmin.correctedstats");
+        } catch (Exception e) {
+            MinecachingAPI.tWarning("error.mcadmin.cstats");
         }
     }
 
@@ -594,6 +630,8 @@ public class MinecachingAPI {
             if (attemptUpdates) LogbookStorage.getInstance().attemptUpdate();
             else tWarning("plugin.data.update.notattempting", "Logbook Data");
         }
+
+        correctStats();
     }
 
     /**

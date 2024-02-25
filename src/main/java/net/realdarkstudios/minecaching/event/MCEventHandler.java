@@ -2,8 +2,8 @@ package net.realdarkstudios.minecaching.event;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.util.Utils;
-import net.realdarkstudios.minecaching.api.log.Notification;
-import net.realdarkstudios.minecaching.api.log.NotificationType;
+import net.realdarkstudios.minecaching.api.misc.Notification;
+import net.realdarkstudios.minecaching.api.misc.NotificationType;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenuHolder;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.AutoUpdater;
@@ -35,6 +35,7 @@ public class MCEventHandler implements Listener {
                 }
 
                 PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(event.getPlayer().getUniqueId());
+                pdo.updateData();
 
                 if (!pdo.getNotifications().isEmpty()) {
                     MCMessages.sendMsg(event.getPlayer(), "plugin.notification.alert", ChatColor.GOLD);

@@ -16,17 +16,24 @@ public class CacheListMenuOptions {
     public static final CacheListMenuOptions DEFAULT_OPTIONS = new CacheListMenuOptions();
 
     // default values
-    private List<MinecacheType> enabledTypes = Arrays.stream(MinecacheType.values()).toList();
-    private List<MinecacheStatus> enabledStatuses = Arrays.stream(MinecacheStatus.values()).toList();
-    private int minFinds = 0, withinBlocks = Integer.MAX_VALUE;
-    private boolean oldestFirst = false, newestFirst = true, ftfsOnly = false;
+    private final ArrayList<MinecacheType> enabledTypes;
+    private final ArrayList<MinecacheStatus> enabledStatuses;
+    private int minFinds, withinBlocks;
+    private boolean oldestFirst, newestFirst, ftfsOnly;
 
     public CacheListMenuOptions() {
+        enabledTypes = new ArrayList<>(Arrays.stream(MinecacheType.values()).toList());
+        enabledStatuses = new ArrayList<>(Arrays.stream(MinecacheStatus.values()).toList());
+        minFinds = 0;
+        withinBlocks = Integer.MAX_VALUE;
+        oldestFirst = false;
+        newestFirst = true;
+        ftfsOnly = false;
     }
 
     public CacheListMenuOptions(List<MinecacheType> enabledTypes, List<MinecacheStatus> enabledStatuses, int minFinds, int withinBlocks, boolean oldestFirst, boolean newestFirst, boolean ftfsOnly) {
-        this.enabledTypes = enabledTypes;
-        this.enabledStatuses = enabledStatuses;
+        this.enabledTypes = new ArrayList<>(enabledTypes);
+        this.enabledStatuses = new ArrayList<>(enabledStatuses);
         this.minFinds = minFinds;
         this.withinBlocks = withinBlocks;
 
@@ -84,7 +91,7 @@ public class CacheListMenuOptions {
     }
 
     public CacheListMenuOptions toggleStatus(MinecacheStatus status) {
-        if (enabledStatuses.contains(status)) enabledStatuses.remove(status);
+        if (statusEnabled(status)) enabledStatuses.remove(status);
         else enabledStatuses.add(status);
         return this;
     }

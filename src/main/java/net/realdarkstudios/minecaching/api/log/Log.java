@@ -13,7 +13,7 @@ public class Log {
     private final String cacheID, logID;
     private String log;
     private final UUID author;
-    private final LogType type;
+    private LogType type;
     private final LocalDateTime time;
     private final boolean invalidated, isFTF;
 

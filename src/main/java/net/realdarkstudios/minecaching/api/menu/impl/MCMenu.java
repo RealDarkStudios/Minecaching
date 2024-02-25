@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.api.menu.impl;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.menu.AddCacheMenu;
+import net.realdarkstudios.minecaching.api.menu.CreateCacheMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.item.ErrorMenuItem;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
@@ -290,7 +290,7 @@ public abstract class MCMenu {
 
     /**
      * Gets the translated name of the item with the given id with a prefix.
-     * Must be overriden by each instance of MCMenu to provide this prefix. You can view an example implementation at {@link AddCacheMenu}
+     * Must be overriden by each instance of MCMenu to provide this prefix. You can view an example implementation at {@link CreateCacheMenu}
      * @param id The id to use
      * @param substitutions Substitutions for the translation
      * @return The translated string

@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.api.menu.item.edit;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.log.NotificationType;
+import net.realdarkstudios.minecaching.api.misc.NotificationType;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;

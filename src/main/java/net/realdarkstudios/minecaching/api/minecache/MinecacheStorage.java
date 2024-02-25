@@ -42,6 +42,8 @@ public class MinecacheStorage {
         }
 
         updateMaps();
+
+        MinecachingAPI.tInfo("plugin.data.loadedcaches", minecaches.size());
     }
 
     public void updateMaps() {

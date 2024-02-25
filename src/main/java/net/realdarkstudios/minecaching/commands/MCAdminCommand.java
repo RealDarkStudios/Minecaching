@@ -2,6 +2,10 @@ package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.menu.CacheDataMenu;
+import net.realdarkstudios.minecaching.api.menu.LogMenu;
+import net.realdarkstudios.minecaching.api.menu.MCMenus;
+import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.AutoUpdater;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.util.MCMessages;
@@ -11,6 +15,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -64,6 +69,32 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
             MCMessages.sendMsg(sender, "mcadmin.data.logbookdataversion", Config.getInstance().getLogbookDataVersion());
 
             if (v == -1) MCMessages.sendMsg(sender, Config.getInstance().autoUpdate() ? "plugin.update.auto" : "plugin.update", ChatColor.RED, AutoUpdater.getNewestVersion());
+        } else if (subcommand.equals("openmenu") && args.length > 1 && sender instanceof Player plr) {
+            switch (args[1]) {
+                case "create" -> {
+                    MCMenus.get().getAddCacheMenu(MinecachingAPI.get().getPlayerData(plr)).open(plr);
+                }
+                case "edit" -> {
+                    if (args.length >= 3 && !MinecachingAPI.get().getMinecache(args[2]).equals(Minecache.EMPTY)) {
+                        MCMenus.get().getEditCacheMenu(MinecachingAPI.get().getPlayerData(plr), MinecachingAPI.get().getMinecache(args[2])).open(plr);
+                    }
+                }
+                case "data" -> {
+                    if (args.length >= 3 && !MinecachingAPI.get().getMinecache(args[2]).equals(Minecache.EMPTY)) {
+                        CacheDataMenu menu = new CacheDataMenu("menu.data.title", MinecachingAPI.get().getMinecache(args[2]), Minecaching.getInstance());
+                        menu.open(plr);
+                    }
+                }
+                case "log" -> {
+                    if (args.length >= 3 && !MinecachingAPI.get().getMinecache(args[2]).equals(Minecache.EMPTY)) {
+                        LogMenu menu = new LogMenu(MinecachingAPI.get().getMinecache(args[2]), MinecachingAPI.get().getPlayerData(plr), Minecaching.getInstance());
+                        menu.open(plr);
+                    }
+                }
+            }
+        } else if (subcommand.equals("correctstats")) {
+            MinecachingAPI.get().correctStats();
+            MCMessages.sendMsg(sender, "mcadmin.correctedstats");
         } else return false;
 
         return true;
@@ -72,7 +103,7 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1) {
-            return List.of("reload", "data");
+            return List.of("reload", "data", "correctstats");
         } else return List.of();
     }
 }

@@ -2,7 +2,8 @@ package net.realdarkstudios.minecaching.api.player;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.log.Notification;
+import net.realdarkstudios.minecaching.api.log.LogType;
+import net.realdarkstudios.minecaching.api.misc.Notification;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStorage;
 import net.realdarkstudios.minecaching.api.misc.Config;
@@ -12,6 +13,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.*;
 
@@ -20,11 +22,12 @@ public class PlayerDataObject {
     private boolean banned;
     private ArrayList<String> finds, ftfs, hides;
     private ArrayList<Notification> notifications;
-    private String locatingId;
+    private String locatingId, logMessage, logCode;
     private Minecache creatingCache, editingCache;
     private YamlConfiguration yaml;
     private File file;
     private CacheListMenuOptions clmOptions;
+    private LogType logType;
 
     public PlayerDataObject(UUID uniqueID, YamlConfiguration yaml, File file) {
         this.uniqueID = uniqueID;
@@ -32,8 +35,21 @@ public class PlayerDataObject {
         this.file = file;
     }
 
-    public OfflinePlayer getPlayer() {
+    public String getUsername() {
+        return getOfflinePlayer().getName();
+    }
+
+    public boolean isOnline() {
+        return getOfflinePlayer().isOnline();
+    }
+
+    public OfflinePlayer getOfflinePlayer() {
         return Bukkit.getOfflinePlayer(uniqueID);
+    }
+
+    @Nullable
+    public Player getPlayer() {
+        return getOfflinePlayer().getPlayer();
     }
 
     public UUID getUniqueID() {
@@ -86,7 +102,7 @@ public class PlayerDataObject {
     }
 
     public void removeFind(String id) {
-        this.finds.remove(id);
+        this.finds.removeAll(Collections.singleton(id));
         saveData();
     }
 
@@ -96,7 +112,7 @@ public class PlayerDataObject {
     }
 
     public void removeHide(String id) {
-        this.hides.remove(id);
+        this.hides.removeAll(Collections.singleton(id));
         saveData();
     }
 
@@ -106,7 +122,7 @@ public class PlayerDataObject {
     }
 
     public void removeFTF(String id) {
-        this.ftfs.remove(id);
+        this.ftfs.removeAll(Collections.singleton(id));
         saveData();
     }
 
@@ -135,6 +151,33 @@ public class PlayerDataObject {
 
     public void setCLMOptions(CacheListMenuOptions clmOptions) {
         this.clmOptions = clmOptions;
+        saveData();
+    }
+
+    public LogType getLogType() {
+        return logType;
+    }
+
+    public void setLogType(LogType logType) {
+        this.logType = logType;
+        saveData();
+    }
+
+    public String getLogMessage() {
+        return logMessage;
+    }
+
+    public void setLogMessage(String logMessage) {
+        this.logMessage = logMessage;
+        saveData();
+    }
+
+    public String getLogCode() {
+        return logCode;
+    }
+
+    public void setLogCode(String logCode) {
+        this.logCode = logCode;
         saveData();
     }
 
@@ -187,6 +230,9 @@ public class PlayerDataObject {
         this.creatingCache = Minecache.fromYaml(yaml, "creating");
         this.editingCache = Minecache.fromYaml(yaml, "editing");
         this.clmOptions = CacheListMenuOptions.fromYaml(yaml, "clm_options");
+        this.logType = LogType.get(yaml.getString("log_type") == null ? "found" : yaml.getString("log_type"));
+        this.logMessage = yaml.getString("log_message") == null ? "" : yaml.getString("log_message");
+        this.logCode = yaml.getString("log_code") == null ? "" : yaml.getString("log_code");
 
         ArrayList<Notification> yNotifs = new ArrayList<>();
         if (yaml.contains("notifications")) {
@@ -210,6 +256,9 @@ public class PlayerDataObject {
         yaml.set("editing_id", this.editingCache.id());
         editingCache.toYaml(yaml, "editing");
         clmOptions.toYaml(yaml, "clm_options");
+        yaml.set("log_type", this.logType.getId());
+        yaml.set("log_message", this.logMessage);
+        yaml.set("log_code", this.logCode);
 
         if (!this.notifications.isEmpty()) {
             for (Notification notification : this.notifications) {
@@ -239,6 +288,7 @@ public class PlayerDataObject {
         }
 
         update();
+        save();
     }
 
     public void save() {
@@ -303,5 +353,9 @@ public class PlayerDataObject {
         }
 
         return new PlayerDataObject(uuid, yaml, plrFile);
+    }
+
+    boolean delete() {
+        return file.delete();
     }
 }

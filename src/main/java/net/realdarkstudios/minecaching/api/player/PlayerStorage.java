@@ -4,46 +4,53 @@ import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class PlayerStorage {
 
     private final static PlayerStorage INSTANCE = new PlayerStorage();
 
-    private File file;
-    private YamlConfiguration yaml;
-    private HashMap<UUID, PlayerDataObject> playerStorage;
+    private HashMap<UUID, PlayerDataObject> playerStorage = new HashMap<>();
 
     private PlayerStorage() {
     }
 
     public void load() {
-        file = new File(Minecaching.getInstance().getDataFolder(), "players.yml");
+        File file = new File(Minecaching.getInstance().getDataFolder() + "/player/");
+        if (!file.exists()) file.mkdirs();
 
-        if (!file.exists()) {
-            Minecaching.getInstance().saveResource("players.yml", false);
-        }
+        File[] plrFiles = file.listFiles(File::isFile);
+        if (plrFiles == null || plrFiles.length == 0) MinecachingAPI.warning("Player list is empty!");
 
-        yaml = new YamlConfiguration();
-        yaml.options().parseComments(true);
-
-        try {
-            yaml.load(file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        updateMaps();
-
-        if (playerStorage != null) {
-            for (PlayerDataObject plr : playerStorage.values()) {
-                plr.load();
+        HashMap<UUID, PlayerDataObject> players = new HashMap<>();
+        for (File plrFile: plrFiles) {
+            String key = plrFile.getName().replace(".yml", "");
+            UUID uuid;
+            try {
+                uuid = UUID.fromString(key);
+            } catch (Exception e) {
+                MinecachingAPI.tWarning("error.plugin.parseuuid", key);
+                continue;
             }
+
+            PlayerDataObject plr = PlayerDataObject.get(uuid);
+
+            plr.load();
+            players.put(uuid, plr);
         }
+
+        this.playerStorage = players;
+
+        for (PlayerDataObject plr : playerStorage.values()) {
+            plr.load();
+        }
+
+        MinecachingAPI.tInfo("plugin.data.loadedplayers", playerStorage.size());
     }
 
     public void save() {
@@ -52,40 +59,36 @@ public class PlayerStorage {
                 plr.save();
             }
         }
-
-        try {
-            yaml.save(file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void updateMaps() {
         HashMap<UUID, PlayerDataObject> players = new HashMap<>();
+        File file = new File(Minecaching.getInstance().getDataFolder() + "/player/");
+        if (!file.exists()) file.mkdirs();
 
-        if (yaml.getList("PLAYERS") == null) MinecachingAPI.warning("Player list is empty!");
-        else {
-            for (String key: (List<String>) yaml.get("PLAYERS")) {
-                UUID uuid;
-                try {
-                    uuid = UUID.fromString(key);
-                } catch (Exception e) {
-                    MinecachingAPI.tWarning("error.plugin.parseuuid", key);
-                    continue;
-                }
+        File[] plrFiles = file.listFiles(File::isFile);
+        if (plrFiles == null || plrFiles.length == 0) MinecachingAPI.warning("Player list is empty!");
 
-                PlayerDataObject plr = PlayerDataObject.get(uuid);
-
-                plr.load();
-                players.put(uuid, plr);
+        for (File plrFile: plrFiles) {
+            String key = plrFile.getName().replace(".yml", "");
+            UUID uuid;
+            try {
+                uuid = UUID.fromString(key);
+            } catch (Exception e) {
+                MinecachingAPI.tWarning("error.plugin.parseuuid", key);
+                continue;
             }
+
+            PlayerDataObject plr = PlayerDataObject.get(uuid);
+
+            plr.load();
+            players.put(uuid, plr);
         }
 
         this.playerStorage = players;
     }
 
-    public int
-    totalFinds() {
+    public int totalFinds() {
         int finds = 0;
 
         for (PlayerDataObject pdo: getPlayers()) {
@@ -99,16 +102,14 @@ public class PlayerStorage {
         return deletePlayerData(plr.getUniqueID());
     }
 
-    public boolean deletePlayerData(Player plr) {
+    public boolean deletePlayerData(OfflinePlayer plr) {
         return deletePlayerData(plr.getUniqueId());
     }
 
     public boolean deletePlayerData(UUID uuid) {
         try {
-            List<String> plrs = yaml.get("PLAYERS") == null ? new ArrayList<>() : (List<String>) yaml.get("PLAYERS");
-            plrs.removeAll(Collections.singleton(uuid.toString()));
 
-            yaml.set("PLAYERS", plrs);
+            playerStorage.get(uuid).delete();
 
             save();
             updateMaps();
@@ -118,22 +119,21 @@ public class PlayerStorage {
         }
     }
 
-    public PlayerDataObject createPlayerData(Player plr) {
+    public PlayerDataObject createPlayerData(OfflinePlayer plr) {
         return createPlayerData(plr.getUniqueId());
     }
 
     public PlayerDataObject createPlayerData(UUID uuid) {
-        List<String> plrs = yaml.get("PLAYERS") == null ? new ArrayList<>() : (List<String>) yaml.get("PLAYERS");
-        plrs.add(uuid.toString());
-        yaml.set("PLAYERS", plrs);
+        PlayerDataObject pdo = PlayerDataObject.get(uuid);
+        MinecachingAPI.tInfo("plugin.player.new", uuid);
 
         save();
         updateMaps();
 
-        return PlayerDataObject.get(uuid);
+        return pdo;
     }
 
-    public boolean hasPlayerData(Player plr) {
+    public boolean hasPlayerData(OfflinePlayer plr) {
         return hasPlayerData(plr.getUniqueId());
     }
 
@@ -141,7 +141,7 @@ public class PlayerStorage {
         return playerStorage.containsKey(uuid);
     }
 
-    public PlayerDataObject getPlayerData(Player plr) {
+    public PlayerDataObject getPlayerData(OfflinePlayer plr) {
         return getPlayerData(plr.getUniqueId());
     }
 
@@ -149,7 +149,7 @@ public class PlayerStorage {
         return playerStorage.get(uuid);
     }
 
-    public PlayerDataObject getOrCreatePlayerData(Player plr) {
+    public PlayerDataObject getOrCreatePlayerData(OfflinePlayer plr) {
         return getOrCreatePlayerData(plr.getUniqueId());
     }
 

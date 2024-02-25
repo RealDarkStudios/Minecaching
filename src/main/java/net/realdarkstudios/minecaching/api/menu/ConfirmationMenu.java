@@ -18,7 +18,7 @@ public class ConfirmationMenu extends MCMenu {
         super("menu.confirmation.title", MenuSize.THREE_ROW, plugin, parent);
         this.confirmItem = confirmItem;
 
-        update(initiator.getPlayer().getPlayer());
+        update(initiator.getPlayer());
     }
 
     @Override

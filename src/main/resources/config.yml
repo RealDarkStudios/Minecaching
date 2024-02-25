@@ -6,7 +6,7 @@
 # Do not touch!
 CONFIG_VERSION: 8
 MINECACHE_DATA_VERSION: 4
-PLAYER_DATA_VERSION: 4
+PLAYER_DATA_VERSION: 5
 LOGBOOK_DATA_VERSION: 1
 
 # Determines the Locale to use for plugin messages
@@ -50,8 +50,10 @@ MAX_Z: 30000000
 MIN_Z: -30000000
 
 # Determines the maximum distance a cache lodestone can be from the cache
+# Defaults: 50
 MAX_LODESTONE_DISTANCE: 50
-# Determines how far away from a cache lodestone the compass will be removed. Default is 25
+# Determines how far away from a cache lodestone the compass will be removed
+# Defaults: 25
 FIND_LODESTONE_DISTANCE: 25
 # Determines whether to use lodestone-based locating or coordinate-based locating
 # Coordinate-based is stable, it tells the player the rough coordinates of the cache
@@ -60,6 +62,7 @@ FIND_LODESTONE_DISTANCE: 25
 USE_LODESTONE_BASED_LOCATING: false
 
 # Determines which types are enabled on the server
+# Available Types: TRADITIONAL, MYSTERY, MULTI
 ENABLED_TYPES:
   - TRADITIONAL
   - MYSTERY

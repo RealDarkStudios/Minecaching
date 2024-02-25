@@ -1,10 +1,13 @@
 package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.log.LogPickMenu;
+import net.realdarkstudios.minecaching.api.menu.LogMenu;
+import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.log.Log;
 import net.realdarkstudios.minecaching.api.log.LogType;
-import net.realdarkstudios.minecaching.api.log.NotificationType;
+import net.realdarkstudios.minecaching.api.misc.NotificationType;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheType;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
@@ -24,6 +27,42 @@ import java.util.List;
 public class LogCacheCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (sender instanceof Player plr) {
+            PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(plr);
+            if (pdo.getLocatingId().equals("NULL")) {
+                LogPickMenu pickMenu = new LogPickMenu(Minecaching.getInstance(), plr);
+                pickMenu.open(plr);
+                return true;
+            }
+            Minecache cache = MinecachingAPI.get().getMinecache(pdo.getLocatingId());
+
+            LogMenu menu = new LogMenu(cache, pdo, Minecaching.getInstance());
+            if (args.length > 0 && args[0].equals("message")) {
+                if (args.length < 2) {
+                    MCMessages.sendErrorMsg(sender,"logcache.emptymessage");
+                } else {
+                    StringBuilder msg = new StringBuilder();
+                    for (int i = 1; i < args.length; i++) {
+                        msg.append(args[i]).append(" ");
+                    }
+                    pdo.setLogMessage(msg.toString().trim());
+                    menu.open(plr);
+                    menu.update(plr);
+                }
+            } else if (args.length > 0 && args[0].equals("code")) {
+                if (args.length < 2) {
+                    MCMessages.sendErrorMsg(sender, "logcache.emptycode");
+                } else {
+                    String code = args[1];
+                    pdo.setLogCode(code);
+                    menu.open(plr);
+                    menu.update(plr);
+                }
+            } else menu.open(plr);
+
+            return true;
+        }
+
         if (!(sender instanceof Player plr)) {
             MCMessages.sendErrorMsg(sender, "execute.console");
             return true;
@@ -143,6 +182,8 @@ public class LogCacheCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        if (Config.getInstance().experimentalFeatures() && args.length == 1) return List.of("message", "code");
+
         if (!(sender instanceof Player plr)) return List.of();
         return switch (args.length) {
             case 0 -> List.of("found", "dnf", "note", "flag", "maintenance");

@@ -8,6 +8,49 @@ VERSION
 
 CHANGELOG:
 
+0.3.0.5
+Minecaching v0.3.0.5: GUI Menus & Enhancements
+
+Added:
+- PlayerDataObject#getPlayer (actual Player, if you want OfflinePlayer use #getOfflinePlayer)
+- PlayerDataObject#getUsername
+- PlayerDataObject#isOnline
+- PlayerDataObject#getLogType
+- PlayerDataObject#getLogMessage
+- PlayerDataObject#getLogCode
+- PlayerDataObject#setLogType
+- PlayerDataObject#setLogMessage
+- PlayerDataObject#setLogCode
+- LogMenu and related items
+- LogType#getMenuMessage
+- /mcadmin correctstats
+- MinecachingAPI#correctStats
+
+Refactors:
+- Changed CacheDataMenu title parameter to titleKey
+- PlayerDataObject#getPlayer -> PlayerDataObject#getOfflinePlayer
+- AddCacheMenu -> CreateCacheMenu
+- api.log.Notification -> api.misc.Notification
+- api.log.NotificationType -> api.misc.NotificationType
+
+Changes:
+- Fixed MCMessages#sendErrorMsg & javadoc
+- Localization now uses a LinkedHashMap
+- Fixed deleting Logbooks on cache deleted
+- Add stuff for log menu in PlayerDataObject
+- Player Data Version is now 5
+- GUI Menus are now the defualt and no longer require experimental features
+- CacheListMenuOptions constructor now sets default values
+- CacheMenuItem now shows the author in the lore
+- Fixed all CLM stuff to actually be bedrock when deselected
+- CloseMenuItem now uses menu.close translation
+- CreateCacheSaveMenuItem lore now uses menu.save.lore lore
+- MenuItemState no longer translates name/lore in the state, instead pass in the translated text
+- Added more stats to /mcstats
+- MinecacheStorage and PlayerStorage now indicate how many caches/players they loaded
+- PlayerStorage no longer uses the players.yml file, instead it pulls players from the /player/ directory in the plugin data folder
+- README.md note said 0.0.3.0, not 0.3.0.0
+
 0.3.0.4
 Added:
 - LocateCacheMenuItem

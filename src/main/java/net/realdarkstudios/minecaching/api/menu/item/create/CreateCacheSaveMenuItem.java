@@ -20,7 +20,7 @@ import java.util.List;
 
 public class CreateCacheSaveMenuItem extends MenuItem {
     public CreateCacheSaveMenuItem(String name, ItemStack item, List<String> lore) {
-        super(name, item, List.of("All wool must be green to be able to save!"));
+        super(name, item, List.of(translation("menu.save.lore")));
     }
 
     @Override

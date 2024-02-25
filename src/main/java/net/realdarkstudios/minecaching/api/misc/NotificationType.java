@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.api.log;
+package net.realdarkstudios.minecaching.api.misc;
 
 public enum NotificationType {
     EDIT("edit"),

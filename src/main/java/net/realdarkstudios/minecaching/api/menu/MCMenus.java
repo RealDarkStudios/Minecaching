@@ -8,16 +8,16 @@ import java.util.HashMap;
 
 public class MCMenus {
     private static final MCMenus INSTANCE = new MCMenus();
-    private final HashMap<PlayerDataObject, AddCacheMenu> addCacheMenus = new HashMap<>();
+    private final HashMap<PlayerDataObject, CreateCacheMenu> addCacheMenus = new HashMap<>();
     private final HashMap<PlayerDataObject, EditCacheMenu> editCacheMenus = new HashMap<>();
 
     private MCMenus() {
     }
 
-    public AddCacheMenu getAddCacheMenu(PlayerDataObject pdo) {
+    public CreateCacheMenu getAddCacheMenu(PlayerDataObject pdo) {
         if (addCacheMenus.containsKey(pdo)) return addCacheMenus.get(pdo);
         else {
-            AddCacheMenu menu = new AddCacheMenu(Minecache.EMPTY, pdo, Minecaching.getInstance());
+            CreateCacheMenu menu = new CreateCacheMenu(Minecache.EMPTY, pdo, Minecaching.getInstance());
             addCacheMenus.put(pdo, menu);
             return menu;
         }

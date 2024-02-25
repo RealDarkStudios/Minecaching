@@ -16,8 +16,8 @@ import java.util.List;
 public class CacheDataMenu extends MCMenu {
     protected Minecache cache;
 
-    public CacheDataMenu(String title, Minecache cache, JavaPlugin plugin) {
-        super(title, MenuSize.THREE_ROW, plugin, cache.id());
+    public CacheDataMenu(String titleKey, Minecache cache, JavaPlugin plugin) {
+        super(titleKey, MenuSize.THREE_ROW, plugin, cache.id());
         this.cache = cache;
 
         setItem(0, new GoBackMenuItem(translation("menu.goback"), new ItemStack(Material.RED_CONCRETE), List.of()));

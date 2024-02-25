@@ -122,11 +122,11 @@ public class MCMessages {
     /**
      * Sends the {@link CommandSender} the Error message from the specified source with substitutions
      * @param sender The CommandSender to send the {@link TextComponent} to
-     * @param source The source of the usage, without the "usage." part (ex. a source of "mcadmin" would use the "usage.mcadmin" translation)
+     * @param source The source of the error, without the "error." part (ex. a source of "mcadmin" would use the "usage.mcadmin" translation)
      * @param substitutions The substitutions (or format args). Uses {@link String#format(String, Object...)}
      */
     public static void sendErrorMsg(CommandSender sender, String source, Object... substitutions) {
-        send(sender, ChatColor.RED + translation(source, "error", substitutions));
+        send(sender, ChatColor.RED + translation("error." + source, "error", substitutions));
     }
 
     /**

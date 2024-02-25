@@ -44,6 +44,10 @@ public enum LogType  {
         return MinecachingAPI.getLocalization().getTranslation("plugin.log." + id);
     }
 
+    public String getMenuMessage() {
+        return MinecachingAPI.getLocalization().getTranslation("menu.log.type." + id);
+    }
+
     public ChatColor getColor() {
         return color;
     }

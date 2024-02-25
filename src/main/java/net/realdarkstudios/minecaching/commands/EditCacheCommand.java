@@ -2,7 +2,7 @@ package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.log.NotificationType;
+import net.realdarkstudios.minecaching.api.misc.NotificationType;
 import net.realdarkstudios.minecaching.api.menu.EditCacheMenu;
 import net.realdarkstudios.minecaching.api.menu.MCMenus;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
@@ -43,7 +43,7 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        if (Config.getInstance().experimentalFeatures() && sender instanceof Player plr) {
+        if (sender instanceof Player plr) {
             Minecache cache = MinecachingAPI.get().getMinecache(args.length > 0 ? args[0] : "NULL");
             if (cache.equals(Minecache.EMPTY)) {
                 EditCacheMenu menu = MCMenus.get().getEditCacheMenu(pdo, pdo.getEditingCache());
@@ -83,7 +83,7 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                 return true;
             }
 
-            if (pdo.getUniqueID().equals(cache.author()) || pdo.getPlayer().getPlayer().hasPermission("minecaching.admin.edit")) {
+            if (pdo.getUniqueID().equals(cache.author()) || pdo.getPlayer().hasPermission("minecaching.admin.edit")) {
                 pdo.setEditingCache(cache);
 
                 EditCacheMenu menu = MCMenus.get().getEditCacheMenu(pdo, cache);

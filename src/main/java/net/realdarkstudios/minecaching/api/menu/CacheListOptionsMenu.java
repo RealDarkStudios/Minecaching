@@ -17,7 +17,7 @@ public class CacheListOptionsMenu extends MCMenu {
     public CacheListOptionsMenu(PlayerDataObject pdo, String titleKey, JavaPlugin plugin, MCMenu parent, Object... substitutions) {
         super(titleKey, MenuSize.FOUR_ROW, plugin, parent, substitutions);
 
-        update(pdo.getPlayer().getPlayer());
+        update(pdo.getPlayer());
     }
 
     @Override

@@ -14,7 +14,7 @@ import java.util.List;
 public class CLMTraditionalTypeMenuItem extends MenuItem {
     public CLMTraditionalTypeMenuItem(PlayerDataObject pdo, String name, ItemStack item, List<String> lore) {
         super((pdo.getCLMOptions().typeEnabled(MinecacheType.TRADITIONAL) ? ChatColor.GREEN : ChatColor.RED) + name,
-                (pdo.getCLMOptions().typeEnabled(MinecacheType.TRADITIONAL)) ? item : new ItemStack(Material.BEDROCK), lore);
+                (pdo.getCLMOptions().typeEnabled(MinecacheType.TRADITIONAL) ? item : new ItemStack(Material.BEDROCK)), lore);
     }
 
     @Override
