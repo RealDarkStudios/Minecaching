@@ -4,6 +4,7 @@ import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStorage;
 import net.realdarkstudios.minecaching.api.misc.Config;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,7 +65,7 @@ public class LogbookStorage {
             LogbookStorage.getInstance().save();
 
             boolean success = getLogbook(id).delete();
-            MinecachingAPI.tInfo(success ? "plugin.logbook.deleted" : "plugin.logbook.deleted.fail", id);
+            MinecachingAPI.tInfo(success ? MessageKeys.Plugin.LOGBOOK_DELETED : MessageKeys.Plugin.LOGBOOK_FAILED_DELETE, id);
             logIDs.removeAll(Collections.singleton(id));
 
             LogbookStorage.getInstance().updateMaps();
@@ -130,7 +131,7 @@ public class LogbookStorage {
                 }
             }
 
-            MinecachingAPI.tInfo("plugin.data.update.succeed",  "Logbook Data", Config.getInstance().getLogbookDataVersion(), MinecachingAPI.getLogbookDataVersion());
+            MinecachingAPI.tInfo(MessageKeys.Plugin.Data.UPDATE_SUCCEEDED,  "Logbook Data", Config.getInstance().getLogbookDataVersion(), MinecachingAPI.getLogbookDataVersion());
 
             Config.getInstance().setLogbookDataVersion(MinecachingAPI.getLogbookDataVersion());
             if (logStorage != null) {
@@ -140,7 +141,7 @@ public class LogbookStorage {
             }
             Config.getInstance().save();
         } catch (Exception e) {
-            MinecachingAPI.tWarning("plugin.data.update.fail",  "Logbook Data", Config.getInstance().getLogbookDataVersion(), MinecachingAPI.getLogbookDataVersion());
+            MinecachingAPI.tWarning(MessageKeys.Plugin.Data.UPDATE_FAILED,  "Logbook Data", Config.getInstance().getLogbookDataVersion(), MinecachingAPI.getLogbookDataVersion());
         }
     }
 }

@@ -1,12 +1,12 @@
 package net.realdarkstudios.minecaching.api.menu.item.edit;
 
-import net.md_5.bungee.api.ChatColor;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.EditCacheMenu;
 import net.realdarkstudios.minecaching.api.menu.MCMenus;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +17,7 @@ public class EditCacheMenuItem extends MenuItem {
     private final Minecache cache;
 
     public EditCacheMenuItem(Minecache cache) {
-        this(ChatColor.LIGHT_PURPLE + translation("menu.data.item.edit"), new ItemStack(Material.PURPLE_CONCRETE), List.of(), cache);
+        this(MessageKeys.Menu.Data.ITEM_EDIT.translate(), new ItemStack(Material.PURPLE_CONCRETE), List.of(), cache);
     }
 
     public EditCacheMenuItem(String nameKey, ItemStack stack, List<String> lore, Minecache cache) {

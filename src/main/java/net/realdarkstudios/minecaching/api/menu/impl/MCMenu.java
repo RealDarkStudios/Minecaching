@@ -1,9 +1,10 @@
 package net.realdarkstudios.minecaching.api.menu.impl;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.menu.CreateCacheMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.item.ErrorMenuItem;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
+import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -32,7 +33,8 @@ import java.util.UUID;
  */
 public abstract class MCMenu {
     private JavaPlugin plugin;
-    private String name, titleKey;
+    private LocalizedMessages.Key titleKey;
+    private String name;
     private MenuSize size;
     private MenuItem[] items;
     private MCMenu parent;
@@ -53,16 +55,16 @@ public abstract class MCMenu {
 
     /**
      * Creates a new MCMenu
-     * @param titleKey The translation key for the title of the menu
+     * @param titleKey The {@link LocalizedMessages.Key} to use for the title
      * @param size The {@link MenuSize} for this menu, {@link MenuSize#ONE_ROW} would have 9 slots (hotbar), while {@link MenuSize#SIX_ROW} would have 54 (double chest)
      * @param plugin The plugin associated with this menu. Used mainly for {@link MCMenu#onInventoryClick(InventoryClickEvent)}
      * @param parent The menu that 'owns' this menu, will be used if a {@link net.realdarkstudios.minecaching.api.menu.impl.item.GoBackMenuItem} is in this menu
-     * @param substitutions Substitutions for the title
+     * @param formatArgs Substitutions for the title
      */
-    public MCMenu(String titleKey, MenuSize size, JavaPlugin plugin, MCMenu parent, Object... substitutions) {
+    public MCMenu(LocalizedMessages.Key titleKey, MenuSize size, JavaPlugin plugin, MCMenu parent, Object... formatArgs) {
         this.plugin = plugin;
         this.titleKey = titleKey;
-        this.name = MinecachingAPI.getLocalization().getTranslation(titleKey, substitutions);
+        this.name = titleKey.console(formatArgs);
         this.size = size;
         this.items = new MenuItem[size.getSlotCount()];
         this.parent = parent;
@@ -70,20 +72,20 @@ public abstract class MCMenu {
 
     /**
      * Creates a new MCMenu
-     * @param titleKey The translation key for the title of the menu
+     * @param titleKey The {@link LocalizedMessages.Key} to use for the title
      * @param size The {@link MenuSize} for this menu, {@link MenuSize#ONE_ROW} would have 9 slots (hotbar), while {@link MenuSize#SIX_ROW} would have 54 (double chest)
      * @param plugin The plugin associated with this menu. Used mainly for {@link MCMenu#onInventoryClick(InventoryClickEvent)}
-     * @param substitutions Substitutions for the title
+     * @param formatArgs Substitutions for the title
      */
-    public MCMenu(String titleKey, MenuSize size, JavaPlugin plugin, Object... substitutions) {
-        this(titleKey, size, plugin, null, substitutions);
+    public MCMenu(LocalizedMessages.Key titleKey, MenuSize size, JavaPlugin plugin, Object... formatArgs) {
+        this(titleKey, size, plugin, null, formatArgs);
     }
 
     /**
-     * Gets the title key of this menu
-     * @return The title key
+     * Gets the title path of this menu
+     * @return The title path
      */
-    public String getTitleKey() {
+    public LocalizedMessages.Key getTitleKey() {
         return titleKey;
     }
 
@@ -92,7 +94,7 @@ public abstract class MCMenu {
      * @return The name
      */
     public String getName() {
-        return name.equals("Translation Not Found") ? titleKey : name;
+        return name.equals("Translation Not Found") ? titleKey.path() : name;
     }
 
     /**
@@ -143,7 +145,7 @@ public abstract class MCMenu {
      */
     public MCMenu setItem(@IntRange(from=0, to=53) int slot, MenuItem item) {
         if (slot <= size.getSlotCount() - 1) items[slot] = item;
-        else MinecachingAPI.tWarning("menu.item.outofbounds", slot, size.getSlotCount());
+        else MinecachingAPI.tWarning(MessageKeys.Menu.ITEM_OUT_OF_BOUNDS, slot, size.getSlotCount());
         return this;
     }
 
@@ -286,35 +288,6 @@ public abstract class MCMenu {
      */
     protected boolean stringCheck(String str) {
         return str != null && !str.isEmpty();
-    }
-
-    /**
-     * Gets the translated name of the item with the given id with a prefix.
-     * Must be overriden by each instance of MCMenu to provide this prefix. You can view an example implementation at {@link CreateCacheMenu}
-     * @param id The id to use
-     * @param substitutions Substitutions for the translation
-     * @return The translated string
-     */
-    abstract protected String itemTranslation(String id, Object... substitutions);
-
-    /**
-     * Gets the translated name of the data item with the given id.
-     * @param id The id to use
-     * @param substitutions Substitutions for the translation
-     * @return The translated string
-     */
-    protected String dataTranslation(String id, Object... substitutions) {
-        return translation("menu.data.item." + id, substitutions);
-    }
-
-    /**
-     * Gets the translation with the specified key
-     * @param key The key to use
-     * @param substitutions Substitutions for the translation
-     * @return The translated string
-     */
-    protected String translation(String key, Object... substitutions) {
-        return MinecachingAPI.getLocalization().getTranslation(key, substitutions);
     }
 
     /**

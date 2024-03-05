@@ -1,10 +1,11 @@
 package net.realdarkstudios.minecaching.api.menu.impl;
 
-import net.md_5.bungee.api.ChatColor;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.menu.impl.item.PaginationMenuItem;
 import net.realdarkstudios.minecaching.api.menu.impl.item.PaginationPageItem;
 import net.realdarkstudios.minecaching.api.menu.impl.item.RefreshPaginationMenuItem;
+import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,21 +20,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class PaginationMenu extends MCMenu {
     private final Map<UUID, AtomicInteger> pages = new HashMap<>();
 
-    public PaginationMenu(String titleKey, JavaPlugin plugin) {
-        this(titleKey, plugin, null);
+    public PaginationMenu(LocalizedMessages.Key titleKey, JavaPlugin plugin, Object... formatArgs) {
+        this(titleKey, plugin, null, formatArgs);
     }
 
 
-    public PaginationMenu(String titleKey, JavaPlugin plugin, MCMenu parent) {
-        super(titleKey, MenuSize.SIX_ROW, plugin, parent);
+    public PaginationMenu(LocalizedMessages.Key titleKey, JavaPlugin plugin, MCMenu parent, Object... formatArgs) {
+        super(titleKey, MenuSize.SIX_ROW, plugin, parent, formatArgs);
 
         for (int i = 0; i < MenuSize.FIVE_ROW.getSlotCount(); i++) {
             setItem(i + 9, new PaginationMenuItem(this, i));
         }
 
-        setItem(0, new PaginationPageItem(this, translation("menu.list.prev"), -1));
-        setItem(7, new RefreshPaginationMenuItem(this, ChatColor.GRAY + translation("menu.list.refresh"), new ItemStack(Material.LIGHT_GRAY_TERRACOTTA), List.of()));
-        setItem(8, new PaginationPageItem(this, translation("menu.list.next"), 1));
+        setItem(0, new PaginationPageItem(this, MessageKeys.Menu.List.PREVIOUS.translate(), -1));
+        setItem(7, new RefreshPaginationMenuItem(this, MessageKeys.Menu.List.REFRESH.translate(),
+                new ItemStack(Material.LIGHT_GRAY_TERRACOTTA), List.of()));
+        setItem(8, new PaginationPageItem(this, MessageKeys.Menu.List.NEXT.translate(), 1));
         fillEmptySlots();
     }
 

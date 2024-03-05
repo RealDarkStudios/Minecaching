@@ -1,9 +1,13 @@
 package net.realdarkstudios.minecaching.api.menu.item.misc;
 
-import net.realdarkstudios.minecaching.util.Utils;
-import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.md_5.bungee.api.ChatColor;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
+import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
+import net.realdarkstudios.minecaching.api.minecache.MinecacheType;
+import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,11 +17,32 @@ import java.util.List;
 public class CacheMenuItem extends MenuItem {
     public CacheMenuItem(String name, Minecache cache) {
         super(name, new ItemStack(Material.SPYGLASS), List.of(
-                MinecachingAPI.getLocalization().getTranslation("menu.data.item.preview.type", cache.type().getTranslation()),
-                MinecachingAPI.getLocalization().getTranslation("menu.data.item.preview.status", cache.status().getTranslation()),
-                Utils.formatLocation(MinecachingAPI.getLocalization().getTranslation("menu.data.item.preview.coords"), cache.navLocation()),
-                MinecachingAPI.getLocalization().getTranslation("menu.data.item.preview.author", Utils.uuidName(cache.author())),
-                MinecachingAPI.getLocalization().getTranslation("menu.data.item.preview.hidden", cache.hidden().format(DateTimeFormatter.ofPattern("MM/dd/yy hh:mma"))),
-                MinecachingAPI.getLocalization().getTranslation("menu.data.item.preview.finds", cache.finds())));
+                MessageKeys.Menu.Data.PREVIEW_TYPE.translateWithOtherStyle(getTypeStyle(cache.type()), cache.type().getTranslation()),
+                MessageKeys.Menu.Data.PREVIEW_STATUS.translateWithOtherStyle(getStatusStyle(cache.status()), cache.status().getTranslation()),
+                MCUtils.formatLocation(MessageKeys.Menu.Data.PREVIEW_NAVIGATION_COORDS.translate(), cache.navLocation()),
+                MessageKeys.Menu.Data.PREVIEW_AUTHOR.translate(MCUtils.uuidName(cache.owner())),
+                MessageKeys.Menu.Data.PREVIEW_HIDDEN.translate(cache.hidden().format(DateTimeFormatter.ofPattern("MM/dd/yy hh:mma"))),
+                MessageKeys.Menu.Data.PREVIEW_FINDS.translate(cache.finds()),
+                MessageKeys.Menu.Data.PREVIEW_FAVORITES.translate(cache.favorites())));
+    }
+
+    private static LocalizedMessages.StyleOptions getTypeStyle(MinecacheType type) {
+        return switch (type) {
+            case TRADITIONAL -> new LocalizedMessages.StyleOptions().setColor(ChatColor.DARK_GREEN);
+            case MYSTERY -> new LocalizedMessages.StyleOptions().setColor(ChatColor.DARK_BLUE);
+            case MULTI -> new LocalizedMessages.StyleOptions().setColor(ChatColor.GOLD);
+            default -> LocalizedMessages.StyleOptions.NONE;
+        };
+    }
+
+    private static LocalizedMessages.StyleOptions getStatusStyle(MinecacheStatus status) {
+        return switch (status) {
+            case PUBLISHED -> new LocalizedMessages.StyleOptions().setColor(ChatColor.GREEN);
+            case NEEDS_MAINTENANCE -> new LocalizedMessages.StyleOptions().setColor(ChatColor.RED);
+            case DISABLED -> new LocalizedMessages.StyleOptions().setColor(ChatColor.GRAY);
+            case ARCHIVED -> new LocalizedMessages.StyleOptions().setColor(ChatColor.DARK_GRAY);
+            case REVIEWING -> new LocalizedMessages.StyleOptions().setColor(ChatColor.YELLOW);
+            default -> LocalizedMessages.StyleOptions.NONE;
+        };
     }
 }

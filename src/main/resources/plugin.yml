@@ -107,3 +107,5 @@ permissions:
     default: op
   minecaching.stats:
     default: true
+  minecaching.admin.bypass.datamenu:
+    default: op

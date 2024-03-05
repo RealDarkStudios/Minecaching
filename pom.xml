@@ -6,7 +6,7 @@
 
     <groupId>net.realdarkstudios</groupId>
     <artifactId>Minecaching</artifactId>
-    <version>0.3.0.5</version>
+    <version>0.3.1.0-24w10a</version>
     <packaging>jar</packaging>
 
     <name>Minecaching</name>
@@ -95,6 +95,10 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>scarsz</id>
+            <url>https://nexus.scarsz.me/content/groups/public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -103,6 +107,17 @@
             <artifactId>spigot-api</artifactId>
             <version>1.19.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>github.scarsz</groupId>
+            <artifactId>mojang</artifactId>
+            <version>1.1.1</version>
         </dependency>
     </dependencies>
 </project>

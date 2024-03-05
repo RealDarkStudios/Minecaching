@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.event;
 
 import net.realdarkstudios.minecaching.Minecaching;
-import net.realdarkstudios.minecaching.util.Utils;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.event.minecache.*;
 import org.bukkit.event.EventHandler;
@@ -29,7 +29,7 @@ public class MCDebugEventHandler implements Listener {
 
     @EventHandler
     public void onMinecacheEdited(MinecacheEditedEvent event) {
-        sendDebugMessage("Minecache " + event.getCache().id() + " was edited", "cacheId - " + event.getCache().id() + ", editor - " + Utils.commandSenderName(event.getEditor()), "");
+        sendDebugMessage("Minecache " + event.getCache().id() + " was edited", "cacheId - " + event.getCache().id() + ", editor - " + MCUtils.commandSenderName(event.getEditor()), "");
     }
 
     @EventHandler
@@ -39,17 +39,17 @@ public class MCDebugEventHandler implements Listener {
 
     @EventHandler
     public void onMinecachePublished(MinecachePublishedEvent event) {
-        sendDebugMessage("Minecache " + event.getCache().id() + " was published", "cacheId - " + event.getCache().id() + ", verifier - " + Utils.commandSenderName(event.getVerifier()), "");
+        sendDebugMessage("Minecache " + event.getCache().id() + " was published", "cacheId - " + event.getCache().id() + ", verifier - " + MCUtils.commandSenderName(event.getVerifier()), "");
     }
 
     @EventHandler
     public void onMinecacheArchived(MinecacheArchivedEvent event) {
-        sendDebugMessage("Minecache " + event.getCache().id() + " was archived", "cacheId - " + event.getCache().id() + ", archiver - " + Utils.commandSenderName(event.getArchiver()), "");
+        sendDebugMessage("Minecache " + event.getCache().id() + " was archived", "cacheId - " + event.getCache().id() + ", archiver - " + MCUtils.commandSenderName(event.getArchiver()), "");
     }
 
     @EventHandler
     public void onMinecacheDisabled(MinecacheDisabledEvent event) {
-        sendDebugMessage("Minecache " + event.getCache().id() + " was disabled", "cacheId - " + event.getCache().id() + ", disabled - " + Utils.commandSenderName(event.getDisabler()), "");
+        sendDebugMessage("Minecache " + event.getCache().id() + " was disabled", "cacheId - " + event.getCache().id() + ", disabled - " + MCUtils.commandSenderName(event.getDisabler()), "");
     }
 
     @EventHandler
@@ -64,7 +64,7 @@ public class MCDebugEventHandler implements Listener {
 
     @EventHandler
     public void onLogCreatedEvent(LogCreatedEvent event) {
-        sendDebugMessage("Log " + event.getLogId() + " was created", "cacheId - " + event.getCache().id() + ", logId - " + event.getLogId() + ", author - " + Utils.uuidName(event.getAuthor()), "type - " + event.getType().getId());
+        sendDebugMessage("Log " + event.getLogId() + " was created", "cacheId - " + event.getCache().id() + ", logId - " + event.getLogId() + ", author - " + MCUtils.uuidName(event.getAuthor()), "type - " + event.getType().getId());
     }
 
     private void sendDebugMessage(String basicMsg, String importantEventData, String otherEventData) {

@@ -1,6 +1,6 @@
 package net.realdarkstudios.minecaching.api.misc;
 
-import net.realdarkstudios.minecaching.util.Utils;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Notification {
-    public static final Notification EMPTY = new Notification("100000", Utils.EMPTY_UUID, NotificationType.INVALID, Minecache.EMPTY, LocalDateTime.now());
+    public static final Notification EMPTY = new Notification("100000", MCUtils.EMPTY_UUID, NotificationType.INVALID, Minecache.EMPTY, LocalDateTime.now());
 
     private final String id;
     private final UUID initiator;
@@ -55,7 +55,7 @@ public class Notification {
         NotificationType nType;
         if (type == null) { nType = NotificationType.INVALID; isInvalidated = true; } else { nType = NotificationType.get(type); }
         if (cacheID == null) { nCache = Minecache.EMPTY; isInvalidated = true; } else { nCache = MinecachingAPI.get().getMinecache(cacheID); }
-        try { nInitiator = UUID.fromString(initiator); } catch (Exception e) { nInitiator = Utils.EMPTY_UUID; isInvalidated = true; }
+        try { nInitiator = UUID.fromString(initiator); } catch (Exception e) { nInitiator = MCUtils.EMPTY_UUID; isInvalidated = true; }
         try { nTime = LocalDateTime.parse(yaml.getString(key + ".time")); } catch (Exception e) { nTime = LocalDateTime.now(); isInvalidated = true; }
         String[] nID = key.split("\\.");
 

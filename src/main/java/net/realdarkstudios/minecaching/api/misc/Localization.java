@@ -2,6 +2,7 @@ package net.realdarkstudios.minecaching.api.misc;
 
 import com.google.gson.JsonObject;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.plugin.Plugin;
 
 import java.util.LinkedHashMap;
@@ -21,14 +22,14 @@ public class Localization {
     }
 
     /**
-     * Gets the translation of the given key. No format arguments.
-     * @param key The key of the translation
+     * Gets the translation of the given path. No format arguments.
+     * @param key The path of the translation
      * @return The translated message
      */
     public String getTranslation(String key) {
         if (!hasTranslation(key)) {
-            if (!hasTranslation("plugin.localization.missing")) return "Translation Not Found!";
-            else return String.format(getTranslation("plugin.localization.missing"), key);
+            if (!MessageKeys.TRANSLATION_MISSING.localizationHasPath()) return "Translation Not Found!";
+            else return String.format(MessageKeys.TRANSLATION_MISSING.translate(key));
         }
         String translation = messages.get(key);
         // The substring removes the quotation marks around the result
@@ -36,8 +37,8 @@ public class Localization {
     }
 
     /**
-     * Gets the translation of the given key with format arguments
-     * @param key The key of the translation
+     * Gets the translation of the given path with format arguments
+     * @param key The path of the translation
      * @param substitutions The format argument substitutions
      * @return The translated message
      */
@@ -45,14 +46,14 @@ public class Localization {
         try {
             return String.format(getTranslation(key), substitutions);
         } catch (MissingFormatArgumentException e) {
-            MinecachingAPI.tWarning("plugin.localization.missingformatarg", key);
+            MinecachingAPI.tWarning(MessageKeys.TRANSLATION_FORMAT_ARG_MISSING, key);
             return getTranslation(key);
         }
     }
 
     /**
      * Checks if a given translation exists
-     * @param key The key of the translation
+     * @param key The path of the translation
      * @return {@code true} if an entry exists, {@code false} if not
      */
     public boolean hasTranslation(String key) {

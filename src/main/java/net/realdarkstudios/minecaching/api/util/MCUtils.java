@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.util;
+package net.realdarkstudios.minecaching.api.util;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.log.Log;
@@ -17,7 +17,7 @@ import java.util.*;
 /**
  * A collection of utility methods for various parts of Minecaching
  */
-public class Utils {
+public class MCUtils {
     /**
      * The placeholder {@link UUID} in string form
      */
@@ -64,12 +64,12 @@ public class Utils {
         List<Map.Entry<I, V>> list = new LinkedList<>(hashMap.entrySet());
         list.sort(comparator);
 
-        HashMap<I, V> temp = new LinkedHashMap<>(hashMap.size());
+        HashMap<I, V> sorted = new LinkedHashMap<>(hashMap.size());
         for (Map.Entry<I, V> entry: list) {
-            temp.put(entry.getKey(), entry.getValue());
+            sorted.put(entry.getKey(), entry.getValue());
         }
 
-        return temp;
+        return sorted;
     }
 
     /**
@@ -83,27 +83,27 @@ public class Utils {
     public static boolean locationInvalid(CommandSender sender, int x, int y, int z) {
         Config cfg = Config.getInstance();
         if (x > cfg.getMaxX()) {
-            MCMessages.sendErrorMsg(sender, "coords.abovelimit", "X", x, cfg.getMaxX());
+            LocalizedMessages.send(sender, MessageKeys.Error.ABOVE_COORD_LIMIT, "X", x, cfg.getMaxX());
             return true;
         }
         if (x < cfg.getMinX()) {
-            MCMessages.sendErrorMsg(sender, "coords.belowlimit", "X", x, cfg.getMinX());
+            LocalizedMessages.send(sender, MessageKeys.Error.BELOW_COORD_LIMIT, "X", x, cfg.getMaxX());
             return true;
         }
         if (y > cfg.getMaxY()) {
-            MCMessages.sendErrorMsg(sender, "coords.abovelimit", "Y", y, cfg.getMaxY());
+            LocalizedMessages.send(sender, MessageKeys.Error.ABOVE_COORD_LIMIT, "Y", y, cfg.getMaxY());
             return true;
         }
         if (y < cfg.getMinY()) {
-            MCMessages.sendErrorMsg(sender, "coords.belowlimit", "Y", y, cfg.getMinY());
+            LocalizedMessages.send(sender, MessageKeys.Error.BELOW_COORD_LIMIT, "Y", y, cfg.getMaxY());
             return true;
         }
         if (z > cfg.getMaxZ()) {
-            MCMessages.sendErrorMsg(sender, "coords.abovelimit", "Z", z, cfg.getMaxZ());
+            LocalizedMessages.send(sender, MessageKeys.Error.ABOVE_COORD_LIMIT, "Z", z, cfg.getMaxZ());
             return true;
         }
         if (z < cfg.getMinZ()) {
-            MCMessages.sendErrorMsg(sender, "coords.belowlimit", "Z", z, cfg.getMinZ());
+            LocalizedMessages.send(sender, MessageKeys.Error.BELOW_COORD_LIMIT, "Z", z, cfg.getMaxZ());
             return true;
         }
         return false;
@@ -130,11 +130,7 @@ public class Utils {
                 }
             }
         } else {
-            try {
-                return Integer.parseInt(coord);
-            } catch (NumberFormatException e) {
-                return (a.equals("X") ? Config.getInstance().getMaxX() : a.equals("Y") ? Config.getInstance().getMaxY() : Config.getInstance().getMaxZ()) + 1;
-            }
+            return interpretCoordinate(coord, axis);
         }
     }
 
@@ -174,7 +170,7 @@ public class Utils {
     }
 
     /**
-     * Gets the name of a player, or [CONSOLE] if it is not a player
+     * Gets the name of a player, or [CONSOLE] if it is not a player (usually for Minecaching this will be the result of using {@link MCUtils#EMPTY_UUID})
      * @param uuid The {@link UUID} to get the name of
      * @return The UUID name
      */

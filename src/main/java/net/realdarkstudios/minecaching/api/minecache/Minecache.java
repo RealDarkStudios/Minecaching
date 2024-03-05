@@ -1,31 +1,39 @@
 package net.realdarkstudios.minecaching.api.minecache;
 
-import net.realdarkstudios.minecaching.util.Utils;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
 import net.realdarkstudios.minecaching.api.misc.Config;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import javax.naming.SizeLimitExceededException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Minecache {
-    public static final Minecache EMPTY = new Minecache("NULL", MinecacheType.TRADITIONAL, null, Utils.EMPTY_UUID, null, 0, 0, 0, 0, 0, 0, Utils.EMPTY_UUID, MinecacheStatus.INVALID, null, null, 0, null, true);
+    public static final Minecache EMPTY = new Minecache("NULL", MinecacheType.TRADITIONAL, null, MCUtils.EMPTY_UUID, null, 0, 0, 0, 0, 0, 0, MCUtils.EMPTY_UUID, MinecacheStatus.INVALID, null, null, 0, null, 0, true);
 
     private String id, name, code;
     private MinecacheType type;
     private UUID author, maintainer, ftf;
     private World world;
-    private int x, y, z, nx, ny, nz, finds;
+    private int x, y, z, nx, ny, nz, finds, favorites;
     private MinecacheStatus status;
     private LocalDateTime hidden;
     private Material blockType;
     private boolean invalidated;
 
-    public Minecache(String id, MinecacheType type, String name, UUID author, World world, int x, int y, int z, int nx, int ny, int nz, UUID ftf, MinecacheStatus status, LocalDateTime hidden, Material blockType, int finds, String code, boolean invalidated) {
+    public Minecache(String id, MinecacheType type, String name, UUID author, World world, int x, int y, int z, int nx, int ny, int nz, UUID ftf, MinecacheStatus status, LocalDateTime hidden, Material blockType, int finds, String code, int favorites, boolean invalidated) {
+        this(id, type, name, author, MCUtils.EMPTY_UUID, world, x, y, z, nx, ny, nz, ftf, status, hidden, blockType, finds, code, favorites, invalidated);
+    }
+
+    public Minecache(String id, MinecacheType type, String name, UUID author, UUID maintainer, World world, int x, int y, int z, int nx, int ny, int nz, UUID ftf, MinecacheStatus status, LocalDateTime hidden, Material blockType, int finds, String code, int favorites, boolean invalidated) {
         this.id = id;
         this.type = type;
         this.name = name;
         this.author = author;
+        this.maintainer = maintainer;
         this.world = world;
         this.x = x;
         this.y = y;
@@ -38,8 +46,9 @@ public class Minecache {
         this.hidden = hidden;
         this.blockType = blockType;
         this.finds = finds;
-        this.invalidated = invalidated;
         this.code = code;
+        this.favorites = favorites;
+        this.invalidated = invalidated;
     }
 
     public Minecache setID(String newID) {
@@ -107,13 +116,17 @@ public class Minecache {
         return this;
     }
 
-    public Minecache setInvalidated(boolean invalidate) {
-        this.invalidated = invalidate;
+    public Minecache setCode(String code) {
+        this.code = code;
         return this;
     }
 
-    public Minecache setCode(String code) {
-        this.code = code;
+    public void setFavorites(int favorites) {
+        this.favorites = favorites;
+    }
+
+    public Minecache setInvalidated(boolean invalidate) {
+        this.invalidated = invalidate;
         return this;
     }
 
@@ -122,15 +135,23 @@ public class Minecache {
     }
 
     public MinecacheType type() {
-        return type;
+        return invalidated ? MinecacheType.INVALID : type;
     }
 
     public String name() {
-        return name;
+        return name != null ? name : "";
     }
 
-    public UUID author() {
+    public UUID owner() {
+        return maintainer.equals(MCUtils.EMPTY_UUID) ? author : maintainer;
+    }
+
+    public UUID originalAuthor() {
         return author;
+    }
+
+    public UUID maintainer() {
+        return maintainer;
     }
 
     public World world() {
@@ -173,7 +194,7 @@ public class Minecache {
     }
 
     public MinecacheStatus status() {
-        return status;
+        return invalidated ? MinecacheStatus.INVALID : status;
     }
 
     public LocalDateTime hidden() {
@@ -188,37 +209,49 @@ public class Minecache {
         return finds;
     }
 
+
+    public String code() {
+        return code != null ? code : "";
+    }
+
+    public int favorites() {
+        return favorites;
+    }
+
     public boolean invalidated() {
         return invalidated;
     }
 
-    public String code() {
-        return code;
-    }
-
     public static Minecache fromYaml(YamlConfiguration yaml, String key) {
-        String cName = yaml.getString(key + ".name");
-        String type = yaml.getString(key + ".type");
-        String author = yaml.getString(key + ".author");
+        boolean isInvalidated = false;
+        int invalidatedCode = -1;
+        boolean ignoreNormalChecks = key.equals("creating") || key.equals("editing");
+
+        String cName = yaml.getString(key + ".name", "");
+        String type = yaml.getString(key + ".type", "invalid");
+        String author = yaml.getString(key + ".author", "");
         UUID cAuthor;
-        String world = yaml.getString(key + ".world");
+        String maintainer = yaml.getString(key + ".maintainer", MCUtils.EMPTY_UUID_STRING);
+        UUID cMaintainer;
+        String world = yaml.getString(key + ".world", "");
         World cWorld;
-        String FTF = yaml.getString(key + ".ftf");
+        String FTF = yaml.getString(key + ".ftf", MCUtils.EMPTY_UUID_STRING);
         UUID cFTF;
         int cX = yaml.getInt(key + ".x");
         int cY = yaml.getInt(key + ".y");
         int cZ = yaml.getInt(key + ".z");
         int cNX, cNY, cNZ;
 
-        if (yaml.contains(".lx")) {
+        // Convert .lx/y/z -> .nx/y/z as part of the rename from lode coords to nav coords
+        if (yaml.contains(key + ".lx")) {
             yaml.set(key + ".nx", yaml.getInt(key + ".lx"));
             yaml.set(key + ".lx", null);
         }
-        if (yaml.contains(".ly")) {
+        if (yaml.contains(key + ".ly")) {
             yaml.set(key + ".ny", yaml.getInt(key + ".ly"));
             yaml.set(key + ".ly", null);
         }
-        if (yaml.contains(".lz")) {
+        if (yaml.contains(key + ".lz")) {
             yaml.set(key + ".nz", yaml.getInt(key + ".lz"));
             yaml.set(key + ".lz", null);
         }
@@ -226,42 +259,62 @@ public class Minecache {
         cNX = yaml.getInt(key + ".nx");
         cNY = yaml.getInt(key + ".ny");
         cNZ = yaml.getInt(key + ".nz");
-        String status = yaml.getString(key + ".status");
+        String status = yaml.getString(key + ".status", "invalid");
+        String hidden = yaml.getString(key + ".hidden", "");
         LocalDateTime cHidden;
-        String blockType = yaml.getString(key + ".blocktype");
+        String blockType = yaml.getString(key + ".blocktype", "AIR");
         Material cBlockType;
-        int cFinds = yaml.getInt(key + ".finds");
-        boolean isInvalidated = false;
-        String cCode = yaml.getString(key + ".code");
+        int cFinds = yaml.getInt(key + ".finds", 0);
+        String cCode = yaml.getString(key + ".code", "");
+        int cFavorites = yaml.getInt(key + ".favorites", 0);
 
         MinecacheType cType;
-        if (type == null) { cType = MinecacheType.TRADITIONAL; } else { cType = MinecacheType.get(type); }
+        if (type.equals("invalid")) { cType = MinecacheType.INVALID; } else { cType = MinecacheType.get(type); }
         MinecacheStatus cStatus;
-        if (status == null) { cStatus = MinecacheStatus.REVIEWING; } else { cStatus = MinecacheStatus.get(status); }
-        try { cHidden = LocalDateTime.parse(yaml.getString(key + ".hidden")); } catch (Exception e) { cHidden = LocalDateTime.now(); isInvalidated = true; }
-        try { cAuthor = UUID.fromString(author); } catch (Exception e) { cAuthor = Utils.EMPTY_UUID; isInvalidated = true; }
-        try { cFTF = UUID.fromString(FTF); } catch (Exception e) { cFTF = Utils.EMPTY_UUID; isInvalidated = true; }
+        if (status.equals("invalid")) { cStatus = MinecacheStatus.INVALID; } else { cStatus = MinecacheStatus.get(status); }
+        try { cHidden = LocalDateTime.parse(hidden); } catch (Exception e) { cHidden = LocalDateTime.now(); yaml.set(key + ".hidden", cHidden.toString()); }
+        try { cAuthor = UUID.fromString(author); } catch (Exception e) { cAuthor = MCUtils.EMPTY_UUID; if (!ignoreNormalChecks) { isInvalidated = true; invalidatedCode = 0; } }
+        try { cMaintainer = UUID.fromString(maintainer); } catch (Exception e) { cMaintainer = MCUtils.EMPTY_UUID; yaml.set(key + ".maintainer", cMaintainer.toString()); }
+        try { cFTF = UUID.fromString(FTF); } catch (Exception e) { cFTF = MCUtils.EMPTY_UUID; yaml.set(key + ".ftf", cFTF.toString()); }
         try { cWorld = Bukkit.createWorld(new WorldCreator(world)); } catch (Exception e) { cWorld = null; isInvalidated = true; }
-        try { cBlockType = Material.getMaterial(blockType); } catch (Exception e) { cBlockType = Material.AIR; isInvalidated = true; }
-        if (cName == null || !key.startsWith("MC-") || key.length() < 8 || cFinds < 0) { isInvalidated = true; }
-        if (cCode == null) { cCode = ""; isInvalidated = true; }
-        if (cWorld == null) { cWorld = Bukkit.getWorlds().get(0); isInvalidated = true; }
+        try { cBlockType = Material.getMaterial(blockType); } catch (Exception e) { cBlockType = Material.AIR; yaml.set(key + ".blocktype", cBlockType.toString()); }
+        if (cName.isEmpty()) { yaml.set(key + ".name", ""); if (!ignoreNormalChecks) { isInvalidated = true; invalidatedCode = 1; } }
+        if ((!key.startsWith("MC-") || key.length() < 8) && !ignoreNormalChecks) try { transferCache(yaml, key, MinecacheStorage.getInstance().generateNonConflictingCacheID()); } catch (SizeLimitExceededException e) {throw new RuntimeException(e); }
+        if (cFinds < 0) { cFavorites = 0; }
+        if (cFavorites < 0) { cFavorites = 0; }
+        if (cCode.isEmpty() && !ignoreNormalChecks) { cCode = ""; isInvalidated = true; invalidatedCode = 2; }
+        if (cWorld == null) { cWorld = Bukkit.getWorlds().get(0); if (!ignoreNormalChecks) { isInvalidated = true; invalidatedCode = 3; } }
+
         Config cfg = Config.getInstance();
         if (cX > cfg.getMaxX() || cX < cfg.getMinX() || cY > cfg.getMaxY() || cY < cfg.getMinY() || cZ > cfg.getMaxZ() || cZ < cfg.getMinZ()
-                || cNX > cfg.getMaxX() || cNX < cfg.getMinX() || cNY > cfg.getMaxY() || cNY < cfg.getMinY() || cNZ > cfg.getMaxZ() || cNZ < cfg.getMinZ()) {
-            isInvalidated = true;
+                || cNX > cfg.getMaxX() || cNX < cfg.getMinX() || cNY > cfg.getMaxY() || cNY < cfg.getMinY() || cNZ > cfg.getMaxZ() || cNZ < cfg.getMinZ() && !ignoreNormalChecks) {
+            isInvalidated = true; invalidatedCode = 4;
         }
-        if (new Location(cWorld, cNX, cNY, cNZ).distance(new Location(cWorld, cX, cY, cZ)) > Config.getInstance().getMaxLodestoneDistance()) {
-            isInvalidated = true;
+        if (new Location(cWorld, cNX, cNY, cNZ).distance(new Location(cWorld, cX, cY, cZ)) > Config.getInstance().getMaxLodestoneDistance() && !ignoreNormalChecks) {
+            isInvalidated = true; invalidatedCode = 5;
         }
 
-        return new Minecache(key, cType, cName, cAuthor, cWorld, cX, cY, cZ, cNX, cNY, cNZ, cFTF, cStatus, cHidden, cBlockType, cFinds, cCode, isInvalidated);
+        if (isInvalidated && !ignoreNormalChecks) {
+            MinecachingAPI.tWarning(MessageKeys.Misc.Cache.YAML, key, switch (invalidatedCode) {
+                case 0 -> MessageKeys.Misc.Cache.YCODE_0.translate();
+                case 1 -> MessageKeys.Misc.Cache.YCODE_1.translate();
+                case 2 -> MessageKeys.Misc.Cache.YCODE_2.translate();
+                case 3 -> MessageKeys.Misc.Cache.YCODE_3.translate();
+                case 4 -> MessageKeys.Misc.Cache.YCODE_4.translate();
+                case 5 -> MessageKeys.Misc.Cache.YCODE_5.translate();
+                default -> MessageKeys.Misc.Cache.YCODE_OTHER.translate();
+            });
+        }
+
+        return new Minecache(key, cType, cName, cAuthor, cMaintainer, cWorld, cX, cY, cZ, cNX, cNY, cNZ, cFTF, cStatus, cHidden, cBlockType, cFinds, cCode, cFavorites, isInvalidated);
     }
 
     public void toYaml(YamlConfiguration yaml, String key) {
-        yaml.set(key + ".type", type().toString());
+        // use type and status variables to prevent saving type as invalid (which type() and status() may return)
+        yaml.set(key + ".type", type.toString());
         yaml.set(key + ".name", name());
-        yaml.set(key + ".author", author().toString());
+        yaml.set(key + ".author", originalAuthor().toString());
+        yaml.set(key + ".maintainer", maintainer().toString());
         yaml.set(key + ".ftf", ftf().toString());
         yaml.set(key + ".world", world() != null ? world().getName() : "world");
         yaml.set(key + ".x", x());
@@ -270,15 +323,21 @@ public class Minecache {
         yaml.set(key + ".nx", nx());
         yaml.set(key + ".ny", ny());
         yaml.set(key + ".nz", nz());
-        yaml.set(key + ".status", status().getId());
+        yaml.set(key + ".status", status.getId());
         yaml.set(key + ".hidden", hidden() != null ? hidden().toString() : LocalDateTime.now().toString());
         yaml.set(key + ".blocktype", blockType() != null ? blockType().toString() : "AIR");
         yaml.set(key + ".finds", finds());
         yaml.set(key + ".code", code());
+        yaml.set(key + ".favorites", favorites());
 
-        if (yaml.contains(key + "lx")) yaml.set("lx", null);
-        if (yaml.contains(key + "ly")) yaml.set("ly", null);
-        if (yaml.contains(key + "lz")) yaml.set("lz", null);
+        if (yaml.contains(key + ".lx")) yaml.set(".lx", null);
+        if (yaml.contains(key + ".ly")) yaml.set(".ly", null);
+        if (yaml.contains(key + ".lz")) yaml.set(".lz", null);
+    }
+
+    private static void transferCache(YamlConfiguration yaml, String currKey, String newKey) {
+        yaml.set(newKey, yaml.get(currKey));
+        yaml.set(currKey, null);
     }
 
     public static int compareByTime(Minecache m1, Minecache m2) {

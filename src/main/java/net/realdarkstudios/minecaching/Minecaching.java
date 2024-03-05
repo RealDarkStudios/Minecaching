@@ -4,6 +4,7 @@ import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenuHolder;
 import net.realdarkstudios.minecaching.api.misc.AutoUpdater;
 import net.realdarkstudios.minecaching.api.misc.Config;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import net.realdarkstudios.minecaching.commands.*;
 import net.realdarkstudios.minecaching.event.MCDebugEventHandler;
 import net.realdarkstudios.minecaching.event.MCEventHandler;
@@ -32,7 +33,7 @@ public final class Minecaching extends JavaPlugin {
         if (!(Integer.parseInt(serverVersion[1]) >= 16)) {
             // Load Config and MCStorage so there's no warning about this.yaml not existing
             MinecachingAPI.get().load(false);
-            MinecachingAPI.tWarning("plugin.1_16_warning");
+            MinecachingAPI.tWarning(MessageKeys.Plugin.VERSION_WARNING);
             onDisable();
         } else {
             // Load plugin data
@@ -40,7 +41,7 @@ public final class Minecaching extends JavaPlugin {
             Bukkit.getScheduler().scheduleSyncRepeatingTask(this, AutoUpdater::checkForUpdate, 0L,36000L);
 
             // Register commands
-            getLogger().info("Registering commands...");
+            MinecachingAPI.tInfo(MessageKeys.Plugin.REGISTERING_COMMANDS);
             getCommand("addcache").setExecutor(new AddCacheCommand());
             getCommand("archivecache").setExecutor(new ArchiveCacheCommand());
             getCommand("disablecache").setExecutor(new DisableCacheCommand());
@@ -55,21 +56,21 @@ public final class Minecaching extends JavaPlugin {
             getCommand("logbook").setExecutor(new LogbookCommand());
 
             // Debug Events check
-            if (Config.getInstance().debugEvents()) MinecachingAPI.tInfo("mcadmin.data.debugevents.on", Config.getInstance().getDebugEventsLevel());
-            else MinecachingAPI.tInfo("mcadmin.data.debugevents.off");
+            if (Config.getInstance().debugEvents()) MinecachingAPI.tInfo(MessageKeys.Command.Admin.DEBUG_EVENTS_ON, Config.getInstance().getDebugEventsLevel());
+            else MinecachingAPI.tInfo(MessageKeys.Command.Admin.DEBUG_EVENTS_OFF);
 
             // Must register regardless of if Debug Events are enabled, in case someone decides to enable it while running.
             // A check is performed in MCDebugEventHandler#sendDebugMessage
             getServer().getPluginManager().registerEvents(new MCDebugEventHandler(), this);
             getServer().getPluginManager().registerEvents(new MCEventHandler(), this);
 
-            MinecachingAPI.tInfo("plugin.enabled", VERSION);
+            MinecachingAPI.tInfo(MessageKeys.Plugin.ENABLED, VERSION);
         }
     }
 
     @Override
     public void onDisable() {
-        MinecachingAPI.tInfo("plugin.disabling");
+        MinecachingAPI.tInfo(MessageKeys.Plugin.DISABLING);
 
         // Close all open MCMenus
         for (Player player: Bukkit.getOnlinePlayers()) {
@@ -83,7 +84,7 @@ public final class Minecaching extends JavaPlugin {
         if (AutoUpdater.hasUpdate() && Config.getInstance().autoUpdate()) {
             AutoUpdater.checkForUpdate();
             String newVersion = AutoUpdater.getNewestVersion();
-            MinecachingAPI.tInfo("plugin.update.getting", newVersion);
+            MinecachingAPI.tInfo(MessageKeys.Plugin.Update.GETTING, newVersion);
             try {
                 URL download = new URL("https://maven.digitalunderworlds.com/" + Config.getInstance().getUpdateBranch() + "s/net/realdarkstudios/Minecaching/" + newVersion + "/Minecaching-" + newVersion + ".jar");
                 ReadableByteChannel rbc = Channels.newChannel(download.openStream());
@@ -91,21 +92,21 @@ public final class Minecaching extends JavaPlugin {
                 FileOutputStream fos = new FileOutputStream(file);
                 fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
                 fos.close();
-                MinecachingAPI.tInfo("plugin.update.downloaded");
+                MinecachingAPI.tInfo(MessageKeys.Plugin.Update.DOWNLOADED);
 
                 Method getFileMethod = JavaPlugin.class.getDeclaredMethod("getFile");
                 getFileMethod.setAccessible(true);
                 File curfile = (File) getFileMethod.invoke(this);
-                MinecachingAPI.tInfo("plugin.update.applied");
+                MinecachingAPI.tInfo(MessageKeys.Plugin.Update.APPLIED);
                 curfile.deleteOnExit();
             } catch (Exception e) {
-                MinecachingAPI.tWarning("plugin.update.fail");
+                MinecachingAPI.tWarning(MessageKeys.Plugin.Update.FAIL);
                 e.printStackTrace();
             }
-        } else MinecachingAPI.tInfo("plugin.update.disabled.download");
+        } else MinecachingAPI.tInfo(MessageKeys.Plugin.Update.AUTO_DISABLED_DOWNLOAD);
 
         // Save all plugin data
-        String disabledMsg = MinecachingAPI.getLocalization().getTranslation("plugin.disabled", VERSION);
+        String disabledMsg = MessageKeys.Plugin.DISABLED.translate(VERSION);
         MinecachingAPI.get().save();
         getLogger().info(disabledMsg);
     }

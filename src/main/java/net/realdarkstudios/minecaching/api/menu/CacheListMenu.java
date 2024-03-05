@@ -7,8 +7,8 @@ import net.realdarkstudios.minecaching.api.menu.item.clm.MinecacheMenuItem;
 import net.realdarkstudios.minecaching.api.menu.item.clm.OpenCLMOptionsMenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.util.MCMessages;
-import org.bukkit.ChatColor;
+import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -20,10 +20,11 @@ import java.util.List;
 public class CacheListMenu extends PaginationMenu {
     private List<MenuItem> menuItems = new ArrayList<>();
 
-    public CacheListMenu(String name, JavaPlugin plugin, Player plr) {
-        super(name, plugin, null);
+    public CacheListMenu(LocalizedMessages.Key titleKey, JavaPlugin plugin, Player plr) {
+        super(titleKey, plugin, null);
 
-        setItem(6, new OpenCLMOptionsMenuItem(itemTranslation("options"), new ItemStack(Material.GRAY_DYE), List.of(), this));
+        setItem(6, new OpenCLMOptionsMenuItem(MessageKeys.Menu.List.ITEM_OPTIONS.translate(),
+                new ItemStack(Material.GRAY_DYE), List.of(), this));
 
         update(plr);
     }
@@ -40,7 +41,7 @@ public class CacheListMenu extends PaginationMenu {
 
         if (filteredCaches.isEmpty()) {
             close(plr);
-            MCMessages.sendMsg(plr, "listcaches.nocaches", ChatColor.RED);
+            LocalizedMessages.send(plr, MessageKeys.Command.List.NO_CACHES);
         }
 
         ArrayList<MenuItem> menuItemsN = new ArrayList<>();
@@ -52,10 +53,5 @@ public class CacheListMenu extends PaginationMenu {
         this.menuItems = menuItemsN;
 
         super.update(plr);
-    }
-
-    @Override
-    protected String itemTranslation(String id, Object... substitutions) {
-        return translation("menu.list.item." + id, substitutions);
     }
 }

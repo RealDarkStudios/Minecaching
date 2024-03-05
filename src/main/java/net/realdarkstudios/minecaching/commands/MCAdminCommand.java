@@ -8,9 +8,9 @@ import net.realdarkstudios.minecaching.api.menu.MCMenus;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.AutoUpdater;
 import net.realdarkstudios.minecaching.api.misc.Config;
-import net.realdarkstudios.minecaching.util.MCMessages;
+import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,13 +23,13 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
-            MCMessages.incorrectUsage(sender);
-            MCMessages.usage(sender, "mcadmin", command, label);
+            LocalizedMessages.send(sender, MessageKeys.Error.INCORRECT_USAGE);
+            LocalizedMessages.send(sender, MessageKeys.Usage.ADMIN);
             return true;
         }
 
         if (!sender.hasPermission("minecaching.admin")) {
-            MCMessages.noPermission(sender,"mcadmin");
+            LocalizedMessages.send(sender, MessageKeys.Permission.NO_PERMISSION_ADMIN);
             return true;
         }
 
@@ -37,42 +37,43 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
 
         if (subcommand.equals("reload")) {
             if (!sender.hasPermission("minecaching.admin.reload")) {
-                MCMessages.noPermission(sender, "mcadmin.reload");
+                LocalizedMessages.send(sender, MessageKeys.Permission.NO_PERMISSION_ADMIN_RELOAD);
                 return true;
             }
 
-            MinecachingAPI.tInfo("plugin.reloading");
+            MinecachingAPI.tInfo(MessageKeys.Plugin.RELOADING);
             MinecachingAPI.get().load(!(args.length >= 2 && args[1].equalsIgnoreCase("false")));
-            MinecachingAPI.tInfo("plugin.reloaded");
-            MCMessages.sendMsg(sender, "plugin.reloaded");
+            MinecachingAPI.tInfo(MessageKeys.Plugin.RELOADED);
+            LocalizedMessages.send(sender, MessageKeys.Plugin.RELOADED);
         } else if (subcommand.equals("data")) {
             if (!sender.hasPermission("minecaching.admin.data")) {
-                MCMessages.noPermission(sender, "mcadmin.data");
+                LocalizedMessages.send(sender, MessageKeys.Permission.NO_PERMISSION_ADMIN_DATA);
                 return true;
             }
 
             int v = AutoUpdater.getLastCheckResult();
 
             // Version
-            MCMessages.sendMsg(sender, "mcadmin.data.verheader");
-            MCMessages.sendMsg(sender, "mcadmin.data.mcversion", Minecaching.getInstance().getDescription().getVersion(), Bukkit.getBukkitVersion().split("-")[0]);
-            MCMessages.sendMsg(sender, "mcadmin.data.checkingversion", v == 0 ? "UP-TO-DATE" : v == 1 ? "AHEAD" : v == -1 ? "BEHIND" : "ERROR");
-            MCMessages.sendMsg(sender, "mcadmin.data.serverlang", MinecachingAPI.getLocalization().getTranslation("locale.name"));
-            if (Config.getInstance().debugEvents()) MCMessages.sendMsg(sender, "mcadmin.data.debugevents.on", Config.getInstance().getDebugEventsLevel());
-            else MCMessages.sendMsg(sender, "mcadmin.data.debugevents.off");
+            LocalizedMessages.send(sender, MessageKeys.Command.Admin.OVERVIEW_HEADER);
+            LocalizedMessages.send(sender, MessageKeys.Command.Admin.PLUGIN_VERSION, Minecaching.getInstance().getDescription().getVersion(), Bukkit.getBukkitVersion().split("-")[0]);
+            LocalizedMessages.send(sender, MessageKeys.Command.Admin.CHECKING_VERSION, v == 0 ? "UP-TO-DATE" : v == 1 ? "AHEAD" : v == -1 ? "BEHIND" : "ERROR");
+            LocalizedMessages.send(sender, MessageKeys.Command.Admin.SERVER_LANGUAGE, MessageKeys.Misc.LOCALE_NAME);
+            if (Config.getInstance().debugEvents()) LocalizedMessages.send(sender, MessageKeys.Command.Admin.DEBUG_EVENTS_ON, Config.getInstance().getDebugEventsLevel());
+            else LocalizedMessages.send(sender, MessageKeys.Command.Admin.DEBUG_EVENTS_OFF);
 
             // Dev
-            MCMessages.sendMsg(sender, "mcadmin.data.devheader");
-            MCMessages.sendMsg(sender, "mcadmin.data.configversion", Config.getInstance().getConfigVersion());
-            MCMessages.sendMsg(sender, "mcadmin.data.mcdataversion", Config.getInstance().getMinecacheDataVersion());
-            MCMessages.sendMsg(sender, "mcadmin.data.plrdataversion", Config.getInstance().getPlayerDataVersion());
-            MCMessages.sendMsg(sender, "mcadmin.data.logbookdataversion", Config.getInstance().getLogbookDataVersion());
+            LocalizedMessages.send(sender, MessageKeys.Command.Admin.DEV_HEADER);
+            LocalizedMessages.send(sender, MessageKeys.Command.Admin.CONFIG_VERSION, Config.getInstance().getConfigVersion());
+            LocalizedMessages.send(sender, MessageKeys.Command.Admin.MINECACHE_DATA_VERSION, Config.getInstance().getMinecacheDataVersion());
+            LocalizedMessages.send(sender, MessageKeys.Command.Admin.PLAYER_DATA_VERSION, Config.getInstance().getPlayerDataVersion());
+            LocalizedMessages.send(sender, MessageKeys.Command.Admin.LOGBOOK_DATA_VERSION, Config.getInstance().getLogbookDataVersion());
 
-            if (v == -1) MCMessages.sendMsg(sender, Config.getInstance().autoUpdate() ? "plugin.update.auto" : "plugin.update", ChatColor.RED, AutoUpdater.getNewestVersion());
+            if (v == -1) LocalizedMessages.send(sender, Config.getInstance().autoUpdate() ? MessageKeys.Plugin.Update.AVAILABE_AUTO : MessageKeys.Plugin.Update.AVAILABLE,
+                    AutoUpdater.getNewestVersion());
         } else if (subcommand.equals("openmenu") && args.length > 1 && sender instanceof Player plr) {
             switch (args[1]) {
                 case "create" -> {
-                    MCMenus.get().getAddCacheMenu(MinecachingAPI.get().getPlayerData(plr)).open(plr);
+                    MCMenus.get().getCreateCacheMenu(MinecachingAPI.get().getPlayerData(plr)).open(plr);
                 }
                 case "edit" -> {
                     if (args.length >= 3 && !MinecachingAPI.get().getMinecache(args[2]).equals(Minecache.EMPTY)) {
@@ -81,7 +82,7 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
                 }
                 case "data" -> {
                     if (args.length >= 3 && !MinecachingAPI.get().getMinecache(args[2]).equals(Minecache.EMPTY)) {
-                        CacheDataMenu menu = new CacheDataMenu("menu.data.title", MinecachingAPI.get().getMinecache(args[2]), Minecaching.getInstance());
+                        CacheDataMenu menu = new CacheDataMenu(MessageKeys.Menu.Data.TITLE, MinecachingAPI.get().getMinecache(args[2]), Minecaching.getInstance(), MinecachingAPI.get().getPlayerData(plr));
                         menu.open(plr);
                     }
                 }
@@ -94,7 +95,7 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
             }
         } else if (subcommand.equals("correctstats")) {
             MinecachingAPI.get().correctStats();
-            MCMessages.sendMsg(sender, "mcadmin.correctedstats");
+            LocalizedMessages.send(sender, MessageKeys.Command.Admin.CORRECTED_STATS);
         } else return false;
 
         return true;

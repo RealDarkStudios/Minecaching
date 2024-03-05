@@ -5,6 +5,7 @@ import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.CacheListOptionsMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -21,7 +22,7 @@ public class OpenCLMOptionsMenuItem extends MenuItem {
     @Override
     public void onItemClick(MenuItemClickEvent event) {
         CacheListOptionsMenu cacheListOptionsMenu = new CacheListOptionsMenu(MinecachingAPI.get().getPlayerData(event.getPlayer()),
-                "menu.clmoptions.title", Minecaching.getInstance(), parent);
+                MessageKeys.Menu.CLMOptions.TITLE, Minecaching.getInstance(), parent);
         cacheListOptionsMenu.open(event.getPlayer());
     }
 }

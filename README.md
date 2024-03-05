@@ -12,78 +12,9 @@ This plugin allows players to hide and find Minecaches (or "Caches") around the 
 Server owners can control many things, such as restrictions on where the caches are placed, the types of allowed caches, and more in the config!
 Operators have access to certain commands to, such as `/verify` and can bypass `/delete` and `/edit` checks.
 
-<table>
-  <tr>
-    <th>Permission Node</th>
-    <th>Default Access</th>
-    <th>What it affects</th>
-  </tr>
-  <tr>
-    <td>minecaching.addcache</td>
-    <td>All players</td>
-    <td>/addcache, Allows a player to create a cache</td>
-  </tr>
-  <tr>
-    <td>minecaching.admin</td>
-    <td>Operators</td>
-    <td>/mcadmin, Allows access to admin utilities</td>
-  </tr>
-  <tr>
-    <td>minecaching.admin.reload</td>
-    <td>Operators</td>
-    <td>/mcadmin reload, Allows reloading the plugin and the data</td>
-  </tr>
-  <tr>
-    <td>minecaching.admin.publish</td>
-    <td>Operators</td>
-    <td>/publish, Allows making a cache able to be found by non-ops</td>
-  </tr>
-  <tr>
-    <td>minecaching.admin.verifycache</td>
-    <td>Operators</td>
-    <td>/verifycache, Verifies a cache, so it can be logged by players</td>
-  </tr>
-  <tr>
-    <td>minecaching.archivecache</td>
-    <td>All players</td>
-    <td>/archivecache, Allows archiving only their caches. Operators bypass this restriction</td>
-  </tr>
-  <tr>
-    <td>minecaching.deletecache</td>
-    <td>All players</td>
-    <td>/deletecache, Allows deleting only their caches. Operators bypass this restriction</td>
-  </tr>
-  <tr>
-    <td>minecaching.disablecache</td>
-    <td>All players</td>
-    <td>/disablecache, Allows disabling only their caches. Operators bypass this restriction</td>
-  </tr>
-  <tr>
-    <td>minecaching.editcache, minecaching.admin.edit</td>
-    <td>All players</td>
-    <td>/editcache, Allows editing only their caches. minecaching.admin.edit bypass this restriction</td>
-  </tr>
-  <tr>
-    <td>minecaching.locatecache</td>
-    <td>All players</td>
-    <td>Allows a player to locate a cache</td>
-  </tr>
-  <tr>
-    <td>minecaching.logcache</td>
-    <td>All players</td>
-    <td>Allows a player to log a cache</td>
-  </tr>
-  <tr>
-    <td>minecaching.logbook</td>
-    <td>All players</td>
-    <td>Allows a player to get the logbook for a cache</td>
-  </tr>
-  <tr>
-    <td>minecaching.listcaches</td>
-    <td>All players</td>
-    <td>Allows players to see the list of caches</td>
-  </tr>
-</table>
+Setting up the plugin is pretty simple, a drag and drop install should work.
+For non-english servers, you should change the language in `plugins\Minecaching\config.yml`.
+In there you can also find many other options, such as changing the `/mcstats` scoring, configuring auto-updates, and more.
 
 ## For Developers
 
@@ -114,7 +45,10 @@ Then,
 <dependency>
   <groupId>net.realdarkstudios</groupId>
   <artifactId>Minecaching</artifactId>
-  <version>0.2.0.7-SNAPSHOT-1</version>
+  <version>0.3.1.0-24w10a</version>
+  <!-- Versions before 0.3.0.5 used X.X.X.X-SNAPSHOT-X versioning -->
+  <!-- Versions after will use X.X.X.X-MCF, where MCF represents the versioning scheme for Minecraft Snapshots, ex 24w10a -->
+  <!-- For example, 0.3.1.0-24w10a (the first snapshot to use this system) was released the tenth week of 2024, and is the first snapshot that week -->
 </dependency>
 ```
 
@@ -123,32 +57,61 @@ Then,
 > If you want to be able to use ANY version, including releases, pick the Snapshot repository!
 </details>
 
-### API & Events:
+### Recent Changes:
+With 0.3.0.0, an `EXPERIMENTAL_FEATURES` config option was released. To check it, use `Config.getInstance().experimentalFeatures()`
 
-Since v0.2.0.0, Minecaching has a dedicated API class, `MinecachingAPI`
+With 0.3.0.1, The `GUI Menu` framework was added, which is a somewhat modified fork of [AmpMenus](https://github.com/Scarsz/AmpMenus) that is basically just refactors and some minor logic changes.
 
-It contains a bunch of methods you can call for various things.
+With 0.3.0.3, the Changelog was added, accessible at [`CHANGELOG.txt`](https://github.com/RealDarkStudios/Minecaching/blob/master/CHANGELOG.txt)
 
-Alongside that update, there are now events!
+With 0.3.0.5, various `PlayerDataObject` methods were added, like `#getUsername()` and `#isOnline()`
 
-#### Events:
-- LogCreatedEvent
-- MinecacheArchivedEvent
-- MinecacheCreatedEvent
-- MinecacheDeletedEvent
-- MinecacheDisabledEvent
-- MinecacheEditedEvent
-- MinecacheFoundEvent
-- MinecachePublishedEvent
-- StartLocatingMinecacheEvent
-- StopLocatingMinecacheEvent
+With 0.3.1.0-24w10a, the `MCMessages V2` framework was introduced, mainly known as `LocalizationMessages`.
 
-You can read the javadocs for each of these classes to see the parameters they have.
+As of `0.3.1.0-24w10a`, the `MCMessages` class and `MinecachingAPI#tInfo(String, Object...)` and `MinecachingAPI#tWarning(String, Object...)`methods have been deprecated, set for removal in 0.3.2.0.
 
+To update to the new system:
+**MinecachingAPI#tInfo/tWarning**:
+```java
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 
+// Using "plugin.reloading" as an example
 
+@Override
+public void onEnable() {
+    // OLD
+    MinecachingAPI.tInfo("plugin.reloading");
 
+    //NEW
+    MinecachingAPI.tInfo(MessageKeys.Plugin.RELOADING);
+}
+```
 
+**MCMessages**:
 
+```java
 
-<style> td { text-align: center; } </style>
+// Using "error.cantfind" as an example
+
+import net.md_5.bungee.api.ChatColor;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCMessages;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
+
+@Override
+public void onEnable() {
+    // Assuming sender defined elsewhere
+
+    //OLD
+    MCMessages.sendErrorMsg(sender, "cantfind");
+    // god forbid you did this
+    MCMessages.send(sender, ChatColor.RED + "" + ChatColor.UNDERLINE + "cantfind");
+
+    //NEW
+    LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE);
+}
+```
+
+You can view the full issue [here](https://github.com/RealDarkStudios/Minecaching/issues/1)

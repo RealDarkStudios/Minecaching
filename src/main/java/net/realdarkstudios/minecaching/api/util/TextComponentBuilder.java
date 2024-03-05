@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.util;
+package net.realdarkstudios.minecaching.api.util;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -8,8 +8,11 @@ import net.realdarkstudios.minecaching.api.misc.Localization;
 
 /**
  * A builder for {@link TextComponent}s
- * @since pre-0.1.4.3-2
+ * @since before 0.1.4.3-2
+ * @deprecated Since 0.3.1.0 | Use {@link net.md_5.bungee.api.chat.ComponentBuilder}.
+ * For localized messages, see {@link LocalizedMessages} and {@link LocalizedMessages.StyleOptions}
  */
+@Deprecated(since = "0.3.1.0", forRemoval = true)
 public class TextComponentBuilder {
     private final String message;
     private boolean bold = false, italic = false, underlined = false, strikethrough = false, obfuscated = false;
@@ -47,8 +50,8 @@ public class TextComponentBuilder {
     }
 
     /**
-     * Static method to create a {@link TextComponentBuilder} from a translation key. Uses the Minecaching localization
-     * @param key The translation key
+     * Static method to create a {@link TextComponentBuilder} from a translation path. Uses the Minecaching localization
+     * @param key The translation path
      * @param substitutions The substitutions (or format args). Uses {@link String#format(String, Object...)}
      * @return The TextComponentBuilder
      * @since 0.2.2.1-SNAPSHOT-1
@@ -58,8 +61,8 @@ public class TextComponentBuilder {
     }
 
     /**
-     * Static method to create a {@link TextComponentBuilder} from a translation key.
-     * @param key The translation key
+     * Static method to create a {@link TextComponentBuilder} from a translation path.
+     * @param key The translation path
      * @param localization The localization to use
      * @param substitutions The substitutions (or format args). Uses {@link String#format(String, Object...)}
      * @return The TextComponentBuilder

@@ -10,8 +10,8 @@ import java.util.List;
 public class GoBackAndUpdateMenuItem extends GoBackMenuItem {
     private final MCMenu parent;
 
-    public GoBackAndUpdateMenuItem(String name, ItemStack item, List<String> lore, MCMenu parent) {
-        super(name, item, lore);
+    public GoBackAndUpdateMenuItem(ItemStack item, List<String> lore, MCMenu parent) {
+        super(item, lore);
         this.parent = parent;
     }
 

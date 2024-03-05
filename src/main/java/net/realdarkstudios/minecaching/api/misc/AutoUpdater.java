@@ -2,10 +2,10 @@ package net.realdarkstudios.minecaching.api.misc;
 
 import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.module.ModuleDescriptor;
 import java.net.URL;
@@ -27,48 +27,6 @@ public class AutoUpdater {
     public static void updateBranch(String newBranch) {
         branch = newBranch;
         readURL = "https://maven.digitalunderworlds.com/" + newBranch + "s/net/realdarkstudios/Minecaching/maven-metadata.xml";
-    }
-
-    /**
-     * Checks for the latest published version on the maven.
-     * @since 0.3.0.0
-     * @deprecated 0.3.0.1 - You should now use {@link AutoUpdater#checkForUpdate()}
-     */
-    @Deprecated(since = "0.3.0.1", forRemoval = true)
-    public static void checkForUpdateOld() {
-        if (!Config.getInstance().autoUpdate()) {
-            MinecachingAPI.info("Auto Updates are disabled!");
-            return;
-        }
-        try {
-            URL url = new URL(readURL);
-            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-            String str;
-            while ((str = br.readLine()) != null) {
-                String line = str;
-                if (line.contains("<release>")) {
-                    String newVersion = line.replace("<release>", "").replace("</release>", "").trim();
-                    MinecachingAPI.info("Latest version: " + newVersion);
-
-                    List<ModuleDescriptor.Version> versions = List.of(Minecaching.getInstance().getDescription().getVersion(), newVersion).stream().map(ModuleDescriptor.Version::parse).sorted().toList();
-
-                    String laterV = versions.get(1).toString();
-                    if (laterV.equals(Minecaching.getInstance().getDescription().getVersion()) && !laterV.equals(newVersion)) MinecachingAPI.info("Ahead");
-                    else if (laterV.equals(newVersion) && !laterV.equals(Minecaching.getInstance().getDescription().getVersion())) {
-                        MinecachingAPI.info("Behind");
-                        doUpdate = true;
-                        newVer = newVersion;
-                    }
-                    else MinecachingAPI.info("Up to date");
-
-                    br.close();
-                    break;
-                }
-            }
-        } catch (IOException e) {
-            MinecachingAPI.warning("Unable to perform auto-update");
-        }
-        MinecachingAPI.warning("AutoUpdater#checkForUpdateOld() is deprecated! Consider using AutoUpdater#checkForUpdate() instead!");
     }
 
     /**
@@ -98,7 +56,7 @@ public class AutoUpdater {
      * @return -1 if plugin version is BEHIND, 0 if it is UP-TO-DATE, 1 if it is AHEAD, 10000 for ERROR
      * @since 0.3.0.1
      */
-    public static int checkForUpdate() {
+    public static void checkForUpdate() {
         final int[] result = new int[1];
         new BukkitRunnable() {
             @Override
@@ -133,13 +91,13 @@ public class AutoUpdater {
                             List<ModuleDescriptor.Version> versions = Stream.of(versionsA).map(ModuleDescriptor.Version::parse).sorted().toList();
                             // Get the most recent version
                             String laterV = versions.get(versions.size() - 1).toString();
-                            MinecachingAPI.tInfo("plugin.update.latest", branch, laterV);
+                            MinecachingAPI.tInfo(MessageKeys.Plugin.Update.LATEST, branch, laterV);
 
                             // Compare laterV to plugin version
                             switch (ModuleDescriptor.Version.parse(Minecaching.getInstance().getDescription().getVersion()).compareTo(ModuleDescriptor.Version.parse(laterV))) {
                                 case -1 -> {
                                     // BEHIND
-                                    MinecachingAPI.tInfo("plugin.update.behind");
+                                    MinecachingAPI.tInfo(MessageKeys.Plugin.Update.STATUS_BEHIND);
                                     doUpdate = true;
                                     newVer = laterV;
                                     lastUpdateCheck = -1;
@@ -147,13 +105,13 @@ public class AutoUpdater {
                                 }
                                 case 0 -> {
                                     // UP-TO-DATE
-                                    MinecachingAPI.tInfo("plugin.update.up_to_date");
+                                    MinecachingAPI.tInfo(MessageKeys.Plugin.Update.STATUS_UP_TO_DATE);
                                     lastUpdateCheck = 0;
                                     result[0] = 0;
                                 }
                                 case 1 -> {
                                     // AHEAD
-                                    MinecachingAPI.tInfo("plugin.update.ahead");
+                                    MinecachingAPI.tInfo(MessageKeys.Plugin.Update.STATUS_AHEAD);
                                     lastUpdateCheck = 1;
                                     result[0] = 1;
                                 }
@@ -162,7 +120,7 @@ public class AutoUpdater {
 
                     }
                 } catch (Exception e) {
-                    MinecachingAPI.tWarning("plugin.update.failcheck");
+                    MinecachingAPI.tWarning(MessageKeys.Plugin.Update.FAIL_TO_CHECK);
                     e.printStackTrace();
                 }
 
@@ -170,6 +128,6 @@ public class AutoUpdater {
             }
         }.runTaskAsynchronously(Minecaching.getInstance());
 
-        return result[0];
+        lastUpdateCheck = result[0];
     }
 }

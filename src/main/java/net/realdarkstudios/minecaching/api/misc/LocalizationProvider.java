@@ -38,14 +38,15 @@ public class LocalizationProvider {
      * @since 0.2.2.0
      */
     public Localization load(Plugin plugin, Locale locale) {
+        // These all need to be basic strings due to the localization not being returned yet (only the
         try {
             this.json = loadJson(plugin, locale);
-            MinecachingAPI.info("Loaded language: " + json.get("locale.name").toString() + " for plugin " + plugin.getName());
+            MinecachingAPI.info(String.format(json.get("plugin.localization.loaded").toString(), json.get("locale.name").toString(), plugin.getName()));
         } catch (Exception e) {
             MinecachingAPI.warning("The Server Locale defined in config.yml is invalid or not supported! \nDefaulting to en-US.json! \nlang/" + locale.toLanguageTag() + ".json does not exist!");
             try {
                 this.json = loadJson(plugin, Locale.US);
-                MinecachingAPI.info("Loaded language: " + json.get("locale.name").toString() + " for plugin " + plugin.getName());
+                MinecachingAPI.info(String.format(json.get("plugin.localization.loaded").toString(), json.get("locale.name").toString(), plugin.getName()));
             } catch (Exception e1) {
                 MinecachingAPI.warning("Unable to set a language!");
                 Minecaching.getInstance().onDisable();

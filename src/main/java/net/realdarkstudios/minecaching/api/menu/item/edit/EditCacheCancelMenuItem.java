@@ -13,7 +13,7 @@ import java.util.List;
 
 public class EditCacheCancelMenuItem extends MenuItem {
     public EditCacheCancelMenuItem(String name, ItemStack item, List<String> lore) {
-        super(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + name, item, lore);
+        super(name, item, lore);
     }
 
     @Override

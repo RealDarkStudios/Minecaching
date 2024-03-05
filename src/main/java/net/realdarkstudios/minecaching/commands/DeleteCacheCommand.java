@@ -1,12 +1,12 @@
 package net.realdarkstudios.minecaching.commands;
 
-import net.realdarkstudios.minecaching.util.Utils;
-import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.minecache.Minecache;
+import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import net.realdarkstudios.minecaching.event.minecache.MinecacheDeletedEvent;
-import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,33 +20,33 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length != 1) {
-            MCMessages.incorrectUsage(sender);
-            MCMessages.usage(sender, "deletecache", command, label);
+            LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
+            LocalizedMessages.send(sender, MessageKeys.Usage.DELETE, label);
             return true;
         }
 
         String id = args[0].trim();
         Minecache cache = MinecachingAPI.get().getMinecache(id);
         if (cache.equals(Minecache.EMPTY)) {
-            MCMessages.sendErrorMsg(sender, "cantfind", id);
+            LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE, cache.id());
             return true;
         }
 
-        if ((sender instanceof Player plr && !plr.getUniqueId().equals(cache.author())) && !sender.isOp()) {
-            MCMessages.sendErrorMsg(sender, "deletecache.others");
+        if ((sender instanceof Player plr && !plr.getUniqueId().equals(cache.owner())) && !sender.isOp()) {
+            LocalizedMessages.send(sender, MessageKeys.Error.Misc.DELETE_OTHERS);
             return true;
         }
 
-        MinecacheDeletedEvent event = new MinecacheDeletedEvent(cache, Bukkit.getOfflinePlayer(cache.author()));
+        MinecacheDeletedEvent event = new MinecacheDeletedEvent(cache, Bukkit.getOfflinePlayer(cache.owner()));
         Bukkit.getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {
-            MCMessages.sendErrorMsg(sender, "deletecache");
+            LocalizedMessages.send(sender, MessageKeys.Error.Misc.DELETE);
             return true;
         }
 
-        MinecachingAPI.get().deleteMinecache(cache, sender instanceof Player plr ? plr.getUniqueId() : Utils.EMPTY_UUID);
-        MCMessages.sendMsg(sender, "deletecache", ChatColor.GREEN, id);
+        MinecachingAPI.get().deleteMinecache(cache, sender instanceof Player plr ? plr.getUniqueId() : MCUtils.EMPTY_UUID);
+        LocalizedMessages.send(sender, MessageKeys.Command.Misc.DELETE, cache.id());
         return true;
     }
 
@@ -58,7 +58,7 @@ public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
         ArrayList<String> toReturn = new ArrayList<>();
 
         for (String id: MinecachingAPI.get().getAllKnownCacheIDs()) {
-            if (id.contains(args[0]) && (sender.isOp() || (sender instanceof Player plr && MinecachingAPI.get().getMinecache(id).author().equals(plr.getUniqueId())))) {
+            if (id.contains(args[0]) && (sender.isOp() || (sender instanceof Player plr && MinecachingAPI.get().getMinecache(id).owner().equals(plr.getUniqueId())))) {
                 toReturn.add(id);
             }
         }

@@ -8,9 +8,49 @@ VERSION
 
 CHANGELOG:
 
-0.3.0.5
-Minecaching v0.3.0.5: GUI Menus & Enhancements
+0.3.1.0-24w10a:
+Added:
+- MCMessages V2 (aka LocalizedMessages)
+- LocalizedMessages
+- MessageKeys
+- PlayerDataObject.cacheCooldownExpire()
+- PlayerDataObject.favorites()
+- CacheListMenuOptions.mostFavoritesFirst()
+- CacheListMenuOptions.favoritesOnly()
+- the respective cooldown/favorite setters
+- Config options: MIN_CACHE_DISTANCE and STATS_SCORE_OPTIONS
+- StatsScoreOptions
+- MinecacheStorage#generateNonConflictingCacheID
+- More Minecache checks
 
+Removed:
+- AutoUpdater#checkForUpdateOld
+- src\main\resources\players.yml (no longer needed due to now reading the files in the players directory)
+
+Refactors:
+- MCMenus#getAddCacheMenu -> MCMenus#getCreateCacheMenu
+- Utils -> MCUtils
+
+Changes:
+- Deprecated MCMessages
+- Deprecated MinecachingAPI#tInfo
+- Deprecated MinecachingAPI#tWarning
+- Deprecated TextComponentBuilder
+- Cleaned up some commands
+- Changed CacheDataMenu (moved things around)
+- MCMenus now take in a LocalizedMessages.Key as their first parameter
+- (BUGFIX) Config#getServerLocale now returns en-US if the LOCALE option isn't present (servers using older versions of configs couldn't load b/c of this)
+- Snapshot Naming Scheme
+  - OLD: X.X.X.X-SNAPSHOT-Y
+    - Y snapshot for version X.X.X.X
+  - NEW: X.X.X.X-YYwWWV
+    - Snapshot V for week WW of year YY for version X.X.X.X
+- Updated README.md
+- And more
+
+{ 0.3.1: Minecache Enchangements }
+
+0.3.0.5
 Added:
 - PlayerDataObject#getPlayer (actual Player, if you want OfflinePlayer use #getOfflinePlayer)
 - PlayerDataObject#getUsername
@@ -85,10 +125,6 @@ Added:
 - MCMenu javadocs
 - MCMenuHolder javadocs
 
-Removed:
-
-Refactors:
-
 Changes:
 - CacheMenuItem hidden format now say xx:xxAM instead of xx:xxAM (same with PM)
 - ConfirmationMenu constuctor now uses the correct translation key
@@ -108,8 +144,8 @@ Removed:
 - Utils#sortCachesByTime
 
 Refactors:
-- net.realdarkstudios.minecaching.Utils -> net.realdarkstudios.minecaching.util.Utils
-- net.realdarkstudios.minecaching.util.LogbookGenerator -> net.realdarkstudios.minecaching.api.log.LogbookGenerator
+- net.realdarkstudios.minecaching.Utils -> net.realdarkstudios.minecaching.api.util.MCUtils
+- net.realdarkstudios.minecaching.api.util.LogbookGenerator -> net.realdarkstudios.minecaching.api.log.LogbookGenerator
 
 Changes:
 - Updated the data values in config.yml (oops)
@@ -212,7 +248,7 @@ Changes:
 - (BUGFIX) Player data was never properly created
 - (BUGFIX) Deleting all files and reloading the plugin caused it to throw an error
 
-{ GUI Menus & Enhancements }
+{ 0.3.0: GUI Menus & Enhancements }
 
 0.2.2.3
 - Fixed some usage messages showing up twice
@@ -267,7 +303,7 @@ Changes:
 - Config Version is now 7
 - MCAdminCommand now says the server version
 
-{ Notification & Localization Update }
+{ 0.2.2: Notification & Localization Update }
 
 0.2.1.5
 - Changed Versioning Scheme [old was 2.0.1.5, new is 0.2.1.5 as these versions are still beta and should not be 1.0.0.0 or above]
@@ -325,7 +361,7 @@ Changes:
 - Updated Log to make most fields final
 - Updated LogType to include color; this is for the logbook later
 
-{ Find V2 & Logbooks }
+{ 0.2.1: Find V2 & Logbooks }
 
 0.2.0.7
 - Added README.md
@@ -374,7 +410,7 @@ Changes:
 - MinecacheStorage and PlayerStorage's methods were largely made package-private, and commands have been updated to use the API instead
 - An experimental event has been created, MinecacheFoundEvent
 
-{ API & Events Update }
+{ 0.2.0: API & Events Update }
 
 0.1.8.0
 - /addcache should now correctly identify empty codes
@@ -382,7 +418,7 @@ Changes:
 - /findcache should now set the caches FTF field instantly
 - PlayerStorage null checks
 
-{ Bugfixing }
+{ 0.1.8: Bugfixing }
 
 0.1.7.3
 - Renamed the old /findcache command to /locatecache
@@ -405,7 +441,7 @@ Changes:
 - /findcache now points to the lodestone coordinates, instead of the cache coordinates
 - /findcache cleanup
 
-{ Finding Caches 2 }
+{ 0.1.7: Finding Caches 2 }
 
 0.1.6.7
 - /editcache 1 argument check now only runs if the argument starts with "MC-"

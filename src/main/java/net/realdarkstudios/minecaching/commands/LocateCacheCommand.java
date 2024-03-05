@@ -1,14 +1,18 @@
 package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;
-import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
+import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import net.realdarkstudios.minecaching.event.minecache.StartLocatingMinecacheEvent;
 import net.realdarkstudios.minecaching.event.minecache.StopLocatingMinecacheEvent;
-import net.realdarkstudios.minecaching.util.MCMessages;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,13 +32,13 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player plr)) {
-            MCMessages.sendErrorMsg(sender, "execute.console");
+            LocalizedMessages.send(sender, MessageKeys.Error.NON_CONSOLE_COMMAND);
             return true;
         }
 
         if (args.length < 1) {
-            MCMessages.incorrectUsage(sender);
-            MCMessages.usage(sender, "locatecache", command, label);
+            LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
+            LocalizedMessages.send(sender, MessageKeys.Usage.LOCATE, label);
             return true;
         }
 
@@ -45,7 +49,8 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
 
         if (id.equalsIgnoreCase("coords") && !Config.getInstance().useLodestoneBasedLocating()) {
             Location lodeLocation = MinecachingAPI.get().getMinecache(MinecachingAPI.get().getPlayerData(plr).getLocatingId()).navLocation();
-            plr.sendMessage(String.format("%sHead to (%d, %d, %d)!", ChatColor.AQUA, lodeLocation.getBlockX(), lodeLocation.getBlockY(), lodeLocation.getBlockZ()));
+
+            LocalizedMessages.send(sender, MessageKeys.Command.Locate.COORDS, lodeLocation.getBlockX(), lodeLocation.getBlockY(), lodeLocation.getBlockZ(), label);
             return true;
         }
 
@@ -64,17 +69,17 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
         Minecache cache = c;
 
         if (!pdo.getLocatingId().equals("NULL") && !gettingNewCompass) {
-            MCMessages.sendErrorMsg(sender, "locatecache.alreadylocating", id);
+            LocalizedMessages.send(sender, MessageKeys.Error.Misc.LOCATE_ALREADY_LOCATING, id);
             return true;
         }
 
         if (cache.equals(Minecache.EMPTY) && !gettingNewCompass) {
-            MCMessages.sendErrorMsg(sender, "cantfind", id);
+            LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE, id);
             return true;
         }
 
         if ((!plr.getWorld().equals(cache.world()))) {
-            MCMessages.sendErrorMsg(sender, "locatecache.differentworld", id);
+            LocalizedMessages.send(sender, MessageKeys.Error.Misc.LOCATE_DIFFERENT_WORLD, id);
             return true;
         }
 
@@ -82,13 +87,13 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
         Location cacheLocationC = lodeLocation.clone();
         cacheLocationC.setY(plr.getLocation().getY());
         if (plr.getLocation().distance(cacheLocationC) < Config.getInstance().getFindLodestoneDistance()) {
-            MCMessages.sendMsg(sender, "locatecache.withindistance", ChatColor.AQUA, (Math.round(cache.location().distance(lodeLocation)) + Config.getInstance().getFindLodestoneDistance()));
+            LocalizedMessages.send(sender, MessageKeys.Command.Locate.WITHIN_DISTANCE, (Math.round(cache.location().distance(lodeLocation)) + Config.getInstance().getFindLodestoneDistance()));
             pdo.setLocatingId(cache.id());
             return true;
         }
 
         if (!Config.getInstance().useLodestoneBasedLocating()) {
-            MCMessages.sendMsg(sender, "locatecache.coords", ChatColor.AQUA, lodeLocation.getBlockX(), lodeLocation.getBlockY(), lodeLocation.getBlockZ(), label);
+            LocalizedMessages.send(sender, MessageKeys.Command.Locate.COORDS, lodeLocation.getBlockX(), lodeLocation.getBlockY(), lodeLocation.getBlockZ(), label);
             pdo.setLocatingId(cache.id());
             return true;
         }
@@ -103,7 +108,7 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
         meta.setLodestone(lodeLocation);
         meta.setLodestoneTracked(true);
         meta.setDisplayName(cache.id() + ": " + cache.name());
-        meta.setLore(List.of(MinecachingAPI.getLocalization().getTranslation("locatecache.compass.lore", cache.id())));
+        meta.setLore(List.of(MessageKeys.Command.Locate.COMPASS_LORE.translate(cache.id())));
         meta.getPersistentDataContainer().set(new NamespacedKey(Minecaching.getInstance(), "attachedMinecacheId"), PersistentDataType.STRING, cache.id());
         compass.setItemMeta(meta);
 
@@ -122,7 +127,7 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
             plr.getInventory().setItem(emptySlots.get(0), compass);
         }
 
-        MCMessages.sendMsg(sender, "locatecache.lode", ChatColor.AQUA, cache.id(), cache.name(), label);
+        LocalizedMessages.send(sender, MessageKeys.Command.Locate.LODE, cache.id(), cache.name(), label);
         pdo.setLocatingId(cache.id());
 
         StartLocatingMinecacheEvent event = new StartLocatingMinecacheEvent(cache, plr, plr.getLocation(), plr.getLocation().distance(cacheLocationC));
@@ -182,10 +187,11 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
                 if (!anyOtherPlayersSearching) cacheB.setType(cache.blockType());
             }
 
-            if (!fromCancel && !gettingNewCompass) MCMessages.sendMsg(plr, "locatecache.withindistance", ChatColor.AQUA, (Math.round(cache.location().distance(cacheLocation)) + Config.getInstance().getFindLodestoneDistance()));
-            else if (!gettingNewCompass) MCMessages.sendMsg(plr, "locatecache.cancel", ChatColor.AQUA, cache.id());
+            if (!fromCancel && !gettingNewCompass) LocalizedMessages.send(plr, MessageKeys.Command.Locate.WITHIN_DISTANCE,
+                    (Math.round(cache.location().distance(cacheLocation)) + Config.getInstance().getFindLodestoneDistance()));
+            else if (!gettingNewCompass) LocalizedMessages.send(plr, MessageKeys.Command.Locate.CANCEL, cache.id());
         } else {
-            MCMessages.sendMsg(plr, "locatecache.cancel", ChatColor.AQUA, cache.id());
+            LocalizedMessages.send(plr, MessageKeys.Command.Locate.CANCEL, cache.id());
             MinecachingAPI.get().getPlayerData(plr).setLocatingId("NULL");
         }
     }

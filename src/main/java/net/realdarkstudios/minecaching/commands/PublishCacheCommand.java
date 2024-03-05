@@ -1,13 +1,13 @@
 package net.realdarkstudios.minecaching.commands;
 
-import net.realdarkstudios.minecaching.util.Utils;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
-import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import net.realdarkstudios.minecaching.event.minecache.MinecachePublishedEvent;
-import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,8 +21,9 @@ public class PublishCacheCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
-            MCMessages.incorrectUsage(sender);
-            MCMessages.usage(sender, "publishcache", command, label);
+            LocalizedMessages.send(sender, MessageKeys.Error.INCORRECT_USAGE);
+            LocalizedMessages.send(sender, MessageKeys.Usage.PUBLISH, label);
+
             return true;
         }
 
@@ -37,24 +38,24 @@ public class PublishCacheCommand implements CommandExecutor, TabExecutor {
             reason = rsn.toString().trim();
         }
 
-        Minecache minecache = MinecachingAPI.get().getMinecache(args[0]);
+        Minecache cache = MinecachingAPI.get().getMinecache(args[0]);
 
-        if (minecache.equals(Minecache.EMPTY)) {
-            MCMessages.sendErrorMsg(sender, "cantfind", minecache.id());
+        if (cache.equals(Minecache.EMPTY)) {
+            LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE);
             return false;
-        } else if (!(minecache.status().equals(MinecacheStatus.REVIEWING) || minecache.status().equals(MinecacheStatus.DISABLED))) {
-            MCMessages.sendErrorMsg(sender, "publishcache.cantpublish");
+        } else if (!(cache.status().equals(MinecacheStatus.REVIEWING) || cache.status().equals(MinecacheStatus.DISABLED))) {
+            LocalizedMessages.send(sender, MessageKeys.Error.Misc.PUBLISH_CANT_PUBLISH);
         } else {
-            MinecachePublishedEvent event = new MinecachePublishedEvent(minecache, sender);
+            MinecachePublishedEvent event = new MinecachePublishedEvent(cache, sender);
             Bukkit.getPluginManager().callEvent(event);
 
             if (event.isCancelled()) {
-                MCMessages.sendErrorMsg(sender, "publishcache");
+                LocalizedMessages.send(sender, MessageKeys.Error.Misc.PUBLISH);
                 return true;
             }
 
-            MinecachingAPI.get().publishMinecache(sender instanceof Player plr ? plr.getUniqueId() : Utils.EMPTY_UUID, minecache, reason);
-            MCMessages.sendMsg(sender, "publishcache.publish", ChatColor.GREEN, minecache.id());
+            MinecachingAPI.get().publishMinecache(sender instanceof Player plr ? plr.getUniqueId() : MCUtils.EMPTY_UUID, cache, reason);
+            LocalizedMessages.send(sender, MessageKeys.Command.Misc.PUBLISH, cache.id());
         }
 
         return true;

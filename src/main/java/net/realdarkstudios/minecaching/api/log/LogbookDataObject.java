@@ -1,10 +1,11 @@
 package net.realdarkstudios.minecaching.api.log;
 
 import net.realdarkstudios.minecaching.Minecaching;
-import net.realdarkstudios.minecaching.util.Utils;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -52,7 +53,7 @@ public class LogbookDataObject {
     }
 
     public Log createLog(UUID uuid, LogType type, String message, boolean isFTF) {
-        Log log = new Log(id, Utils.generateRandomString(5), uuid, type, LocalDateTime.now(), message, false, isFTF);
+        Log log = new Log(id, MCUtils.generateRandomString(5), uuid, type, LocalDateTime.now(), message, false, isFTF);
         log.toYaml(yaml, log.logId());
 
         saveData();
@@ -124,7 +125,7 @@ public class LogbookDataObject {
             try {
                 logFile.createNewFile();
             } catch (Exception e) {
-                MinecachingAPI.tWarning("error.plugin.createfile", id + ".yml");
+                MinecachingAPI.tWarning(MessageKeys.Error.PLUGIN_CREATE_FILE, id + ".yml");
             }
         } else if (Config.getInstance().getLogbookDataVersion() != MinecachingAPI.getLogbookDataVersion()) {
             try {
@@ -135,7 +136,7 @@ public class LogbookDataObject {
                 ldo.saveData();
                 return ldo;
             } catch (Exception e) {
-                MinecachingAPI.tWarning("error.plugin.updatefile", id + ".yml");
+                MinecachingAPI.tWarning(MessageKeys.Error.PLUGIN_UPDATE_FILE, id + ".yml");
             }
         }
 

@@ -1,5 +1,7 @@
 package net.realdarkstudios.minecaching.api.player;
 
+import me.scarsz.mojang.Mojang;
+import me.scarsz.mojang.exception.ProfileFetchException;
 import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.log.LogType;
@@ -7,7 +9,8 @@ import net.realdarkstudios.minecaching.api.misc.Notification;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStorage;
 import net.realdarkstudios.minecaching.api.misc.Config;
-import net.realdarkstudios.minecaching.util.Utils;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,12 +18,13 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class PlayerDataObject {
     private final UUID uniqueID;
     private boolean banned;
-    private ArrayList<String> finds, ftfs, hides;
+    private ArrayList<String> finds, ftfs, hides, favorites;
     private ArrayList<Notification> notifications;
     private String locatingId, logMessage, logCode;
     private Minecache creatingCache, editingCache;
@@ -28,6 +32,7 @@ public class PlayerDataObject {
     private File file;
     private CacheListMenuOptions clmOptions;
     private LogType logType;
+    private LocalDateTime cacheCooldownExpire;
 
     public PlayerDataObject(UUID uniqueID, YamlConfiguration yaml, File file) {
         this.uniqueID = uniqueID;
@@ -36,7 +41,12 @@ public class PlayerDataObject {
     }
 
     public String getUsername() {
-        return getOfflinePlayer().getName();
+        try {
+            if (getOfflinePlayer().hasPlayedBefore() && !getOfflinePlayer().getName().isEmpty()) return getOfflinePlayer().getName();
+            else return getGameProfile().getName();
+        } catch (Exception e) {
+            return getGameProfile().getName();
+        }
     }
 
     public boolean isOnline() {
@@ -45,6 +55,14 @@ public class PlayerDataObject {
 
     public OfflinePlayer getOfflinePlayer() {
         return Bukkit.getOfflinePlayer(uniqueID);
+    }
+
+    private Mojang.GameProfile getGameProfile() {
+        try {
+            return Mojang.fetch(uniqueID);
+        } catch (ProfileFetchException e) {
+            return new Mojang.GameProfile(uniqueID, getOfflinePlayer().getName(), List.of(), "");
+        }
     }
 
     @Nullable
@@ -66,6 +84,10 @@ public class PlayerDataObject {
 
     public List<String> getFTFs() {
         return ftfs;
+    }
+
+    public List<String> getFavorites() {
+        return favorites;
     }
     public List<Notification> getNotifications() {
         return notifications;
@@ -126,6 +148,16 @@ public class PlayerDataObject {
         saveData();
     }
 
+    public void addFavorite(String id) {
+        if (!this.favorites.contains(id)) this.favorites.add(id);
+        saveData();
+    }
+
+    public void removeFavorite(String id) {
+        this.favorites.removeAll(Collections.singleton(id));
+        saveData();
+    }
+
     public void addNotification(Notification notification) {
         this.notifications.add(notification);
         saveData();
@@ -181,18 +213,30 @@ public class PlayerDataObject {
         saveData();
     }
 
+    public void setCacheCooldownExpire(LocalDateTime cacheCooldownExpire) {
+        this.cacheCooldownExpire = cacheCooldownExpire;
+        saveData();
+    }
+
+    public LocalDateTime getCacheCooldownExpireTime() {
+        return cacheCooldownExpire != null ? cacheCooldownExpire : LocalDateTime.now();
+    }
+
     public List<Minecache> filterCLMenuCaches(Player player) {
         List<Minecache> allCaches = MinecachingAPI.get().getAllKnownCaches();
         List<Minecache> finalCaches = new ArrayList<>();
 
         for (Minecache cache: allCaches) {
+            if (clmOptions.favoritesOnly() && !favorites.contains(cache.id()))  {
+                continue;
+            }
             if (!clmOptions.getEnabledTypes().contains(cache.type())) {
                 continue;
             }
             if (!clmOptions.getEnabledStatuses().contains(cache.status())) {
                 continue;
             }
-            if (clmOptions.ftfsOnly() && !cache.ftf().equals(Utils.EMPTY_UUID)) {
+            if (clmOptions.ftfsOnly() && !cache.ftf().equals(MCUtils.EMPTY_UUID)) {
                 continue;
             }
             if (cache.finds() < clmOptions.getMinFinds()) {
@@ -206,7 +250,8 @@ public class PlayerDataObject {
         }
 
         if (clmOptions.newestFirst()) finalCaches.sort(Comparator.comparing(Minecache::hidden).reversed());
-        else finalCaches.sort(Comparator.comparing(Minecache::hidden));
+        else if (clmOptions.oldestFirst()) finalCaches.sort(Comparator.comparing(Minecache::hidden));
+        else finalCaches.sort(Comparator.comparing(Minecache::favorites).reversed());
 
         return finalCaches;
     }
@@ -216,16 +261,18 @@ public class PlayerDataObject {
     }
 
     private void update() {
-        ArrayList<String> yFtfs = new ArrayList<>(), yHides = new ArrayList<>(), yFinds = new ArrayList<>();
+        ArrayList<String> yFtfs = new ArrayList<>(), yHides = new ArrayList<>(), yFinds = new ArrayList<>(), yFavs = new ArrayList<>();
 
         if (yaml.getList("ftfs") != null) yFtfs.addAll((Collection<? extends String>) yaml.getList("ftfs"));
         if (yaml.getList("hides") != null) yHides.addAll((Collection<? extends String>) yaml.getList("hides"));
         if (yaml.getList("finds") != null) yFinds.addAll((Collection<? extends String>) yaml.getList("finds"));
+        if (yaml.getList("favorites") != null) yFavs.addAll((Collection<? extends String>) yaml.getList("favorites"));
         if (!yaml.contains("clm_options")) CacheListMenuOptions.DEFAULT_OPTIONS.toYaml(yaml, "clm_options");
 
         this.ftfs = yFtfs;
         this.hides = yHides;
         this.finds = yFinds;
+        this.favorites = yFavs;
         this.locatingId = yaml.getString("locating_id") == null ? "NULL" : yaml.getString("locating_id");
         this.creatingCache = Minecache.fromYaml(yaml, "creating");
         this.editingCache = Minecache.fromYaml(yaml, "editing");
@@ -236,11 +283,12 @@ public class PlayerDataObject {
 
         ArrayList<Notification> yNotifs = new ArrayList<>();
         if (yaml.contains("notifications")) {
-            for (String notificationID: yaml.getKeys(true).stream().filter(s -> s.startsWith("notifications.")).toList()) {
+            for (String notificationID: yaml.getKeys(false).stream().filter(s -> s.startsWith("notifications.")).toList()) {
                 yNotifs.add(Notification.fromYaml(yaml, notificationID));
             }
         }
         this.notifications = yNotifs;
+        this.cacheCooldownExpire = yaml.contains("cache_cooldown_expire") ? LocalDateTime.parse(yaml.getString("cache_cooldown_expire")) : LocalDateTime.now();
 
         creatingCache.setID(yaml.getString("creating_id") == null ? "NULL" : yaml.getString("creating_id"));
         editingCache.setID(yaml.getString("editing_id") == null ? "NULL" : yaml.getString("editing_id"));
@@ -250,6 +298,7 @@ public class PlayerDataObject {
         yaml.set("ftfs", this.ftfs);
         yaml.set("hides", this.hides);
         yaml.set("finds", this.finds);
+        yaml.set("favorites", this.favorites);
         yaml.set("locating_id", this.locatingId);
         yaml.set("creating_id", this.creatingCache.id());
         creatingCache.toYaml(yaml, "creating");
@@ -270,6 +319,8 @@ public class PlayerDataObject {
         if (hasNotification("type")) yaml.set("notifications.type", null);
         if (hasNotification("cache_id")) yaml.set("notifications.cache_id", null);
         if (hasNotification("time")) yaml.set("notifications.time", null);
+
+        yaml.set("cache_cooldown_expire", this.cacheCooldownExpire.toString());
 
         save();
         update();
@@ -334,21 +385,23 @@ public class PlayerDataObject {
                 yaml.set("ftfs", List.of());
                 yaml.set("hides", List.of());
                 yaml.set("finds", List.of());
+                yaml.set("favorites", List.of());
                 yaml.set("locating_id", "NULL");
                 Minecache.EMPTY.toYaml(yaml, "creating");
                 Minecache.EMPTY.toYaml(yaml, "editing");
                 yaml.set("creating_id", "NULL");
                 yaml.set("editing_id", "NULL");
+                yaml.set("cache_cooldown_expire", LocalDateTime.now().toString());
                 CacheListMenuOptions.DEFAULT_OPTIONS.toYaml(yaml, "clm_options");
             } catch (Exception e) {
-                MinecachingAPI.tWarning("error.plugin.createfile", uuid + ".yml");
+                MinecachingAPI.tWarning(MessageKeys.Error.PLUGIN_CREATE_FILE, uuid + ".yml");
             }
-        } else if (Config.getInstance().getPlayerDataVersion() != MinecachingAPI.getPlayerDataVersion()) {
+        } else if (Config.getInstance().getPlayerDataVersion() < MinecachingAPI.getPlayerDataVersion()) {
             try {
                 if (!plrFile.canWrite()) throw new Exception();
                 plrFile.createNewFile();
             } catch (Exception e) {
-                MinecachingAPI.tWarning("error.plugin.updatefile", uuid + ".yml");
+                MinecachingAPI.tWarning(MessageKeys.Error.PLUGIN_UPDATE_FILE, uuid + ".yml");
             }
         }
 

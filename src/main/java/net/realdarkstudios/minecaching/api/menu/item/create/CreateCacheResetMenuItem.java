@@ -1,6 +1,5 @@
 package net.realdarkstudios.minecaching.api.menu.item.create;
 
-import net.md_5.bungee.api.ChatColor;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
@@ -12,7 +11,7 @@ import java.util.List;
 
 public class CreateCacheResetMenuItem extends MenuItem {
     public CreateCacheResetMenuItem(String name, ItemStack item, List<String> lore) {
-        super(ChatColor.BOLD + "" + ChatColor.GRAY + name, item, lore);
+        super(name, item, lore);
     }
 
     @Override

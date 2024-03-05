@@ -8,23 +8,23 @@ import java.util.HashMap;
 
 public class MCMenus {
     private static final MCMenus INSTANCE = new MCMenus();
-    private final HashMap<PlayerDataObject, CreateCacheMenu> addCacheMenus = new HashMap<>();
+    private final HashMap<PlayerDataObject, CreateCacheMenu> createCacheMenus = new HashMap<>();
     private final HashMap<PlayerDataObject, EditCacheMenu> editCacheMenus = new HashMap<>();
 
     private MCMenus() {
     }
 
-    public CreateCacheMenu getAddCacheMenu(PlayerDataObject pdo) {
-        if (addCacheMenus.containsKey(pdo)) return addCacheMenus.get(pdo);
+    public CreateCacheMenu getCreateCacheMenu(PlayerDataObject pdo) {
+        if (createCacheMenus.containsKey(pdo)) return createCacheMenus.get(pdo);
         else {
             CreateCacheMenu menu = new CreateCacheMenu(Minecache.EMPTY, pdo, Minecaching.getInstance());
-            addCacheMenus.put(pdo, menu);
+            createCacheMenus.put(pdo, menu);
             return menu;
         }
     }
 
-    public void releaseAddCacheMenu(PlayerDataObject pdo) {
-        addCacheMenus.remove(pdo);
+    public void releaseCreateCacheMenu(PlayerDataObject pdo) {
+        createCacheMenus.remove(pdo);
     }
 
     public EditCacheMenu getEditCacheMenu(PlayerDataObject pdo, Minecache editingCache) {

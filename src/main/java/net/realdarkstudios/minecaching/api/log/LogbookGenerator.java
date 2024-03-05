@@ -2,7 +2,7 @@ package net.realdarkstudios.minecaching.api.log;
 
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.util.Utils;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -31,7 +31,7 @@ public class LogbookGenerator {
     }
 
     private void addEntry(Log log) {
-        String top = (log.author().equals(minecache.author()) ? ChatColor.GOLD : ChatColor.RESET) + (log.author().equals(Utils.EMPTY_UUID) ? "[CONSOLE]" : Bukkit.getOfflinePlayer(log.author()).getName()) + ChatColor.RESET + (log.isFTF() ? " | FTF" : "");
+        String top = (log.author().equals(minecache.owner()) ? ChatColor.GOLD : ChatColor.RESET) + (log.author().equals(MCUtils.EMPTY_UUID) ? "[CONSOLE]" : Bukkit.getOfflinePlayer(log.author()).getName()) + ChatColor.RESET + (log.isFTF() ? " | FTF" : "");
         String middle = log.type().toLogFormat() + " " + log.time().format(DateTimeFormatter.ofPattern("M/d/yy"));
         String bottom = log.log();
 

@@ -1,26 +1,24 @@
 package net.realdarkstudios.minecaching.commands;
 
-import net.realdarkstudios.minecaching.util.Utils;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.misc.NotificationType;
 import net.realdarkstudios.minecaching.api.menu.EditCacheMenu;
 import net.realdarkstudios.minecaching.api.menu.MCMenus;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;
+import net.realdarkstudios.minecaching.api.misc.NotificationType;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
+import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import net.realdarkstudios.minecaching.event.minecache.MinecacheEditedEvent;
-import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -30,7 +28,7 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         UUID uuid;
         if (!(sender instanceof Player plr)) {
-            uuid = Utils.EMPTY_UUID;
+            uuid = MCUtils.EMPTY_UUID;
         } else {
             uuid = plr.getUniqueId();
         }
@@ -38,8 +36,8 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
         PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(uuid);
 
         if (args.length < 1 && pdo.getEditingCache().id().equals("NULL")) {
-            MCMessages.incorrectUsage(sender);
-            MCMessages.usage(sender, "editcache", command, label);
+            LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
+            LocalizedMessages.send(sender, MessageKeys.Usage.EDIT, label);
             return true;
         }
 
@@ -53,23 +51,23 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                 switch (args[0]) {
                     case "name" -> {
                         if (args.length < 2) {
-                            MCMessages.incorrectUsage(sender);
-                            MCMessages.usage(sender, "editcache.name", command, label);
+                            LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
+                            LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_NAME, label);
                             return true;
                         } else {
                             StringBuilder name = new StringBuilder();
                             for (int i = 1; i < args.length; i++) {
                                 name.append(args[i]).append(" ");
                             }
-                            pdo.setEditingCache(pdo.getEditingCache().setName(name.toString().trim()));
+                            pdo.setEditingCache(pdo.getEditingCache().setName(name.toString().replace("&", "§").trim()));
                             menu.open(plr);
                             menu.update(plr);
                         }
                     }
                     case "code" -> {
                         if (args.length < 2) {
-                            MCMessages.incorrectUsage(sender);
-                            MCMessages.usage(sender, "editcache.code", command, label);
+                            LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
+                            LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_CODE, label);
                             return true;
                         } else {
                             pdo.setEditingCache(pdo.getEditingCache().setCode(args[1].trim()));
@@ -77,39 +75,39 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                             menu.update(plr);
                         }
                     }
-                    default -> MCMessages.sendErrorMsg(sender, "cantfind", args[0]);
+                    default -> LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE, cache.id());
                 }
 
                 return true;
             }
 
-            if (pdo.getUniqueID().equals(cache.author()) || pdo.getPlayer().hasPermission("minecaching.admin.edit")) {
+            if (pdo.getUniqueID().equals(cache.owner()) || pdo.getPlayer().hasPermission("minecaching.admin.edit")) {
                 pdo.setEditingCache(cache);
 
                 EditCacheMenu menu = MCMenus.get().getEditCacheMenu(pdo, cache);
                 menu.open(plr);
             } else {
-                MCMessages.noPermission(sender, "editcache");
+                LocalizedMessages.send(sender, MessageKeys.Permission.NO_PERMISSION_EDITCACHE);
             }
         } else {
             Minecache cache = pdo.getEditingCache();
             if (args.length < 1) {
-                MCMessages.incorrectUsage(sender);
-                MCMessages.usage(sender, "editcache", command, label);
+                LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
+                LocalizedMessages.send(sender, MessageKeys.Usage.EDIT, label);
                 return true;
             } else if (args.length == 1 && (cache == null || cache.id().equals("NULL"))) {
                 String id = args[0];
 
                 if (MinecachingAPI.get().getMinecache(id).equals(Minecache.EMPTY)) {
-                    MCMessages.sendErrorMsg(sender, "cantfind", id);
+                    LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE, id);
                     return true;
                 }
 
-                MCMessages.sendMsg(sender, "editcache.edit", ChatColor.LIGHT_PURPLE, id);
+                LocalizedMessages.send(sender, MessageKeys.Command.Edit.EDIT, id);
                 pdo.setEditingCache(MinecachingAPI.get().getMinecache(id));
                 return true;
             } else if (args.length == 1 && args[0].startsWith("MC-") && !cache.id().equals("NULL")) {
-                MCMessages.sendErrorMsg(sender, "editcache.alreadyediting", cache.id());
+                LocalizedMessages.send(sender, MessageKeys.Error.Edit.ALREADY_EDITING, cache.id());
                 return true;
             }
 
@@ -117,14 +115,15 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
 
             switch (subCommand) {
                 case "cancel" -> {
-                    MCMessages.sendMsg(sender, "editcache.cancel", ChatColor.LIGHT_PURPLE, cache.id());
+                    LocalizedMessages.send(sender, MessageKeys.Command.Edit.CANCEL, cache.id());
                     cache = Minecache.EMPTY;
                     cache.setID("NULL");
                 }
                 case "name" -> {
                     if (args.length < 2) {
-                        MCMessages.incorrectUsage(sender);
-                        MCMessages.usage(sender, "editcache.name", command, label);
+
+                        LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
+                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_NAME, label);
                         return true;
                     } else {
                         StringBuilder name = new StringBuilder();
@@ -132,100 +131,83 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                             name.append(args[i]).append(" ");
                         }
                         cache.setName(name.toString().trim());
-                        sender.sendMessage(ChatColor.LIGHT_PURPLE + "Set name of " + cache.id() + " to \"" + cache.name() + "\"");
+                        LocalizedMessages.send(sender, MessageKeys.Command.Edit.NAME, cache.name());
                     }
                 }
                 case "lodecoords" -> {
                     int x, y, z;
-                    if (args.length == 1 && sender instanceof Player plr) {
-                        x = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockX()), plr, "x");
-                        y = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockY()), plr, "y");
-                        z = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockZ()), plr, "z");
-                    } else if (args.length == 4 && sender instanceof Player plr) {
-                        x = Utils.interpretCoordinate(args[1], plr, "x");
-                        y = Utils.interpretCoordinate(args[2], plr, "y");
-                        z = Utils.interpretCoordinate(args[3], plr, "z");
-                    } else if (args.length == 4) {
-                        x = Utils.interpretCoordinate(args[1], "x");
-                        y = Utils.interpretCoordinate(args[2], "y");
-                        z = Utils.interpretCoordinate(args[3], "z");
+                    if (args.length == 4) {
+                        x = MCUtils.interpretCoordinate(args[1], "x");
+                        y = MCUtils.interpretCoordinate(args[2], "y");
+                        z = MCUtils.interpretCoordinate(args[3], "z");
                     } else {
-                        MCMessages.incorrectUsage(sender, "argcount");
-                        MCMessages.usage(sender, "editcache.lodecoords", command, label);
+                        LocalizedMessages.send(sender, MessageKeys.Error.INCORRECT_ARG_COUNT);
+                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_NAVIGATION_COORDS, label);
                         return true;
                     }
 
-                    if (Utils.locationInvalid(sender, x, y, z)) return true;
+                    if (MCUtils.locationInvalid(sender, x, y, z)) return true;
 
                     cache.setNavLocation(new Location(cache.world(), x, y, z));
-                    MCMessages.sendMsg(sender, "editcache.lodecoords", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z);
+                    LocalizedMessages.send(sender, MessageKeys.Command.Edit.NAV_COORDS, cache.world().getName(), x, y, z);
                 }
                 case "coords" -> {
                     int x, y, z;
-                    if (args.length == 1 && sender instanceof Player plr) {
-                        x = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockX()), plr, "x");
-                        y = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockY()), plr, "y");
-                        z = Utils.interpretCoordinate(String.valueOf(plr.getLocation().getBlockZ()), plr, "z");
-                    } else if (args.length == 4 && sender instanceof Player plr) {
-                        x = Utils.interpretCoordinate(args[1], plr, "x");
-                        y = Utils.interpretCoordinate(args[2], plr, "y");
-                        z = Utils.interpretCoordinate(args[3], plr, "z");
-                    } else if (args.length == 4) {
-                        x = Utils.interpretCoordinate(args[1], "x");
-                        y = Utils.interpretCoordinate(args[2], "y");
-                        z = Utils.interpretCoordinate(args[3], "z");
+                    if (args.length == 4) {
+                        x = MCUtils.interpretCoordinate(args[1], "x");
+                        y = MCUtils.interpretCoordinate(args[2], "y");
+                        z = MCUtils.interpretCoordinate(args[3], "z");
                     } else {
-                        MCMessages.incorrectUsage(sender, "argcount");
-                        MCMessages.usage(sender, "editcache.coords", command, label);
+                        LocalizedMessages.send(sender, MessageKeys.Error.INCORRECT_ARG_COUNT);
+                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_COORDS, label);
                         return true;
                     }
 
-                    if (Utils.locationInvalid(sender, x, y, z)) return true;
+                    if (MCUtils.locationInvalid(sender, x, y, z)) return true;
 
                     cache.setLocation(new Location(cache.world(), x, y, z));
-                    MCMessages.sendMsg(sender, "editcache.coords", ChatColor.LIGHT_PURPLE, cache.world().getName(), x, y, z);
+                    LocalizedMessages.send(sender, MessageKeys.Command.Edit.COORDS, cache.world().getName(), x, y, z);
 
                 }
                 case "code" -> {
                     if (args.length < 2) {
-                        MCMessages.incorrectUsage(sender);
-                        MCMessages.usage(sender, "editcache.code", command, label);
+                        LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
+                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_CODE, label);
                         return true;
                     } else {
                         cache.setCode(args[1].trim());
-                        MCMessages.sendMsg(sender, "editcache.code", ChatColor.LIGHT_PURPLE, cache.code());
+                        LocalizedMessages.send(sender, MessageKeys.Command.Edit.CODE, cache.code());
                     }
                 }
                 case "save" -> {
                     if (cache.name() == null) {
-                        MCMessages.sendErrorMsg(sender, "editcache.noname");
-                        MCMessages.usage(sender, "editcache.name", command, label);
-                    } else if (cache.x() == 0 && cache.y() == 0 && cache.z() == 0) {
-                        MCMessages.sendErrorMsg(sender, "editcache.nocoords");
-                        MCMessages.usage(sender, "editcache.coords", command, label);
-                    } else if (cache.nx() == 0 && cache.ny() == 0 && cache.nz() == 0) {
-                        MCMessages.sendErrorMsg(sender, "editcache.nolodecoords");
-                        MCMessages.usage(sender, "editcache.lodecoords", command, label);
-                    } else if (cache.navLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
-                        MCMessages.sendErrorMsg(sender, "editcache.lodetoofar");
+                        LocalizedMessages.send(sender, MessageKeys.Error.Edit.NO_NAME);
+                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_NAME, label);
                     } else if (cache.code() == null) {
-                        MCMessages.sendErrorMsg(sender, "editcache.nocode");
-                        MCMessages.usage(sender, "editcache.code", command, label);
+                        LocalizedMessages.send(sender, MessageKeys.Error.Edit.NO_CODE);
+                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_COORDS, label);
+                    } else if (cache.x() == 0 && cache.y() == 0 && cache.z() == 0) {
+                        LocalizedMessages.send(sender, MessageKeys.Error.Edit.NO_COORDS);
+                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_COORDS, label);
+                    } else if (cache.nx() == 0 && cache.ny() == 0 && cache.nz() == 0) {
+                        LocalizedMessages.send(sender, MessageKeys.Error.Edit.NO_NAV_COORDS);
+                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_NAVIGATION_COORDS, label);
+                    } else if (cache.navLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
+                        LocalizedMessages.send(sender, MessageKeys.Error.Edit.NAV_COORDS_TOO_FAR);
+                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_NAVIGATION_COORDS, label);
                     } else {
                         MinecacheEditedEvent event = new MinecacheEditedEvent(cache, sender);
                         Bukkit.getPluginManager().callEvent(event);
 
                         if (event.isCancelled()) {
-                            MCMessages.sendErrorMsg(sender, "editcache");
+                            LocalizedMessages.send(sender, MessageKeys.Error.Edit.GENERAL);
                             return true;
                         }
 
-                        if ((sender instanceof Player plr && !plr.getUniqueId().equals(cache.author())) || !(sender instanceof Player)) {
-                            MinecachingAPI.get().createNotification(cache.author(), sender instanceof Player player ? player.getUniqueId() : Utils.EMPTY_UUID, NotificationType.EDIT, cache);
-                        }
+                        MinecachingAPI.get().createNotification(cache.owner(), MCUtils.EMPTY_UUID, NotificationType.EDIT, cache);
 
                         MinecachingAPI.get().saveMinecache(cache, false);
-                        MCMessages.sendMsg(sender, "editcache.save", ChatColor.LIGHT_PURPLE, cache.id(), cache.name());
+                        LocalizedMessages.send(sender, MessageKeys.Command.Edit.SAVE, cache.id(), cache.name());
                         cache = Minecache.EMPTY;
                         cache.setID("NULL");
                     }
@@ -240,39 +222,22 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        UUID uuid;
-        if (!(sender instanceof Player plr)) {
-            uuid = Utils.EMPTY_UUID;
-        } else {
-            uuid = plr.getUniqueId();
+        if (sender instanceof Player plr) {
+            if (MinecachingAPI.get().getPlayerData(plr).getEditingCache().id().equals("NULL")) return List.of();
+            else return List.of("name", "code");
         }
 
-        PlayerDataObject plrdata = MinecachingAPI.get().getPlayerData(uuid);
+        PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(MCUtils.EMPTY_UUID);
 
-        if (args.length == 0 && (plrdata.getEditingCache() == null || plrdata.getEditingCache().id().equals("NULL"))) return MinecachingAPI.get().getAllKnownCacheIDs();
-        else if (args.length == 1 && (plrdata.getEditingCache() == null || plrdata.getEditingCache().id().equals("NULL"))) {
-
-            ArrayList<String> toReturn = new ArrayList<>();
-
-            for (String id : MinecachingAPI.get().getAllKnownCacheIDs()) {
-                if ((plrdata.getEditingCache() != null || !plrdata.getEditingCache().id().equals("NULL")) && id.contains(args[0]) && (sender.isOp() || (sender instanceof Player plr && MinecachingAPI.get().getMinecache(id).author().equals(plr.getUniqueId())))) {
-                    toReturn.add(id);
-                }
-            }
-
-            return toReturn;
+        if (args.length == 0 && (pdo.getEditingCache() == null || pdo.getEditingCache().id().equals("NULL")))
+            return MinecachingAPI.get().getAllKnownCacheIDs();
+        else if (args.length == 1 && (pdo.getEditingCache() == null || pdo.getEditingCache().id().equals("NULL"))) {
+            return MinecachingAPI.get().getAllKnownCacheIDs();
         } else {
-            boolean isPlr = sender instanceof Player;
-
-            Block target = isPlr ? ((Player) sender).getTargetBlock(null, 5) : null;
-
-            return switch (args.length) {
-                case 1 -> plrdata.getEditingCache() == null || plrdata.getEditingCache().id().equals("NULL") ? List.of() : Stream.of("cancel", "code", "name", "lodecoords", "coords", "save").filter(s -> s.contains(args[0])).toList();
-                case 2 -> args[0].equals("lodecoords") || args[0].equals("coords") && isPlr ? List.of("~", "~ ~", "~ ~ ~", target.getX() + "", String.format("%d %d %d", target.getX(), target.getY(), target.getZ())) : List.of();
-                case 3 -> args[0].equals("lodecoords") || args[0].equals("coords") && isPlr ? List.of("~", "~ ~", target.getY() + "", String.format("%d %d", target.getY(), target.getZ())) : List.of();
-                case 4 -> args[0].equals("lodecoords") || args[0].equals("coords") && isPlr ? List.of("~", target.getZ() + "") : List.of();
-                default -> List.of();
-            };
+            if (args.length == 1) {
+                return (pdo.getEditingCache() == null || pdo.getEditingCache().id().equals("NULL")) ? List.of() :
+                        Stream.of("cancel", "code", "name", "lodecoords", "coords", "save").filter(s -> s.contains(args[0])).toList();
+            } else return List.of();
         }
     }
 }

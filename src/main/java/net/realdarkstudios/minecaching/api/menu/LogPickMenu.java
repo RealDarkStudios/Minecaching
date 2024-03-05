@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.api.log;
+package net.realdarkstudios.minecaching.api.menu;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.impl.PaginationMenu;
@@ -7,8 +7,8 @@ import net.realdarkstudios.minecaching.api.menu.item.clm.OpenCLMOptionsMenuItem;
 import net.realdarkstudios.minecaching.api.menu.item.log.LogPickMenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.util.MCMessages;
-import org.bukkit.ChatColor;
+import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,9 +21,10 @@ public class LogPickMenu extends PaginationMenu {
     private List<MenuItem> menuItems = new ArrayList<>();
 
     public LogPickMenu(JavaPlugin plugin, Player plr) {
-        super("menu.log.pick.title", plugin, null);
+        super(MessageKeys.Menu.Log.PICK_TITLE, plugin, null);
 
-        setItem(6, new OpenCLMOptionsMenuItem(itemTranslation("options"), new ItemStack(Material.GRAY_DYE), List.of(), this));
+        setItem(6, new OpenCLMOptionsMenuItem(MessageKeys.Menu.List.ITEM_OPTIONS.translate(),
+                new ItemStack(Material.GRAY_DYE), List.of(), this));
 
         update(plr);
     }
@@ -40,7 +41,7 @@ public class LogPickMenu extends PaginationMenu {
 
         if (filteredCaches.isEmpty()) {
             close(plr);
-            MCMessages.sendMsg(plr, "listcaches.nocaches", ChatColor.RED);
+            LocalizedMessages.send(plr, MessageKeys.Command.List.NO_CACHES);
         }
 
         ArrayList<MenuItem> menuItemsN = new ArrayList<>();
@@ -52,10 +53,5 @@ public class LogPickMenu extends PaginationMenu {
         this.menuItems = menuItemsN;
 
         super.update(plr);
-    }
-
-    @Override
-    protected String itemTranslation(String id, Object... substitutions) {
-        return translation("menu.list.item." + id, substitutions);
     }
 }

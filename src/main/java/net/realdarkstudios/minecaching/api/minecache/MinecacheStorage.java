@@ -1,15 +1,15 @@
 package net.realdarkstudios.minecaching.api.minecache;
 
 import net.realdarkstudios.minecaching.Minecaching;
-import net.realdarkstudios.minecaching.util.Utils;
-import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import org.bukkit.Location;
+import net.realdarkstudios.minecaching.api.misc.Config;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import javax.naming.SizeLimitExceededException;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -24,7 +24,6 @@ public class MinecacheStorage {
 
     private ArrayList<Minecache> minecaches = null;
     private HashMap<String, Minecache> idToMinecache = null;
-    private HashMap<Location, Minecache> mcLocations = null;
     public void load() {
         file = new File(Minecaching.getInstance().getDataFolder(), "minecaches.yml");
 
@@ -43,27 +42,24 @@ public class MinecacheStorage {
 
         updateMaps();
 
-        MinecachingAPI.tInfo("plugin.data.loadedcaches", minecaches.size());
+        MinecachingAPI.tInfo(MessageKeys.Plugin.Data.LOADED_CACHES, minecaches.size());
     }
 
     public void updateMaps() {
         ArrayList<Minecache> caches = new ArrayList<>(yaml.getKeys(false).size());
-        HashMap<String, Minecache> idMap = new HashMap(yaml.getKeys(false).size());
-        HashMap<Location, Minecache> locationMap = new HashMap<>(yaml.getKeys(false).size());
+        HashMap<String, Minecache> idMap = new HashMap<>(yaml.getKeys(false).size());
 
         for (String key : yaml.getKeys(false)) {
             Minecache cache = Minecache.fromYaml(yaml, key);
 
             caches.add(cache);
             idMap.put(key, cache);
-            locationMap.put(new Location(cache.world(), cache.x(), cache.y(), cache.z()), cache);
         }
 
         caches.sort(Minecache::compareByTime);
 
         this.minecaches = caches;
-        this.idToMinecache = Utils.sortHashMap(idMap, Comparator.comparing(m -> m.getValue().hidden()));
-        this.mcLocations = locationMap;
+        this.idToMinecache = idMap;
     }
     public void save() {
         try {
@@ -73,12 +69,27 @@ public class MinecacheStorage {
         }
     }
 
+    public String generateNonConflictingCacheID() throws SizeLimitExceededException {
+        for (int i = 0; i < 250; i++) {
+            // Success rate should be about 99.9999149465%
+            // There is about a 0.0000850535% chance this will fail due to ALL 250 combinations already being used.
+            String possibleID = MCUtils.generateCacheID((int) (Math.floor((double) i / 50) + 5));
+            if (checkID(possibleID)) return possibleID;
+        }
+
+        throw new SizeLimitExceededException("Could not generate a non-conflicting cache id after 250 tries. Consider your self lucky... or unlucky?");
+    }
+
+    private boolean checkID(String id) {
+        return !idToMinecache.containsKey(id);
+    }
+
     public boolean saveMinecache(Minecache minecache, boolean isNewCache) {
         try {
             int tries = 0;
 
             while (idToMinecache.containsKey(minecache.id()) && isNewCache) {
-                minecache.setID(Utils.generateCacheID((int) (Math.floor((double) tries / 50) + 5)));
+                minecache.setID(MCUtils.generateCacheID((int) (Math.floor((double) tries / 50) + 5)));
                 tries++;
             }
 
@@ -123,16 +134,12 @@ public class MinecacheStorage {
         return ids;
     }
 
-    public HashMap<Location, Minecache> getLocations() {
-        return mcLocations;
-    }
-
     public static MinecacheStorage getInstance() {
         return INSTANCE;
     }
 
     public boolean isFTF(UUID plr, Minecache minecache) {
-        return minecache.ftf().equals(Utils.EMPTY_UUID);
+        return minecache.ftf().equals(MCUtils.EMPTY_UUID);
     }
 
     public void attemptUpdate() {
@@ -145,7 +152,7 @@ public class MinecacheStorage {
                 cache.toYaml(yaml, cache.id());
             }
 
-            MinecachingAPI.tInfo("plugin.data.update.succeed",  "Minecache Data", Config.getInstance().getMinecacheDataVersion(), MinecachingAPI.getMinecacheDataVersion());
+            MinecachingAPI.tInfo(MessageKeys.Plugin.Data.UPDATE_SUCCEEDED,  "Minecache Data", Config.getInstance().getMinecacheDataVersion(), MinecachingAPI.getMinecacheDataVersion());
 
             Config.getInstance().setMinecacheDataVersion(MinecachingAPI.getMinecacheDataVersion());
             Config.getInstance().save();
@@ -153,7 +160,7 @@ public class MinecacheStorage {
             save();
             updateMaps();
         } catch (Exception e) {
-            MinecachingAPI.tWarning("plugin.data.update.fail",  "Minecache Data", Config.getInstance().getMinecacheDataVersion(), MinecachingAPI.getMinecacheDataVersion());
+            MinecachingAPI.tWarning(MessageKeys.Plugin.Data.UPDATE_FAILED,  "Minecache Data", Config.getInstance().getMinecacheDataVersion(), MinecachingAPI.getMinecacheDataVersion());
         }
     }
 }

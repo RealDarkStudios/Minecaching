@@ -19,7 +19,11 @@ public class OpenConfirmationMenuItem extends MenuItem {
     }
 
     public OpenConfirmationMenuItem(MenuItem confirmItem, MCMenu parent) {
-        super(confirmItem.getName(), confirmItem.getItem(), confirmItem.getLore());
+        this(confirmItem, confirmItem, parent);
+    }
+
+    public OpenConfirmationMenuItem(MenuItem displayItem, MenuItem confirmItem, MCMenu parent) {
+        super(displayItem.getName(), displayItem.getItem(), displayItem.getLore());
         this.confirmItem = confirmItem;
         this.parent = parent;
     }

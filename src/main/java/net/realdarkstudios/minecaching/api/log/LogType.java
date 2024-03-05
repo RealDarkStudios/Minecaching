@@ -1,6 +1,8 @@
 package net.realdarkstudios.minecaching.api.log;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.ChatColor;
 
 public enum LogType  {
@@ -44,8 +46,14 @@ public enum LogType  {
         return MinecachingAPI.getLocalization().getTranslation("plugin.log." + id);
     }
 
-    public String getMenuMessage() {
-        return MinecachingAPI.getLocalization().getTranslation("menu.log.type." + id);
+    public LocalizedMessages.Key getMenuMessageKey() {
+        return switch (this) {
+            case FOUND -> MessageKeys.Menu.Log.TYPE_FOUND;
+            case DNF -> MessageKeys.Menu.Log.TYPE_DNF;
+            case NOTE -> MessageKeys.Menu.Log.TYPE_NOTE;
+            case FLAG -> MessageKeys.Menu.Log.TYPE_FLAG;
+            default -> null;
+        };
     }
 
     public ChatColor getColor() {

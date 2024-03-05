@@ -5,16 +5,13 @@ import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheType;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
 public class CLMTraditionalTypeMenuItem extends MenuItem {
-    public CLMTraditionalTypeMenuItem(PlayerDataObject pdo, String name, ItemStack item, List<String> lore) {
-        super((pdo.getCLMOptions().typeEnabled(MinecacheType.TRADITIONAL) ? ChatColor.GREEN : ChatColor.RED) + name,
-                (pdo.getCLMOptions().typeEnabled(MinecacheType.TRADITIONAL) ? item : new ItemStack(Material.BEDROCK)), lore);
+    public CLMTraditionalTypeMenuItem(String name, ItemStack item, List<String> lore) {
+        super(name, item, lore);
     }
 
     @Override

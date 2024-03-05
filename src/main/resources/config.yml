@@ -4,9 +4,9 @@
 # +-------------+
 
 # Do not touch!
-CONFIG_VERSION: 8
-MINECACHE_DATA_VERSION: 4
-PLAYER_DATA_VERSION: 5
+CONFIG_VERSION: 10
+MINECACHE_DATA_VERSION: 5
+PLAYER_DATA_VERSION: 6
 LOGBOOK_DATA_VERSION: 1
 
 # Determines the Locale to use for plugin messages
@@ -49,6 +49,10 @@ MIN_X: -30000000
 MAX_Z: 30000000
 MIN_Z: -30000000
 
+# Determines the minimum amount of separation between caches in blocks
+# Defaults: 25
+MIN_CACHE_DISTANCE: 25
+
 # Determines the maximum distance a cache lodestone can be from the cache
 # Defaults: 50
 MAX_LODESTONE_DISTANCE: 50
@@ -66,3 +70,27 @@ USE_LODESTONE_BASED_LOCATING: false
 ENABLED_TYPES:
   - TRADITIONAL
   - MYSTERY
+  - MULTI
+
+# Defines how the 'score' is calculated for the Most Accomplished stat.
+# FIND is how many points for you get for finding a cache
+# FAVORITE is how many points for getting a favorite point on one of your caches
+# FTF is how many points for getting an FTF on a cache
+# HIDE_X is how many points for having a hide with the type X:
+#   AD is archived/disabled, R is reviewing, NM is needs maintenance, and P is published. All others types default to 0
+# Defaults:
+#   FIND: 1
+#   FAVORITE: 1
+#   FTF: 10
+#   HIDE_AD: 0
+#   HIDE_R: 2
+#   HIDE_NM: 3
+#   HIDE_P: 5
+STATS_SCORE_OPTIONS:
+  FIND: 1
+  FAVORITE: 1
+  FTF: 10
+  HIDE_AD: 0
+  HIDE_R: 2
+  HIDE_NM: 3
+  HIDE_P: 5

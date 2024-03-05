@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.util;
+package net.realdarkstudios.minecaching.api.util;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -6,9 +6,12 @@ import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+
 /**
  * A collection of utility methods to send messages while supporting the {@link net.realdarkstudios.minecaching.api.misc.Localization} system
+ * @deprecated Since 0.3.1.0 | Please use the new {@link LocalizedMessages} system
  */
+@Deprecated(since = "0.3.1.0", forRemoval = true)
 public class MCMessages {
     /**
      * A default No Permission message. Used when a translated one is not found

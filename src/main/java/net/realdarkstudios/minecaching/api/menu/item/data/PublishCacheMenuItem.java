@@ -1,12 +1,12 @@
 package net.realdarkstudios.minecaching.api.menu.item.data;
 
-import net.md_5.bungee.api.ChatColor;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
+import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
 import net.realdarkstudios.minecaching.event.minecache.MinecachePublishedEvent;
-import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -17,11 +17,11 @@ public class PublishCacheMenuItem extends MenuItem {
     private final Minecache cache;
     
     public PublishCacheMenuItem(Minecache cache) {
-        this(ChatColor.DARK_GREEN + translation("menu.data.item.publish", cache.id()), new ItemStack(Material.GREEN_CONCRETE), List.of(), cache);
+        this(MessageKeys.Menu.Data.ITEM_PUBLISH.translate(cache.id()), new ItemStack(Material.GREEN_CONCRETE), List.of(), cache);
     }
 
-    public PublishCacheMenuItem(String nameKey, ItemStack stack, List<String> lore, Minecache cache) {
-        super(nameKey, stack, lore);
+    public PublishCacheMenuItem(String name, ItemStack stack, List<String> lore, Minecache cache) {
+        super(name, stack, lore);
         this.cache = cache;
     }
 
@@ -33,12 +33,12 @@ public class PublishCacheMenuItem extends MenuItem {
         Bukkit.getPluginManager().callEvent(pEvent);
 
         if (pEvent.isCancelled()) {
-            MCMessages.sendErrorMsg(event.getPlayer(), "publishcache");
+            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Misc.PUBLISH);
             return;
         }
 
-        MinecachingAPI.get().publishMinecache(event.getPlayer().getUniqueId(), cache, "Published.");
-        MCMessages.sendMsg(event.getPlayer(), "publishcache.publish", ChatColor.GREEN, cache.id());
+        MinecachingAPI.get().publishMinecache(event.getPlayer().getUniqueId(), cache);
+        LocalizedMessages.send(event.getPlayer(), MessageKeys.Command.Misc.PUBLISH, cache.id());
 
         event.setClose(true);
     }

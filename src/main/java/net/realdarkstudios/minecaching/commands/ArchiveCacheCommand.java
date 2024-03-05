@@ -1,13 +1,13 @@
 package net.realdarkstudios.minecaching.commands;
 
-import net.realdarkstudios.minecaching.util.Utils;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
-import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import net.realdarkstudios.minecaching.event.minecache.MinecacheArchivedEvent;
-import net.realdarkstudios.minecaching.util.MCMessages;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,15 +21,13 @@ public class ArchiveCacheCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
-            MCMessages.incorrectUsage(sender);
-            MCMessages.usage(sender, "archivecache", command, label);
+            LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
+            LocalizedMessages.send(sender, MessageKeys.Usage.ARCHIVE, label);
             return true;
         }
 
-        String reason;
-
-        if (args.length == 1) reason = "Archived. Please note that this cache can no longer be found by other cachers.";
-        else {
+        String reason = MessageKeys.Command.Log.ARCHIVE_DEFAULT_MESSAGE.translate();
+        if (args.length > 1) {
             StringBuilder rsn = new StringBuilder();
             for (int i = 1; i < args.length; i++) {
                 rsn.append(args[i]).append(" ");
@@ -37,24 +35,24 @@ public class ArchiveCacheCommand implements CommandExecutor, TabExecutor {
             reason = rsn.toString().trim();
         }
 
-        Minecache minecache = MinecachingAPI.get().getMinecache(args[0]);
+        Minecache cache = MinecachingAPI.get().getMinecache(args[0]);
 
-        if (minecache.equals(Minecache.EMPTY)) {
-            MCMessages.sendErrorMsg(sender, "cantfind", minecache.id());
+        if (cache.equals(Minecache.EMPTY)) {
+            LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE, cache.id());
             return false;
-        } else if (minecache.status().equals(MinecacheStatus.ARCHIVED) || minecache.status().equals(MinecacheStatus.INVALID)) {
-            MCMessages.sendErrorMsg(sender, "archivecache.cantarchive");
+        } else if (cache.status().equals(MinecacheStatus.ARCHIVED) || cache.status().equals(MinecacheStatus.INVALID)) {
+            LocalizedMessages.send(sender, MessageKeys.Error.Misc.ARCHIVE_CANT_ARCHIVE);
         } else {
-            MinecacheArchivedEvent event = new MinecacheArchivedEvent(minecache, sender);
+            MinecacheArchivedEvent event = new MinecacheArchivedEvent(cache, sender);
             Bukkit.getPluginManager().callEvent(event);
 
             if (event.isCancelled()) {
-                MCMessages.sendErrorMsg(sender, "archivecache");
+                LocalizedMessages.send(sender, MessageKeys.Error.Misc.ARCHIVE);
                 return true;
             }
 
-            MinecachingAPI.get().archiveMinecache(sender instanceof Player plr ? plr.getUniqueId() : Utils.EMPTY_UUID, minecache, reason);
-            MCMessages.sendMsg(sender, "archivecache.archive", ChatColor.GREEN, minecache.id());
+            MinecachingAPI.get().archiveMinecache(sender instanceof Player plr ? plr.getUniqueId() : MCUtils.EMPTY_UUID, cache, reason);
+            LocalizedMessages.send(sender, MessageKeys.Command.Misc.ARCHIVE, cache.id());
         }
 
         return true;
@@ -66,7 +64,7 @@ public class ArchiveCacheCommand implements CommandExecutor, TabExecutor {
         ArrayList<String> mcIDs = new ArrayList<>();
 
         for (Minecache m: fMinecaches) {
-            if (m.id().contains(args[0]) && (sender.isOp() || (sender instanceof Player plr && m.author().equals(plr.getUniqueId())))) {
+            if (m.id().contains(args[0]) && (sender.isOp() || (sender instanceof Player plr && m.owner().equals(plr.getUniqueId())))) {
                 mcIDs.add(m.id());
             }
         }
