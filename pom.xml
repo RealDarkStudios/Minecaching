@@ -6,7 +6,7 @@
 
     <groupId>net.realdarkstudios</groupId>
     <artifactId>Minecaching</artifactId>
-    <version>0.3.1.0-SNAPSHOT-24w11b</version>
+    <version>snapshot-24w11b</version>
     <packaging>jar</packaging>
 
     <name>Minecaching</name>
