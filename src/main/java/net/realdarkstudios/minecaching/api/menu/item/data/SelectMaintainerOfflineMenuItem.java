@@ -5,7 +5,7 @@ import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
+import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

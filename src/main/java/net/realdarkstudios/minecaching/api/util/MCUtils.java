@@ -6,7 +6,7 @@ import net.realdarkstudios.minecaching.api.log.LogType;
 import net.realdarkstudios.minecaching.api.log.LogbookDataObject;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;
-import net.realdarkstudios.minecaching.event.minecache.LogCreatedEvent;
+import net.realdarkstudios.minecaching.api.event.minecache.LogCreatedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;

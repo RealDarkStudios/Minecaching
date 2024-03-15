@@ -1,13 +1,12 @@
-package net.realdarkstudios.minecaching;
+package net.realdarkstudios.minecaching.api;
 
-import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.event.MCDebugEventHandler;
+import net.realdarkstudios.minecaching.api.event.MCEventHandler;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenuHolder;
 import net.realdarkstudios.minecaching.api.misc.AutoUpdater;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import net.realdarkstudios.minecaching.commands.*;
-import net.realdarkstudios.minecaching.event.MCDebugEventHandler;
-import net.realdarkstudios.minecaching.event.MCEventHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -22,22 +21,30 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Path;
 
 public final class Minecaching extends JavaPlugin {
-    private final String VERSION = getDescription().getVersion();
+    private static Minecaching plugin;
+    private static String version;
+    private static MinecachingAPI api;
 
     @Override
     public void onEnable() {
+        plugin = this;
+        version = getDescription().getVersion();
+        api = new MinecachingAPI();
+
+        api.init();
+
         // Server version check
         getLogger().info("Checking server version...");
         getLogger().info("Server Version: " + Bukkit.getBukkitVersion());
         String[] serverVersion = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
         if (!(Integer.parseInt(serverVersion[1]) >= 16)) {
             // Load Config and MCStorage so there's no warning about this.yaml not existing
-            MinecachingAPI.get().load(false);
+            api.load(false);
             MinecachingAPI.tWarning(MessageKeys.Plugin.VERSION_WARNING);
             onDisable();
         } else {
             // Load plugin data
-            MinecachingAPI.get().load(true);
+            api.load(true);
             Bukkit.getScheduler().scheduleSyncRepeatingTask(this, AutoUpdater::checkForUpdate, 0L,36000L);
 
             // Register commands
@@ -64,7 +71,7 @@ public final class Minecaching extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new MCDebugEventHandler(), this);
             getServer().getPluginManager().registerEvents(new MCEventHandler(), this);
 
-            MinecachingAPI.tInfo(MessageKeys.Plugin.ENABLED, VERSION);
+            MinecachingAPI.tInfo(MessageKeys.Plugin.ENABLED, version);
         }
     }
 
@@ -106,12 +113,20 @@ public final class Minecaching extends JavaPlugin {
         } else MinecachingAPI.tInfo(MessageKeys.Plugin.Update.AUTO_DISABLED_DOWNLOAD);
 
         // Save all plugin data
-        String disabledMsg = MessageKeys.Plugin.DISABLED.translate(VERSION);
-        MinecachingAPI.get().save();
+        String disabledMsg = MessageKeys.Plugin.DISABLED.console(version);
+        api.save();
         getLogger().info(disabledMsg);
     }
 
     public static Minecaching getInstance() {
-        return getPlugin(Minecaching.class);
+        return plugin;
+    }
+
+    public static String getVersion() {
+        return version;
+    }
+
+    public static MinecachingAPI getAPI() {
+        return api;
     }
 }

@@ -1,13 +1,13 @@
 package net.realdarkstudios.minecaching.api.menu.item.log;
 
-import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.LogMenu;
 import net.realdarkstudios.minecaching.api.menu.item.misc.CacheMenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
+import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

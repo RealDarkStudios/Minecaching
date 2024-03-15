@@ -1,6 +1,6 @@
 name: Minecaching
 version: '${project.version}'
-main: net.realdarkstudios.minecaching.Minecaching
+main: net.realdarkstudios.minecaching.api.Minecaching
 api-version: '1.19'
 prefix: Minecaching
 load: POSTWORLD

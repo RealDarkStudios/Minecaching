@@ -5,7 +5,7 @@ import net.realdarkstudios.minecaching.api.menu.impl.item.SkullMenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
+import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
 
 import java.util.List;
 import java.util.UUID;

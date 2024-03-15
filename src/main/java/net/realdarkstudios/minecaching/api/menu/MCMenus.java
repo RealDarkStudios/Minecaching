@@ -1,6 +1,6 @@
 package net.realdarkstudios.minecaching.api.menu;
 
-import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 

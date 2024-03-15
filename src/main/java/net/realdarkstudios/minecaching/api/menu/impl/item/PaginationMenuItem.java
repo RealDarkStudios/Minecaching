@@ -2,7 +2,7 @@ package net.realdarkstudios.minecaching.api.menu.impl.item;
 
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.PaginationMenu;
-import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
+import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

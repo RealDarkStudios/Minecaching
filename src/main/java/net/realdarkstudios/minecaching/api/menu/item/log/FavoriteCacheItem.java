@@ -5,8 +5,9 @@ import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
+import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -28,6 +29,7 @@ public class FavoriteCacheItem extends MenuItem {
 
         ItemStack stack = checkIfCanFavorite(pdo) ? new ItemStack(Material.GRAY_DYE) : new ItemStack(Material.BEDROCK);
         if (checkIfCanFavorite(pdo)) stack = !pdo.getFavorites().contains(cache.id()) ? new ItemStack(Material.GRAY_DYE) : new ItemStack(Material.LIME_DYE);
+        else setClickSound(Sound.ENTITY_VILLAGER_TRADE);
 
         return applyText(stack);
     }

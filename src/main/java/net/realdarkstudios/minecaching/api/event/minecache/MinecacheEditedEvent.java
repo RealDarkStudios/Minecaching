@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.event.minecache;
+package net.realdarkstudios.minecaching.api.event.minecache;
 
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.commands.EditCacheCommand;

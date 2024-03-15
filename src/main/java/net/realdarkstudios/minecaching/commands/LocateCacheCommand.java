@@ -1,14 +1,14 @@
 package net.realdarkstudios.minecaching.commands;
 
-import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.event.minecache.StartLocatingMinecacheEvent;
-import net.realdarkstudios.minecaching.event.minecache.StopLocatingMinecacheEvent;
+import net.realdarkstudios.minecaching.api.event.minecache.StartLocatingMinecacheEvent;
+import net.realdarkstudios.minecaching.api.event.minecache.StopLocatingMinecacheEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

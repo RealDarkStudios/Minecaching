@@ -1,12 +1,12 @@
 package net.realdarkstudios.minecaching.api.menu.item.data;
 
-import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.menu.SelectMaintainerMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
+import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

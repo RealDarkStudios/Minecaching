@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.commands;
 
 import net.md_5.bungee.api.chat.TextComponent;
-import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.CacheListMenu;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;

@@ -1,6 +1,6 @@
-package net.realdarkstudios.minecaching.event;
+package net.realdarkstudios.minecaching.api.event;
 
-import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenuHolder;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;

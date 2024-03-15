@@ -1,10 +1,10 @@
-package net.realdarkstudios.minecaching.event.minecache;
+package net.realdarkstudios.minecaching.api.event.minecache;
 
 import net.realdarkstudios.minecaching.api.log.Log;
 import net.realdarkstudios.minecaching.api.log.LogType;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.commands.LogCacheCommand;
-import net.realdarkstudios.minecaching.event.BaseEvent;
+import net.realdarkstudios.minecaching.api.event.BaseEvent;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;

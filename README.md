@@ -45,10 +45,10 @@ Then,
 <dependency>
   <groupId>net.realdarkstudios</groupId>
   <artifactId>Minecaching</artifactId>
-  <version>0.3.1.0-24w10a</version>
+  <version>snapshot-24w11b</version>
   <!-- Versions before 0.3.0.5 used X.X.X.X-SNAPSHOT-X versioning -->
-  <!-- Versions after will use X.X.X.X-MCF, where MCF represents the versioning scheme for Minecraft Snapshots, ex 24w10a -->
-  <!-- For example, 0.3.1.0-24w10a (the first snapshot to use this system) was released the tenth week of 2024, and is the first snapshot that week -->
+  <!-- Versions after will use snapshot-YYwWWX, where YY represents the year, WW the week, and X the snapshot # (in letters) that week -->
+  <!-- For example, snapshot-24w11b was released the 11th week of 2024, and is the second snapshot that week -->
 </dependency>
 ```
 

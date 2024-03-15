@@ -1,6 +1,6 @@
 package net.realdarkstudios.minecaching.api.misc;
 
-import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,12 +11,10 @@ import java.util.List;
 import java.util.Locale;
 
 public class Config {
-    private final static Config INSTANCE = new Config();
-
     private File file;
     private YamlConfiguration yaml;
 
-    private Config() {
+    Config() {
     }
 
     public void load() {
@@ -141,11 +139,7 @@ public class Config {
         return StatsScoreOptions.fromYaml(yaml, "STATS_SCORE_OPTIONS");
     }
 
-    public static Config getInstance() {
-        return INSTANCE;
-    }
-
-    public void attemptUpdate() {
+    public void updateData() {
         try {
             int configVersion = getConfigVersion();
             int minecacheDataVersion = configVersion < 4 ? yaml.getInt("MINECACHE_VERSION") : getMinecacheDataVersion();
@@ -200,11 +194,16 @@ public class Config {
             yaml.set("USE_LODESTONE_BASED_LOCATING", useLodestoneBasedLocating);
             yaml.set("ENABLED_TYPES", enabledTypes);
             statsScoreOptions.toYaml(yaml, "STATS_SCORE_OPTIONS");
-            yaml.set("CONFIG_VERSION", MinecachingAPI.getConfigDataVersion());
-            MinecachingAPI.tInfo(MessageKeys.Plugin.Data.UPDATE_SUCCEEDED, "Config", configVersion, MinecachingAPI.getConfigDataVersion());
+            yaml.set("CONFIG_VERSION", MinecachingAPI.CONFIG_DATA_VERSION);
+            MinecachingAPI.tInfo(MessageKeys.Plugin.Data.UPDATE_SUCCEEDED, "Config", configVersion, MinecachingAPI.CONFIG_DATA_VERSION);
             save();
         } catch (Exception e) {
-            MinecachingAPI.tInfo(MessageKeys.Plugin.Data.UPDATE_FAILED, "Config", getConfigVersion(), MinecachingAPI.getConfigDataVersion());
+            MinecachingAPI.tInfo(MessageKeys.Plugin.Data.UPDATE_FAILED, "Config", getConfigVersion(), MinecachingAPI.CONFIG_DATA_VERSION);
         }
+    }
+
+    public static Config getInstance() {
+        if (MinecachingAPI.get().hasInitialized()) return MinecachingAPI.getConfig();
+        else return new Config();
     }
 }

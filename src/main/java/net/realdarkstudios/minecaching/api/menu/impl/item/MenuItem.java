@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.api.menu.impl.item;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
+import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +13,7 @@ import java.util.List;
  *
  */
 public class MenuItem {
-    protected static final Sound buttonClickSound = Sound.UI_BUTTON_CLICK;
+    protected Sound buttonClickSound = Sound.UI_BUTTON_CLICK;
     protected final String name;
     protected final ItemStack item;
     protected final List<String> lore;
@@ -42,6 +42,10 @@ public class MenuItem {
 
     public void playClickSound(Player plr) {
         plr.playSound(plr.getLocation(), buttonClickSound, .5f, 1);
+    }
+
+    public void setClickSound(Sound newSound) {
+        buttonClickSound = newSound;
     }
 
     public void onItemClick(MenuItemClickEvent event) {

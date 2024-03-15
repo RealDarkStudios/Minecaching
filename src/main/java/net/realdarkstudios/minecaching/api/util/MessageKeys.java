@@ -275,6 +275,7 @@ public class MessageKeys {
         public static final LocalizedMessages.Key LOGBOOK_DELETED = key(".logbook.deleted");
         public static final LocalizedMessages.Key TRANSLATION_MISSING = key(".localization.missing");
         public static final LocalizedMessages.Key TRANSLATION_FORMAT_ARG_MISSING = key(".localization.missingformatarg");
+        public static final LocalizedMessages.Key LOCALIZATION_LOADED = key(".localization.loaded");
 
         private static LocalizedMessages.Key key(String path) { return MessageKeys.key(plugin + path); }
     }

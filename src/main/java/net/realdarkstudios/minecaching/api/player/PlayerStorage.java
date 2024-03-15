@@ -1,6 +1,6 @@
 package net.realdarkstudios.minecaching.api.player;
 
-import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;
@@ -13,9 +13,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class PlayerStorage {
-
-    private final static PlayerStorage INSTANCE = new PlayerStorage();
-
     private HashMap<UUID, PlayerDataObject> playerStorage = new HashMap<>();
 
     private PlayerStorage() {
@@ -180,7 +177,8 @@ public class PlayerStorage {
     }
 
     public static PlayerStorage getInstance() {
-        return INSTANCE;
+        if (MinecachingAPI.get().hasInitialized()) return MinecachingAPI.getPlayerStorage();
+        else return new PlayerStorage();
     }
 
     public void updateData() {
@@ -191,9 +189,9 @@ public class PlayerStorage {
                 }
             }
 
-            MinecachingAPI.tWarning(MessageKeys.Plugin.Data.UPDATE_SUCCEEDED, "Player Data", Config.getInstance().getPlayerDataVersion(), MinecachingAPI.getPlayerDataVersion());
+            MinecachingAPI.tWarning(MessageKeys.Plugin.Data.UPDATE_SUCCEEDED, "Player Data", Config.getInstance().getPlayerDataVersion(), MinecachingAPI.PLAYER_DATA_VERSION);
 
-            Config.getInstance().setPlayerDataVersion(MinecachingAPI.getPlayerDataVersion());
+            Config.getInstance().setPlayerDataVersion(MinecachingAPI.PLAYER_DATA_VERSION);
             if (playerStorage != null) {
                 for (PlayerDataObject plr : playerStorage.values()) {
                     plr.save();
@@ -201,7 +199,7 @@ public class PlayerStorage {
             }
             Config.getInstance().save();
         } catch (Exception e) {
-            MinecachingAPI.tWarning(MessageKeys.Plugin.Data.UPDATE_FAILED, "Player Data", Config.getInstance().getPlayerDataVersion(), MinecachingAPI.getPlayerDataVersion());
+            MinecachingAPI.tWarning(MessageKeys.Plugin.Data.UPDATE_FAILED, "Player Data", Config.getInstance().getPlayerDataVersion(), MinecachingAPI.PLAYER_DATA_VERSION);
         }
     }
 }

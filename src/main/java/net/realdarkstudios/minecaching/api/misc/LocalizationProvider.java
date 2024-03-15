@@ -2,9 +2,11 @@ package net.realdarkstudios.minecaching.api.misc;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,11 +14,11 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class LocalizationProvider {
-    private static final LocalizationProvider INSTANCE = new LocalizationProvider();
     private final Gson gson = new Gson();
-    private JsonObject json;
     private final HashMap<Plugin, Localization> pluginMap = new HashMap<>();
+    private final HashMap<Locale, String> localeNames = new HashMap<>();
     private LocalizationProvider() {
+        localeNames.put(Locale.US, "US English");
     }
 
     /**
@@ -26,8 +28,18 @@ public class LocalizationProvider {
      * @since 0.2.2.0
      */
     public Localization load(Plugin plugin) {
-        if (pluginMap.containsKey(plugin)) return get(plugin);
-        else return load(plugin, Config.getInstance().getServerLocale());
+        return load(plugin, MinecachingAPI.getConfig().getServerLocale());
+    }
+
+    /**
+     * Generates the {@link Localization} for this {@link Plugin} with the defined {@link Locale}
+     * @param plugin The plugin to generate the Localization for
+     * @param locale The Locale to use
+     * @return A Localization which can be used for translation
+     * @since 0.3.1.0-24w11a
+     */
+    public Localization load(Plugin plugin, Locale locale) {
+        return pluginMap.containsKey(plugin) ? get(plugin) : loadPlugin(plugin, locale);
     }
 
     /**
@@ -35,21 +47,39 @@ public class LocalizationProvider {
      * @param plugin The plugin to generate the Localization for
      * @param locale The Locale to use
      * @return A Localization which can be used for translation
+     * @throws RuntimeException If a language can't be loaded for the given Plugin
      * @since 0.2.2.0
      */
-    public Localization load(Plugin plugin, Locale locale) {
-        // These all need to be basic strings due to the localization not being returned yet (only the
+    private Localization loadPlugin(Plugin plugin, Locale locale) {
+        JsonObject json;
+
+        // These all need to be basic strings due to the localization not being returned yet
         try {
-            this.json = loadJson(plugin, locale);
-            MinecachingAPI.info(String.format(json.get("plugin.localization.loaded").toString(), json.get("locale.name").toString(), plugin.getName()));
+            json = loadJson(plugin, locale);
+            if (json.isJsonNull()) throw new Exception("JSON is null!");
+            MinecachingAPI.info(String.format(plugin.equals(Minecaching.getInstance()) ? json.get("plugin.localization.loaded").toString() :
+                            MessageKeys.Plugin.LOCALIZATION_LOADED.getRawMessage(),
+                    json.has("locale.name") ? json.get("locale.name").toString() : localeNames.get(locale),
+                    json.has("plugin.name") ? json.get("plugin.name") + " (" + plugin.getName() + ")" : plugin.getName()));
         } catch (Exception e) {
-            MinecachingAPI.warning("The Server Locale defined in config.yml is invalid or not supported! \nDefaulting to en-US.json! \nlang/" + locale.toLanguageTag() + ".json does not exist!");
+            MinecachingAPI.warning("The Server Locale defined in config.yml is invalid or not supported! \nlang/" + locale.toLanguageTag() + ".json does not exist inside " + plugin.getName() + "'s resource folder! \nDefaulting to en-US.json!");
+            e.printStackTrace();
+
+            if (locale.equals(Locale.US)) {
+                MinecachingAPI.warning(String.format("Unable to set a language for plugin: %s!", plugin.getName()));
+                if (plugin.equals(Minecaching.getInstance())) Minecaching.getInstance().onDisable();
+                else throw new RuntimeException("Could not load en-US.json for plugin " + plugin.getName());
+                return null;
+            }
+
             try {
-                this.json = loadJson(plugin, Locale.US);
-                MinecachingAPI.info(String.format(json.get("plugin.localization.loaded").toString(), json.get("locale.name").toString(), plugin.getName()));
+                json = loadJson(plugin, Locale.US);
+                MinecachingAPI.info(String.format(json.get("plugin.localization.loaded").toString(), json.has("locale.name") ? json.get("locale.name").toString() : localeNames.get(locale), json.has("plugin.name") ? json.get("plugin.name") + " (" + plugin.getName() + ")" : plugin.getName()));
             } catch (Exception e1) {
-                MinecachingAPI.warning("Unable to set a language!");
-                Minecaching.getInstance().onDisable();
+                MinecachingAPI.warning(String.format("Unable to set a language for plugin: %s!", plugin.getName()));
+                if (plugin.equals(Minecaching.getInstance())) Minecaching.getInstance().onDisable();
+                else throw new RuntimeException("Could not load either " + locale.toLanguageTag() + ".json or en-US.json for plugin " + plugin.getName());
+                return null;
             }
         }
 
@@ -59,19 +89,22 @@ public class LocalizationProvider {
     }
 
     /**
-     * Loads the JSON String from "(plugin resource folder)/lang/(locale).json" Ex: /lang/en-US.json
+     * Loads the JSON String from "resources/lang/(locale).json" for a specific plugin Ex: resources/lang/en-US.json
      * @param plugin The plugin to load the JSON from
      * @param locale The locale to load the JSON from
      * @return A JsonObject which can be used by the {@link Localization}
      * @throws IOException If no JSON could be read or if the file does not exist
      */
-    private JsonObject loadJson(Plugin plugin, Locale locale) throws IOException {
+    private JsonObject loadJson(@NotNull Plugin plugin, @NotNull Locale locale) throws IOException {
         InputStreamReader reader = new InputStreamReader(plugin.getResource("lang/" + locale.toLanguageTag() + ".json"));
         if (!reader.ready()) {
             reader.close();
-            throw new IOException();
+            throw new IOException("Reader not ready or JSON invalid for plugin " + plugin.getName());
         }
-        return gson.fromJson(reader, JsonObject.class);
+
+        JsonObject ret = gson.fromJson(reader, JsonObject.class);
+        if (ret == null) throw new IOException("JSON could not be read from file " + plugin.getName() + "/resources/lang/" + locale.toLanguageTag() + ".json");
+        else return ret;
     }
 
     /**
@@ -83,8 +116,10 @@ public class LocalizationProvider {
         return pluginMap.get(plugin);
     }
 
+    /**
+     * Clears the LocalizationProvider's internal plugin map
+     */
     public void clear() {
-        this.json = null;
         this.pluginMap.clear();
     }
 
@@ -93,6 +128,7 @@ public class LocalizationProvider {
      * @return The LocalizationProvider instance
      */
     public static LocalizationProvider getInstance() {
-        return INSTANCE;
+        if (Minecaching.getAPI().hasInitialized()) return MinecachingAPI.getLocalizationProvider();
+        else return new LocalizationProvider();
     }
 }

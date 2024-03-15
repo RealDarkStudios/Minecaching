@@ -1,5 +1,6 @@
 {
   "locale.name": "US English",
+  "plugin.name": "Minecaching",
 
   "error.archivecache": "Couldn't archive cache for some reason!",
   "error.archivecache.cantarchive": "Couldn't archive cache because it already is or is invalid!",

@@ -5,7 +5,7 @@ import net.realdarkstudios.minecaching.api.log.LogType;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItemState;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MultiStateMenuItem;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.event.MenuItemClickEvent;
+import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
 
 public class LogTypeMenuItem extends MultiStateMenuItem {
     public LogTypeMenuItem(MenuItemState... items) {

@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class LogbookStorage {
-    private final static LogbookStorage INSTANCE = new LogbookStorage();
     private HashMap<String, LogbookDataObject> logStorage;
     private List<String> logIDs = new ArrayList<>();
 
@@ -120,10 +119,11 @@ public class LogbookStorage {
     }
 
     public static LogbookStorage getInstance() {
-        return INSTANCE;
+        if (MinecachingAPI.get().hasInitialized()) return MinecachingAPI.getLogbookStorage();
+        else return new LogbookStorage();
     }
 
-    public void attemptUpdate() {
+    public void updateData() {
         try {
             if (logStorage != null) {
                 for (LogbookDataObject log : logStorage.values()) {
@@ -131,9 +131,9 @@ public class LogbookStorage {
                 }
             }
 
-            MinecachingAPI.tInfo(MessageKeys.Plugin.Data.UPDATE_SUCCEEDED,  "Logbook Data", Config.getInstance().getLogbookDataVersion(), MinecachingAPI.getLogbookDataVersion());
+            MinecachingAPI.tInfo(MessageKeys.Plugin.Data.UPDATE_SUCCEEDED,  "Logbook Data", Config.getInstance().getLogbookDataVersion(), MinecachingAPI.LOGBOOK_DATA_VERSION);
 
-            Config.getInstance().setLogbookDataVersion(MinecachingAPI.getLogbookDataVersion());
+            Config.getInstance().setLogbookDataVersion(MinecachingAPI.LOGBOOK_DATA_VERSION);
             if (logStorage != null) {
                 for (LogbookDataObject log : logStorage.values()) {
                     log.save();
@@ -141,7 +141,7 @@ public class LogbookStorage {
             }
             Config.getInstance().save();
         } catch (Exception e) {
-            MinecachingAPI.tWarning(MessageKeys.Plugin.Data.UPDATE_FAILED,  "Logbook Data", Config.getInstance().getLogbookDataVersion(), MinecachingAPI.getLogbookDataVersion());
+            MinecachingAPI.tWarning(MessageKeys.Plugin.Data.UPDATE_FAILED,  "Logbook Data", Config.getInstance().getLogbookDataVersion(), MinecachingAPI.LOGBOOK_DATA_VERSION);
         }
     }
 }

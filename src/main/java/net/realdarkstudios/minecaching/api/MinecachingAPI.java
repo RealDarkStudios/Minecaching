@@ -1,7 +1,6 @@
 package net.realdarkstudios.minecaching.api;
 
 import com.google.common.collect.HashMultimap;
-import net.realdarkstudios.minecaching.Minecaching;
 import net.realdarkstudios.minecaching.api.log.LogType;
 import net.realdarkstudios.minecaching.api.log.LogbookDataObject;
 import net.realdarkstudios.minecaching.api.log.LogbookStorage;
@@ -18,6 +17,7 @@ import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -29,38 +29,47 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 
 public class MinecachingAPI {
-    private static final MinecachingAPI api = new MinecachingAPI();
+    private boolean hasInitialized = false;
     /**
      * Defines the expected Config Data Version
      */
-    private static final int CONFIG_DATA_VERSION = 10;
+    public static final int CONFIG_DATA_VERSION = 10;
     /**
      * Defines the expected Minecache Data Version
      */
-    private static final int MINECACHE_DATA_VERSION = 5;
+    public static final int MINECACHE_DATA_VERSION = 5;
     /**
      * Defines the expected Player Data Version
      */
-    private static final int PLAYER_DATA_VERSION = 6;
+    public static final int PLAYER_DATA_VERSION = 6;
     /**
      * Defines the expected Logbook Data Version
      */
-    private static final int LOGBOOK_DATA_VERSION = 1;
+    public static final int LOGBOOK_DATA_VERSION = 1;
     /**
      * Defines the Minecaching Localization Provider
      */
-    private static Localization MINECACHING_LOCALIZATION;
+    private static Localization minecachingLocalization;
+    private static Config config;
+    private static MinecacheStorage cacheStorage;
+    private static PlayerStorage playerStorage;
+    private static LogbookStorage logbookStorage;
+    private static LocalizationProvider localizationProvider;
+    private static Logger logger;
 
-    private MinecachingAPI() {
+    MinecachingAPI() {
     }
 
     /**
      * Gets the Config Data Version
      * @return the expected Config Data Version
      * @since 0.2.1.0
+     * @deprecated Since 0.3.1.0-24w11b | Use {@link MinecachingAPI#CONFIG_DATA_VERSION} instead
      */
+    @Deprecated(since = "0.3.1.0-24w11b")
     public static int getConfigDataVersion() {
         return CONFIG_DATA_VERSION;
     }
@@ -69,7 +78,9 @@ public class MinecachingAPI {
      * Gets the Minecache Data Version
      * @return the expected Minecache Data Version
      * @since 0.2.1.0
+     * @deprecated Since 0.3.1.0-24w11b | Use {@link MinecachingAPI#MINECACHE_DATA_VERSION} instead
      */
+    @Deprecated(since = "0.3.1.0-24w11b")
     public static int getMinecacheDataVersion() {
         return MINECACHE_DATA_VERSION;
     }
@@ -78,7 +89,9 @@ public class MinecachingAPI {
      * Gets the Player Data Version
      * @return the expected Player Data Version
      * @since 0.2.1.0
+     * @deprecated Since 0.3.1.0-24w11b | Use {@link MinecachingAPI#PLAYER_DATA_VERSION} instead
      */
+    @Deprecated(since = "0.3.1.0-24w11b")
     public static int getPlayerDataVersion() {
         return PLAYER_DATA_VERSION;
     }
@@ -87,13 +100,35 @@ public class MinecachingAPI {
      * Gets the Logbook Data Version
      * @return the expected Logbook Data Version
      * @since 0.2.1.0
+     * @deprecated Since 0.3.1.0-24w11b | Use {@link MinecachingAPI#LOGBOOK_DATA_VERSION} instead
      */
+    @Deprecated(since = "0.3.1.0-24w11b")
     public static int getLogbookDataVersion() {
         return LOGBOOK_DATA_VERSION;
     }
 
     public static Localization getLocalization() {
-        return MINECACHING_LOCALIZATION;
+        return minecachingLocalization;
+    }
+
+    public static Config getConfig() {
+        return config;
+    }
+
+    public static MinecacheStorage getCacheStorage() {
+        return cacheStorage;
+    }
+
+    public static PlayerStorage getPlayerStorage() {
+        return playerStorage;
+    }
+
+    public static LogbookStorage getLogbookStorage() {
+        return logbookStorage;
+    }
+
+    public static LocalizationProvider getLocalizationProvider() {
+        return localizationProvider;
     }
 
     /**
@@ -103,7 +138,7 @@ public class MinecachingAPI {
      */
     public static void info(String... messages) {
         for (String msg : messages) {
-            Minecaching.getInstance().getLogger().info(msg);
+            logger.info(msg);
         }
     }
 
@@ -116,7 +151,7 @@ public class MinecachingAPI {
      */
     @Deprecated(since = "0.3.1.0", forRemoval = true)
     public static void tInfo(String key, Object... substitutions) {
-        info(MINECACHING_LOCALIZATION.getTranslation(key, substitutions));
+        info(minecachingLocalization.getTranslation(key, substitutions));
     }
 
     /**
@@ -137,7 +172,7 @@ public class MinecachingAPI {
      */
     public static void warning(String... messages) {
         for (String msg : messages) {
-            Minecaching.getInstance().getLogger().warning(msg);
+            logger.warning(msg);
         }
     }
 
@@ -150,7 +185,7 @@ public class MinecachingAPI {
      */
     @Deprecated(since = "0.3.1.0", forRemoval = true)
     public static void tWarning(String key, Object... substitutions) {
-        warning(MINECACHING_LOCALIZATION.getTranslation(key, substitutions));
+        warning(minecachingLocalization.getTranslation(key, substitutions));
     }
 
     /**
@@ -181,7 +216,7 @@ public class MinecachingAPI {
      * @since 0.2.0.0
      */
     public PlayerDataObject getPlayerData(UUID uuid) {
-        return PlayerStorage.getInstance().getOrCreatePlayerData(uuid);
+        return playerStorage.getOrCreatePlayerData(uuid);
     }
 
     /**
@@ -191,7 +226,7 @@ public class MinecachingAPI {
      * @since 0.2.1.0
      */
     public List<PlayerDataObject> getAllKnownPlayers() {
-        return PlayerStorage.getInstance().getPlayers();
+        return playerStorage.getPlayers();
     }
 
     /**
@@ -233,7 +268,7 @@ public class MinecachingAPI {
      * @since 0.2.0.0
      */
     public boolean hasPlayerData(UUID uuid) {
-        return PlayerStorage.getInstance().hasPlayerData(uuid);
+        return playerStorage.hasPlayerData(uuid);
     }
 
     /**
@@ -263,7 +298,7 @@ public class MinecachingAPI {
      * @since 0.2.1.0
      */
     public boolean deletePlayerData(UUID uuid) {
-        return PlayerStorage.getInstance().deletePlayerData(uuid);
+        return playerStorage.deletePlayerData(uuid);
     }
 
     /**
@@ -273,7 +308,7 @@ public class MinecachingAPI {
      * @since 0.2.0.0
      */
     public Minecache getMinecache(String cacheId) {
-        return cacheId.equals("NULL") ? Minecache.EMPTY : MinecacheStorage.getInstance().getMinecacheByID(cacheId);
+        return cacheId.equals("NULL") ? Minecache.EMPTY : cacheStorage.getMinecacheByID(cacheId);
     }
 
     /**
@@ -282,7 +317,7 @@ public class MinecachingAPI {
      * @since 0.2.0.0
      */
     public List<Minecache> getAllKnownCaches() {
-        return MinecacheStorage.getInstance().getMinecaches();
+        return cacheStorage.getMinecaches();
     }
 
     /**
@@ -291,7 +326,7 @@ public class MinecachingAPI {
      * @since 0.2.0.0
      */
     public List<String> getAllKnownCacheIDs() {
-        return MinecacheStorage.getInstance().getIDArray();
+        return cacheStorage.getIDArray();
     }
 
     /**
@@ -352,7 +387,7 @@ public class MinecachingAPI {
      * @since 0.2.0.0
      */
     public boolean saveMinecache(Minecache minecache, boolean isNewCache) {
-        return MinecacheStorage.getInstance().saveMinecache(minecache, isNewCache);
+        return cacheStorage.saveMinecache(minecache, isNewCache);
     }
 
     /**
@@ -364,7 +399,7 @@ public class MinecachingAPI {
      */
     public boolean deleteMinecache(Minecache minecache, UUID initiator) {
         if (!minecache.owner().equals(initiator)) createNotification(minecache.owner(), initiator, NotificationType.DELETION, minecache);
-        boolean success = (PlayerStorage.getInstance().deleteMinecache(minecache) && MinecacheStorage.getInstance().deleteMinecache(minecache));
+        boolean success = (playerStorage.deleteMinecache(minecache) && cacheStorage.deleteMinecache(minecache));
         deleteLogbook(minecache);
         return success;
     }
@@ -469,7 +504,7 @@ public class MinecachingAPI {
      * @since 0.2.1.0
      */
     public LogbookDataObject getLogbook(String id) {
-        return LogbookStorage.getInstance().getOrCreateLogbook(id);
+        return logbookStorage.getOrCreateLogbook(id);
     }
 
     /**
@@ -478,7 +513,7 @@ public class MinecachingAPI {
      * @since 0.2.1.0
      */
     public List<LogbookDataObject> getAllKnownLogbooks() {
-        return LogbookStorage.getInstance().getLogbooks();
+        return logbookStorage.getLogbooks();
     }
 
     /**
@@ -488,7 +523,7 @@ public class MinecachingAPI {
      * @since 0.2.1.0
      */
     public List<LogbookDataObject> getFilteredLogbooks(Predicate<LogbookDataObject> predicate) {
-        return LogbookStorage.getInstance().getLogbooks().stream().filter(predicate).toList();
+        return getAllKnownLogbooks().stream().filter(predicate).toList();
     }
 
     /**
@@ -508,7 +543,7 @@ public class MinecachingAPI {
      * @since 0.2.1.0
      */
     public boolean hasLogbook(String id) {
-        return LogbookStorage.getInstance().hasLogbook(id);
+        return logbookStorage.hasLogbook(id);
     }
 
     /**
@@ -538,7 +573,7 @@ public class MinecachingAPI {
      * @since 0.2.1.0
      */
     public boolean deleteLogbook(String id) {
-        return LogbookStorage.getInstance().deleteLogbook(id);
+        return logbookStorage.deleteLogbook(id);
     }
 
     /**
@@ -552,7 +587,7 @@ public class MinecachingAPI {
      */
     public boolean createNotification(UUID uuid, UUID initiator, NotificationType type, Minecache cache) {
         try {
-            PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(uuid);
+            PlayerDataObject pdo = getPlayerData(uuid);
 
             if (pdo.isOnline()) LocalizedMessages.send(pdo.getPlayer(), type.getTranslationKey(), ChatColor.GRAY, cache.id(), MCUtils.uuidName(initiator));
             else pdo.addNotification(new Notification(MCUtils.generateRandomString(5), initiator, type, cache, LocalDateTime.now()));
@@ -662,18 +697,18 @@ public class MinecachingAPI {
      */
     public void save() {
         tInfo(MessageKeys.Plugin.SAVE, "Config");
-        Config.getInstance().save();
-        LocalizationProvider.getInstance().clear();
+        config.save();
+        localizationProvider.clear();
         tInfo(MessageKeys.Plugin.SAVE, "Minecache Data");
-        MinecacheStorage.getInstance().save();
+        cacheStorage.save();
         tInfo(MessageKeys.Plugin.SAVE, "Player Data");
-        PlayerStorage.getInstance().save();
+        playerStorage.save();
         tInfo(MessageKeys.Plugin.SAVE, "Logbook Data");
-        LogbookStorage.getInstance().save();
+        logbookStorage.save();
     }
 
     /**
-     * Loads all plugin data
+     * Loads all Minecaching Plugin data
      *
      * @param attemptUpdates Whether to attempt updates (if needed) or not
      * @since 0.2.1.2
@@ -681,59 +716,79 @@ public class MinecachingAPI {
      * @see MinecachingAPI#update()
      */
     public void load(boolean attemptUpdates) {
-        Minecaching minecaching = Minecaching.getInstance();
-
-        File playerFolder = new File(minecaching.getDataFolder() + "/player/");
+        File playerFolder = new File(Minecaching.getInstance().getDataFolder() + "/player/");
         if (!playerFolder.exists()) playerFolder.mkdirs();
 
-        File logFolder = new File(minecaching.getDataFolder() + "/logbook/");
+        File logFolder = new File(Minecaching.getInstance().getDataFolder() + "/logbook/");
         if (!logFolder.exists()) logFolder.mkdirs();
 
-        Config.getInstance().load();
-        MINECACHING_LOCALIZATION = LocalizationProvider.getInstance().load(minecaching);
+        config.load();
+        minecachingLocalization = localizationProvider.load(Minecaching.getInstance());
 
         // Load Message Keys for later use
         MessageKeys.init();
 
         tInfo(MessageKeys.Plugin.LOAD, "Config");
-        if (Config.getInstance().getConfigVersion() < CONFIG_DATA_VERSION) {
+        if (config.getConfigVersion() < CONFIG_DATA_VERSION) {
             tWarning(MessageKeys.Plugin.Data.ATTEMPTING_UPDATE, "Config");
-            if (attemptUpdates) Config.getInstance().attemptUpdate();
+            if (attemptUpdates) config.updateData();
             else tWarning(MessageKeys.Plugin.Data.NOT_ATTEMPTING_UPDATE, "Config");
         }
 
-        AutoUpdater.updateBranch(Config.getInstance().getUpdateBranch());
-        if (Config.getInstance().experimentalFeatures()) {
+        AutoUpdater.updateBranch(config.getUpdateBranch());
+        if (config.experimentalFeatures()) {
             MinecachingAPI.tInfo(MessageKeys.Plugin.EXPERIMENTAL);
         }
 
         tInfo(MessageKeys.Plugin.LOAD, "Localization");
 
         tInfo(MessageKeys.Plugin.LOAD, "Minecache Data");
-        MinecacheStorage.getInstance().load();
-        if (Config.getInstance().getMinecacheDataVersion() < MINECACHE_DATA_VERSION) {
+        cacheStorage.load();
+        if (config.getMinecacheDataVersion() < MINECACHE_DATA_VERSION) {
             tWarning(MessageKeys.Plugin.Data.ATTEMPTING_UPDATE, "Minecache Data");
-            if (attemptUpdates) MinecacheStorage.getInstance().attemptUpdate();
+            if (attemptUpdates) cacheStorage.updateData();
             else tWarning(MessageKeys.Plugin.Data.NOT_ATTEMPTING_UPDATE, "Minecache Data");
         }
 
         tInfo(MessageKeys.Plugin.LOAD, "Player Data");
-        PlayerStorage.getInstance().load();
-        if (Config.getInstance().getPlayerDataVersion() < PLAYER_DATA_VERSION) {
+        playerStorage.load();
+        if (config.getPlayerDataVersion() < PLAYER_DATA_VERSION) {
             tWarning(MessageKeys.Plugin.Data.ATTEMPTING_UPDATE, "Player Data");
-            if (attemptUpdates) PlayerStorage.getInstance().updateData();
+            if (attemptUpdates) playerStorage.updateData();
             else tWarning(MessageKeys.Plugin.Data.NOT_ATTEMPTING_UPDATE, "Player Data");
         }
 
         tInfo(MessageKeys.Plugin.LOAD, "Logbook Data");
-        LogbookStorage.getInstance().load();
-        if (Config.getInstance().getLogbookDataVersion() < LOGBOOK_DATA_VERSION) {
+        logbookStorage.load();
+        if (config.getLogbookDataVersion() < LOGBOOK_DATA_VERSION) {
             tWarning(MessageKeys.Plugin.Data.ATTEMPTING_UPDATE, "Logbook Data");
-            if (attemptUpdates) LogbookStorage.getInstance().attemptUpdate();
+            if (attemptUpdates) logbookStorage.updateData();
             else tWarning(MessageKeys.Plugin.Data.NOT_ATTEMPTING_UPDATE, "Logbook Data");
         }
 
         correctStats();
+    }
+
+    /**
+     * Initializes the Minecaching API elements
+     */
+    @ApiStatus.Internal
+    void init() {
+        logger = Minecaching.getInstance().getLogger();
+        config = Config.getInstance();
+        localizationProvider = LocalizationProvider.getInstance();
+        cacheStorage = MinecacheStorage.getInstance();
+        playerStorage = PlayerStorage.getInstance();
+        logbookStorage = LogbookStorage.getInstance();
+        hasInitialized = true;
+    }
+
+    /**
+     * Checks if the Minecaching API has been initialized
+     * @return {@code true} if initialized, {@code false} otherwise
+     */
+    public boolean hasInitialized() {
+        return hasInitialized;
     }
 
     /**
@@ -742,6 +797,6 @@ public class MinecachingAPI {
      * @since 0.2.0.0
      */
     public static MinecachingAPI get() {
-        return api;
+        return Minecaching.getAPI();
     }
 }

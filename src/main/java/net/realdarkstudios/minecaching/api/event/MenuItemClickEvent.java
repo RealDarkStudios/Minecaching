@@ -1,4 +1,4 @@
-package net.realdarkstudios.minecaching.event;
+package net.realdarkstudios.minecaching.api.event;
 
 import org.bukkit.entity.Player;
 

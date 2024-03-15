@@ -1,6 +1,6 @@
 package net.realdarkstudios.minecaching.api.misc;
 
-import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.scheduler.BukkitRunnable;

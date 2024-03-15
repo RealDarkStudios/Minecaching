@@ -1,6 +1,6 @@
 package net.realdarkstudios.minecaching.api.log;
 
-import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
@@ -127,7 +127,7 @@ public class LogbookDataObject {
             } catch (Exception e) {
                 MinecachingAPI.tWarning(MessageKeys.Error.PLUGIN_CREATE_FILE, id + ".yml");
             }
-        } else if (Config.getInstance().getLogbookDataVersion() != MinecachingAPI.getLogbookDataVersion()) {
+        } else if (Config.getInstance().getLogbookDataVersion() != MinecachingAPI.LOGBOOK_DATA_VERSION) {
             try {
                 if (!logFile.canWrite()) throw new Exception();
                 LogbookDataObject ldo = getLDO(id, yaml, logFile);

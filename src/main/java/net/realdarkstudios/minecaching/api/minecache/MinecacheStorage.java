@@ -1,6 +1,6 @@
 package net.realdarkstudios.minecaching.api.minecache;
 
-import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class MinecacheStorage {
-    private final static MinecacheStorage INSTANCE = new MinecacheStorage();
-
     private File file;
     private YamlConfiguration yaml;
 
@@ -135,14 +133,15 @@ public class MinecacheStorage {
     }
 
     public static MinecacheStorage getInstance() {
-        return INSTANCE;
+        if (MinecachingAPI.get().hasInitialized()) return MinecachingAPI.getCacheStorage();
+        else return new MinecacheStorage();
     }
 
     public boolean isFTF(UUID plr, Minecache minecache) {
         return minecache.ftf().equals(MCUtils.EMPTY_UUID);
     }
 
-    public void attemptUpdate() {
+    public void updateData() {
         try {
             updateMaps();
 
@@ -152,15 +151,15 @@ public class MinecacheStorage {
                 cache.toYaml(yaml, cache.id());
             }
 
-            MinecachingAPI.tInfo(MessageKeys.Plugin.Data.UPDATE_SUCCEEDED,  "Minecache Data", Config.getInstance().getMinecacheDataVersion(), MinecachingAPI.getMinecacheDataVersion());
+            MinecachingAPI.tInfo(MessageKeys.Plugin.Data.UPDATE_SUCCEEDED,  "Minecache Data", Config.getInstance().getMinecacheDataVersion(), MinecachingAPI.MINECACHE_DATA_VERSION);
 
-            Config.getInstance().setMinecacheDataVersion(MinecachingAPI.getMinecacheDataVersion());
+            Config.getInstance().setMinecacheDataVersion(MinecachingAPI.MINECACHE_DATA_VERSION);
             Config.getInstance().save();
 
             save();
             updateMaps();
         } catch (Exception e) {
-            MinecachingAPI.tWarning(MessageKeys.Plugin.Data.UPDATE_FAILED,  "Minecache Data", Config.getInstance().getMinecacheDataVersion(), MinecachingAPI.getMinecacheDataVersion());
+            MinecachingAPI.tWarning(MessageKeys.Plugin.Data.UPDATE_FAILED,  "Minecache Data", Config.getInstance().getMinecacheDataVersion(), MinecachingAPI.MINECACHE_DATA_VERSION);
         }
     }
 }

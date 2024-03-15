@@ -2,7 +2,7 @@ package net.realdarkstudios.minecaching.api.player;
 
 import me.scarsz.mojang.Mojang;
 import me.scarsz.mojang.exception.ProfileFetchException;
-import net.realdarkstudios.minecaching.Minecaching;
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.log.LogType;
 import net.realdarkstudios.minecaching.api.misc.Notification;
@@ -396,7 +396,7 @@ public class PlayerDataObject {
             } catch (Exception e) {
                 MinecachingAPI.tWarning(MessageKeys.Error.PLUGIN_CREATE_FILE, uuid + ".yml");
             }
-        } else if (Config.getInstance().getPlayerDataVersion() < MinecachingAPI.getPlayerDataVersion()) {
+        } else if (Config.getInstance().getPlayerDataVersion() < MinecachingAPI.PLAYER_DATA_VERSION) {
             try {
                 if (!plrFile.canWrite()) throw new Exception();
                 plrFile.createNewFile();
