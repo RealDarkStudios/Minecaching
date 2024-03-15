@@ -3,10 +3,36 @@ HOW TO READ:
 VERSION
 - Changes listed
 
-{ UPDATE NAME (only 0.1.7.0 and up) }
+{ UPDATE NAME (only 0.1.7.0 and up), BELOW THE UPDATES FOR THAT VERSION }
 [edited text or clarifications]
 
 CHANGELOG:
+
+snapshot-24w11b (for 0.3.1.0):
+Added:
+- MinecachingAPI#init
+- MinecachingAPI#hasInitialized
+- MinecachingAPI#getConfig
+- MinecachingAPI#getCacheStorage
+- MinecachingAPI#getPlayerStorage
+- MinecachingAPI#getLogbookStorage
+- MinecachingAPI#getLocalizationProvider
+- Minecaching#getAPI
+- Minecaching#getVersion
+
+Refactors:
+(minecaching represents the base package, net.realdarkstudios.minecaching)
+- minecaching.event -> minecaching.api.event
+- minecaching.Minecaching -> minecaching.api.Minecaching
+
+Changes:
+- Deprecated MinecachingAPI data version getters. Instead, use MinecachingAPI.<respective variable> (Ex. MinecachingAPI#getConfigDataVersion -> MinecachingAPI.CONFIG_DATA_VERSION )
+- Made Config/MinecacheStorage/PlayerStorage/LogbookStorage/LocalizationProvider instances available from MinecachingAPI
+- LocalizationProvider should work now for other plugins using it
+- Updated some API function definitions
+- Updated README.md
+- Updating versioning scheme (again)
+- And more...
 
 0.3.1.0-24w10a:
 Added:
