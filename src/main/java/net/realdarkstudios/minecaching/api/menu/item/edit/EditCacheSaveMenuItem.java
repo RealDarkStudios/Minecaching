@@ -1,19 +1,23 @@
 package net.realdarkstudios.minecaching.api.menu.item.edit;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
+import net.realdarkstudios.minecaching.api.event.minecache.MinecacheEditedEvent;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.misc.NotificationType;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
-import net.realdarkstudios.minecaching.api.event.minecache.MinecacheEditedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Comparator;
 import java.util.List;
@@ -36,8 +40,6 @@ public class EditCacheSaveMenuItem extends MenuItem {
             LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_CODE);
         } else if (cache.x() == 0 && cache.y() == 0 && cache.z() == 0) {
             LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_COORDS);
-        } else if (!cacheDistanceCheck(cache.location())) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.TOO_CLOSE);
         } else if (cache.nx() == 0 && cache.ny() == 0 && cache.nz() == 0) {
             LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_NAV_COORDS);
         } else if (cache.navLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
@@ -55,10 +57,28 @@ public class EditCacheSaveMenuItem extends MenuItem {
                 MinecachingAPI.get().createNotification(cache.owner(), event.getPlayer().getUniqueId(), NotificationType.EDIT, cache);
             }
 
+            if (Config.getInstance().experimentalFeatures()) {
+                Minecache oldCache = MinecachingAPI.get().getMinecache(cache.id());
+
+                MinecachingAPI.info("Updating " + cache.id() + " chest at " + MCUtils.formatLocation(cache.world().getName(), cache.location()));
+                Block containerBlock = cache.location().getBlock();
+
+                // Handles changed coords
+                if (!oldCache.location().equals(cache.location())) {
+                    oldCache.location().getBlock().setType(oldCache.blockType());
+                    cache.setBlockType(containerBlock.getType());
+                }
+
+                containerBlock.setType(Material.CHEST);
+                Chest chestData = (Chest) containerBlock.getState();
+                chestData.getPersistentDataContainer().set(MCUtils.LINKED_CACHE_KEY, PersistentDataType.STRING, cache.id());
+                chestData.setCustomName(cache.id() + ": " + cache.name());
+                chestData.update();
+            }
+
             MinecachingAPI.get().saveMinecache(cache, false);
             LocalizedMessages.send(event.getPlayer(), MessageKeys.Command.Edit.SAVE, cache.id(), cache.name());
-            cache = Minecache.EMPTY;
-            cache.setID("NULL");
+            pdo.setEditingCache(Minecache.EMPTY.setID("NULL"));
         }
 
         event.setClose(true);

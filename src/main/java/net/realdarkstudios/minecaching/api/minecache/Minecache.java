@@ -154,6 +154,10 @@ public class Minecache {
         return maintainer;
     }
 
+    public boolean hasMaintainer() {
+        return !maintainer.equals(MCUtils.EMPTY_UUID);
+    }
+
     public World world() {
         return world;
     }
@@ -208,7 +212,6 @@ public class Minecache {
     public int finds() {
         return finds;
     }
-
 
     public String code() {
         return code != null ? code : "";

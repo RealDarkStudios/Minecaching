@@ -1,6 +1,8 @@
 package net.realdarkstudios.minecaching.api.menu.item.create;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
+import net.realdarkstudios.minecaching.api.event.minecache.MinecacheCreatedEvent;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
@@ -9,12 +11,13 @@ import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
-import net.realdarkstudios.minecaching.api.event.minecache.MinecacheCreatedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -48,7 +51,7 @@ public class CreateCacheSaveMenuItem extends MenuItem {
         } else if (!distanceCheck(cache.location(), cache.navLocation(), Config.getInstance().getMaxLodestoneDistance())) {
             LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NAV_COORDS_TOO_FAR);
         } else {
-            cache.setStatus(MinecacheStatus.REVIEWING).setAuthor(event.getPlayer().getUniqueId()).setBlockType(cache.navLocation().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(MCUtils.EMPTY_UUID);
+            cache.setStatus(MinecacheStatus.REVIEWING).setAuthor(event.getPlayer().getUniqueId()).setBlockType(cache.location().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(MCUtils.EMPTY_UUID);
 
             MinecacheCreatedEvent cEvent = new MinecacheCreatedEvent(cache, event.getPlayer());
             Bukkit.getPluginManager().callEvent(cEvent);
@@ -58,6 +61,16 @@ public class CreateCacheSaveMenuItem extends MenuItem {
             }
 
             MinecachingAPI.get().saveMinecache(cache, true);
+
+            if (Config.getInstance().experimentalFeatures()) {
+                MinecachingAPI.info("Placing " + cache.id() + " chest at " + MCUtils.formatLocation(cache.world().getName(), cache.location()));
+                Block containerBlock = cache.location().getBlock();
+                containerBlock.setType(Material.CHEST);
+                Chest chestData = (Chest) containerBlock.getState();
+                chestData.getPersistentDataContainer().set(MCUtils.LINKED_CACHE_KEY, PersistentDataType.STRING, cache.id());
+                chestData.setCustomName(cache.id() + ": " + cache.name());
+                chestData.update();
+            }
 
             pdo.addHide(cache.id());
             pdo.setCreatingCache(Minecache.EMPTY.setID("NULL"));

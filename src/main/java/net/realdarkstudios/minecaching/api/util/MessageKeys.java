@@ -70,19 +70,23 @@ public class MessageKeys {
         }
 
         public static class Misc {
-            public static final LocalizedMessages.Key ARCHIVE = key("error.archivecache");
+            public static final LocalizedMessages.Key ARCHIVE = key(".archivecache");
             public static final LocalizedMessages.Key ARCHIVE_CANT_ARCHIVE = key(ARCHIVE.path() + ".cantarchive");
-            public static final LocalizedMessages.Key DELETE = key("error.deletecache");
+            public static final LocalizedMessages.Key DELETE = key(".deletecache");
             public static final LocalizedMessages.Key DELETE_OTHERS = key(DELETE.path() + ".others");
-            public static final LocalizedMessages.Key DISABLE = key("error.disablecache");
+            public static final LocalizedMessages.Key DISABLE = key(".disablecache");
             public static final LocalizedMessages.Key DISABLE_CANT_DISABLE = key(DISABLE.path() + ".cantdisable");
-            public static final LocalizedMessages.Key LOCATE_ALREADY_LOCATING = key("error.locatecache.alreadylocating");
-            public static final LocalizedMessages.Key LOCATE_DIFFERENT_WORLD = key("error.locatecache.differentworld");
-            public static final LocalizedMessages.Key LOGBOOK_NO_SLOTS = key("error.logbook.noslots");
-            public static final LocalizedMessages.Key MCADMIN_CORRECTING_STATS = key("error.mcadmin.cstats");
-            public static final LocalizedMessages.Key PUBLISH = key("error.publishcache");
+            public static final LocalizedMessages.Key LOCATE_ALREADY_LOCATING = key(".locatecache.alreadylocating");
+            public static final LocalizedMessages.Key LOCATE_DIFFERENT_WORLD = key(".locatecache.differentworld");
+            public static final LocalizedMessages.Key LOGBOOK_NO_SLOTS = key(".logbook.noslots");
+            public static final LocalizedMessages.Key MCADMIN_CORRECTING_STATS = key(".mcadmin.cstats");
+            public static final LocalizedMessages.Key PUBLISH = key(".publishcache");
             public static final LocalizedMessages.Key PUBLISH_CANT_PUBLISH = key(PUBLISH.path() + ".cantpublish");
+            public static final LocalizedMessages.Key CACHE_BLOCK = key(".cacheblock");
+            public static final LocalizedMessages.Key CACHE_BLOCK_CLICK_HERE = key(".cacheblock.clickhere");
+            public static final LocalizedMessages.Key MAINTAINER_NOT_FOUND = key(".maintainer.notfound");
         }
+
         public static final LocalizedMessages.Key GENERIC = key("");
         public static final LocalizedMessages.Key NON_CONSOLE_COMMAND = key(".execute.console");
         public static final LocalizedMessages.Key ABOVE_COORD_LIMIT = key(".coords.abovelimit");
@@ -97,14 +101,21 @@ public class MessageKeys {
         public static final LocalizedMessages.Key PLUGIN_PARSE_UUID = key(".plugin.parseuuid");
         public static final LocalizedMessages.Key PLAYER_LIST_EMPTY = key(".playerlistempty");
 
-        private static LocalizedMessages.Key key(String path) { return MessageKeys.errorKey("error" + path); }
+        private static LocalizedMessages.Key key(String path) {
+            return key(path, LocalizedMessages.StyleOptions.ERROR);
+        }
+
+        private static LocalizedMessages.Key key(String path, LocalizedMessages.StyleOptions options) {
+            return MessageKeys.key("error" + path);
+        }
     }
+
     public static class Command {
         public static class Create {
             public static final LocalizedMessages.Key CANCEL = key(".cancel");
             public static final LocalizedMessages.Key CREATE = key(".create");
             public static final LocalizedMessages.Key SAVE = key(".save");
-            public static final LocalizedMessages.Key CODE = key( ".code");
+            public static final LocalizedMessages.Key CODE = key(".code");
             public static final LocalizedMessages.Key COORDS = key(".coords");
             public static final LocalizedMessages.Key NAV_COORDS = key(".lodecoords");
             public static final LocalizedMessages.Key NAME = key(".name");
@@ -112,8 +123,11 @@ public class MessageKeys {
             public static final LocalizedMessages.Key MENU_SET_NAME = key(".menu.name");
             public static final LocalizedMessages.Key MENU_SET_CODE = key(".menu.code");
 
-            private static LocalizedMessages.Key key(String path) { return MessageKeys.key(addCache + path, new LocalizedMessages.StyleOptions().setColor(ChatColor.LIGHT_PURPLE)); }
+            private static LocalizedMessages.Key key(String path) {
+                return MessageKeys.key(addCache + path, new LocalizedMessages.StyleOptions().setColor(ChatColor.LIGHT_PURPLE));
+            }
         }
+
         public static class Edit {
             public static final LocalizedMessages.Key CANCEL = key(".cancel");
             public static final LocalizedMessages.Key EDIT = key(".edit");
@@ -123,30 +137,38 @@ public class MessageKeys {
             public static final LocalizedMessages.Key NAV_COORDS = key(".lodecoords");
             public static final LocalizedMessages.Key NAME = key(".name");
 
-            private static LocalizedMessages.Key key(String path) { return MessageKeys.key(editCache + path, new LocalizedMessages.StyleOptions().setColor(ChatColor.LIGHT_PURPLE)); }
-
-
+            private static LocalizedMessages.Key key(String path) {
+                return MessageKeys.key(editCache + path, new LocalizedMessages.StyleOptions().setColor(ChatColor.LIGHT_PURPLE));
+            }
         }
+
         public static class List {
             public static final LocalizedMessages.Key PAGE = key(".page");
             public static final LocalizedMessages.Key ENTRY = key(".entry");
-            public static final LocalizedMessages.Key FIND = key( ".find");
+            public static final LocalizedMessages.Key FIND = key(".find");
             public static final LocalizedMessages.Key NO_CACHES = key(".nocaches", new LocalizedMessages.StyleOptions().setColor(ChatColor.RED));
 
-            private static LocalizedMessages.Key key(String path) { return key(path, LocalizedMessages.StyleOptions.NONE); }
+            private static LocalizedMessages.Key key(String path) {
+                return key(path, LocalizedMessages.StyleOptions.NONE);
+            }
+
             private static LocalizedMessages.Key key(String path, LocalizedMessages.StyleOptions styleOptions) {
                 return MessageKeys.key(listCaches + path, styleOptions);
             }
         }
+
         public static class Locate {
             public static final LocalizedMessages.Key WITHIN_DISTANCE = key(".withindistance");
             public static final LocalizedMessages.Key COORDS = key(".coords");
-            public static final LocalizedMessages.Key LODE = key( ".lode");
+            public static final LocalizedMessages.Key LODE = key(".lode");
             public static final LocalizedMessages.Key COMPASS_LORE = key(".compass.lore");
             public static final LocalizedMessages.Key CANCEL = key(".cancel");
 
-            private static LocalizedMessages.Key key(String path) { return MessageKeys.key(locateCache + path, new LocalizedMessages.StyleOptions().setColor(ChatColor.AQUA)); }
+            private static LocalizedMessages.Key key(String path) {
+                return MessageKeys.key(locateCache + path, new LocalizedMessages.StyleOptions().setColor(ChatColor.AQUA));
+            }
         }
+
         public static class Log {
             public static final LocalizedMessages.Key FIND = key(".find");
             public static final LocalizedMessages.Key FIND_COUNT = key(".findcount");
@@ -158,8 +180,11 @@ public class MessageKeys {
             public static final LocalizedMessages.Key DISABLE_DEFAULT_MESSAGE = key(".message.archive");
             public static final LocalizedMessages.Key PUBLISH_DEFAULT_MESSAGE = key(".message.archive");
 
-            private static LocalizedMessages.Key key(String path) { return MessageKeys.key(logCache + path); }
+            private static LocalizedMessages.Key key(String path) {
+                return MessageKeys.key(logCache + path);
+            }
         }
+
         public static class Admin {
             public static final LocalizedMessages.Key OVERVIEW_HEADER = key(".data.verheader");
             public static final LocalizedMessages.Key DEV_HEADER = key(".data.devheader");
@@ -174,9 +199,12 @@ public class MessageKeys {
             public static final LocalizedMessages.Key DEBUG_EVENTS_OFF = key(".data.debugevents.off");
             public static final LocalizedMessages.Key CORRECTED_STATS = key(".correctedstats");
 
-            private static LocalizedMessages.Key key(String path) { return MessageKeys.key(admin + path); }
+            private static LocalizedMessages.Key key(String path) {
+                return MessageKeys.key(admin + path);
+            }
 
         }
+
         public static class Stats {
             public static final LocalizedMessages.Key HEADER = key(".statsheader");
             public static final LocalizedMessages.Key CACHES = key(".caches");
@@ -189,8 +217,11 @@ public class MessageKeys {
             public static final LocalizedMessages.Key MOST_HIDES = key(".mosthides");
             public static final LocalizedMessages.Key MOST_ACCOMPLISHED = key(".accomplished");
 
-            private static LocalizedMessages.Key key(String path) { return MessageKeys.key(stats + path); }
+            private static LocalizedMessages.Key key(String path) {
+                return MessageKeys.key(stats + path);
+            }
         }
+
         public static class Misc {
             public static final LocalizedMessages.Key ARCHIVE = key("archivecache.archive", LocalizedMessages.StyleOptions.SUCCESS);
             public static final LocalizedMessages.Key DELETE = key("deletecache", LocalizedMessages.StyleOptions.SUCCESS);
@@ -199,6 +230,7 @@ public class MessageKeys {
             public static final LocalizedMessages.Key NO_SUITABLE_MAINTAINERS = key("maintainer.nonesuitable", new LocalizedMessages.StyleOptions().setColor(ChatColor.RED));
         }
     }
+
     public static class Plugin {
         public static class Data {
             public static final LocalizedMessages.Key LOADED_PLAYERS = key(".loadedplayers");
@@ -208,8 +240,11 @@ public class MessageKeys {
             public static final LocalizedMessages.Key UPDATE_FAILED = key(".update.fail");
             public static final LocalizedMessages.Key UPDATE_SUCCEEDED = key(".update.succeed");
 
-            private static LocalizedMessages.Key key(String path) { return MessageKeys.key(plugin + ".data" + path); }
+            private static LocalizedMessages.Key key(String path) {
+                return MessageKeys.key(plugin + ".data" + path);
+            }
         }
+
         public static class Update {
             public static final LocalizedMessages.Key AVAILABLE = key("", new LocalizedMessages.StyleOptions().setColor(ChatColor.RED));
             public static final LocalizedMessages.Key AVAILABE_AUTO = key(".auto", new LocalizedMessages.StyleOptions().setColor(ChatColor.RED));
@@ -225,13 +260,16 @@ public class MessageKeys {
             public static final LocalizedMessages.Key AUTO_DISABLED = key(".disabled");
             public static final LocalizedMessages.Key AUTO_DISABLED_DOWNLOAD = key(".disabled.download");
 
-            private static LocalizedMessages.Key key(String path) { return key(path, LocalizedMessages.StyleOptions.NONE); }
+            private static LocalizedMessages.Key key(String path) {
+                return key(path, LocalizedMessages.StyleOptions.NONE);
+            }
 
             private static LocalizedMessages.Key key(String path, LocalizedMessages.StyleOptions styleOptions) {
                 return MessageKeys.key(plugin + ".update" + path, styleOptions);
             }
 
         }
+
         public static class Log {
             public static final LocalizedMessages.Key FOUND = key(".found");
             public static final LocalizedMessages.Key DNF = key(".dnf");
@@ -243,9 +281,12 @@ public class MessageKeys {
             public static final LocalizedMessages.Key PUBLISH = key(".publish");
             public static final LocalizedMessages.Key INVALID = key(".invalid");
 
-            private static LocalizedMessages.Key key(String path) { return MessageKeys.key(plugin + ".log" + path); }
+            private static LocalizedMessages.Key key(String path) {
+                return MessageKeys.key(plugin + ".log" + path);
+            }
 
         }
+
         public static class Notification {
             public static final LocalizedMessages.Key NOTIFICATION_ALERT = key(".alert");
             public static final LocalizedMessages.Key NOTIFICATION_EDIT = key(".edit");
@@ -256,10 +297,13 @@ public class MessageKeys {
             public static final LocalizedMessages.Key NOTIFICATION_PUBLISH = key(".publish");
             public static final LocalizedMessages.Key NOTIFICATION_INVALID = key(".invalid");
 
-            private static LocalizedMessages.Key key(String path) { return MessageKeys.key(plugin + ".notification" + path, new LocalizedMessages.StyleOptions().setColor(ChatColor.GOLD)); }
+            private static LocalizedMessages.Key key(String path) {
+                return MessageKeys.key(plugin + ".notification" + path, new LocalizedMessages.StyleOptions().setColor(ChatColor.GOLD));
+            }
 
 
         }
+
         public static final LocalizedMessages.Key NEW_PLAYER_DATA = key(".player.new");
         public static final LocalizedMessages.Key ENABLED = key(".enabled");
         public static final LocalizedMessages.Key DISABLING = key(".disabling");
@@ -277,8 +321,11 @@ public class MessageKeys {
         public static final LocalizedMessages.Key TRANSLATION_FORMAT_ARG_MISSING = key(".localization.missingformatarg");
         public static final LocalizedMessages.Key LOCALIZATION_LOADED = key(".localization.loaded");
 
-        private static LocalizedMessages.Key key(String path) { return MessageKeys.key(plugin + path); }
+        private static LocalizedMessages.Key key(String path) {
+            return MessageKeys.key(plugin + path);
+        }
     }
+
     public static class Menu {
         public static class CLMOptions {
             public static final LocalizedMessages.Key TITLE = key(".title");
@@ -297,8 +344,11 @@ public class MessageKeys {
             public static final LocalizedMessages.Key ITEM_FAVORITES_ONLY = key(".item.favoritesonly");
             public static final LocalizedMessages.Key RESET = key(".item.reset");
 
-            private static LocalizedMessages.Key key(String path) { return MessageKeys.key("menu.clmoptions" + path); }
+            private static LocalizedMessages.Key key(String path) {
+                return MessageKeys.key("menu.clmoptions" + path);
+            }
         }
+
         public static class Create {
             public static final LocalizedMessages.Key TITLE = key(".title");
             public static final LocalizedMessages.Key ITEM_CREATE = key(".item.create", new LocalizedMessages.StyleOptions().setColor(ChatColor.GREEN));
@@ -322,11 +372,15 @@ public class MessageKeys {
             public static final LocalizedMessages.Key SET_NAME = key(".setname",
                     new LocalizedMessages.StyleOptions().setColor(ChatColor.LIGHT_PURPLE).setUnderline(true).setClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/ac name "));
 
-            private static LocalizedMessages.Key key(String path) { return key(path, LocalizedMessages.StyleOptions.NONE); }
+            private static LocalizedMessages.Key key(String path) {
+                return key(path, LocalizedMessages.StyleOptions.NONE);
+            }
+
             private static LocalizedMessages.Key key(String path, LocalizedMessages.StyleOptions styleOptions) {
                 return MessageKeys.key("menu.creating" + path, styleOptions);
             }
         }
+
         public static class Data {
             public static final LocalizedMessages.Key TITLE = key(".title");
             public static final LocalizedMessages.Key MAINTAINER_TITLE = key(".maintainertitle");
@@ -339,13 +393,14 @@ public class MessageKeys {
             public static final LocalizedMessages.Key ITEM_PUBLISH = key(".item.publish", new LocalizedMessages.StyleOptions().setColor(ChatColor.DARK_GREEN));
             public static final LocalizedMessages.Key ITEM_MAINTAINER = key(".item.maintainer", new LocalizedMessages.StyleOptions().setColor(ChatColor.YELLOW));
             public static final LocalizedMessages.Key ITEM_MAINTAINER_LORE = key(".item.maintainerlore", new LocalizedMessages.StyleOptions().setColor(ChatColor.RED));
-            public static final LocalizedMessages.Key PREVIEW =  key(".item.preview");
+            public static final LocalizedMessages.Key PREVIEW = key(".item.preview");
             public static final LocalizedMessages.Key PREVIEW_MESSAGE = key(".item.preview.message");
             public static final LocalizedMessages.Key PREVIEW_TYPE = key(".item.preview.type");
             public static final LocalizedMessages.Key PREVIEW_CODE = key(".item.preview.code");
             public static final LocalizedMessages.Key PREVIEW_STATUS = key(".item.preview.status");
             public static final LocalizedMessages.Key PREVIEW_COORDS = key(".item.preview.coords");
             public static final LocalizedMessages.Key PREVIEW_AUTHOR = key(".item.preview.author");
+            public static final LocalizedMessages.Key PREVIEW_MAINTAINER = key(".item.preview.maintainer");
             public static final LocalizedMessages.Key PREVIEW_NAVIGATION_COORDS = key(".item.preview.navcoords");
             public static final LocalizedMessages.Key PREVIEW_HIDDEN = key(".item.preview.hidden");
             public static final LocalizedMessages.Key PREVIEW_FINDS = key(".item.preview.finds");
@@ -354,11 +409,15 @@ public class MessageKeys {
             public static final LocalizedMessages.Key CACHE_CODE = key(".item.cache.code");
             public static final LocalizedMessages.Key SET_MAINTAINER = key(".setmaintainer", LocalizedMessages.StyleOptions.SUCCESS);
 
-            private static LocalizedMessages.Key key(String path) { return key(path, LocalizedMessages.StyleOptions.NONE); }
+            private static LocalizedMessages.Key key(String path) {
+                return key(path, LocalizedMessages.StyleOptions.NONE);
+            }
+
             private static LocalizedMessages.Key key(String path, LocalizedMessages.StyleOptions styleOptions) {
                 return MessageKeys.key("menu.data" + path, styleOptions);
             }
         }
+
         public static class Edit {
             public static final LocalizedMessages.Key TITLE = key(".title");
             public static final LocalizedMessages.Key ITEM_RESET = key(".item.reset");
@@ -374,12 +433,15 @@ public class MessageKeys {
             public static final LocalizedMessages.Key SET_NAME = key(".setname",
                     new LocalizedMessages.StyleOptions().setColor(ChatColor.LIGHT_PURPLE).setUnderline(true).setClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/ec name "));
 
-            private static LocalizedMessages.@NotNull Key key(String path) { return key(path, LocalizedMessages.StyleOptions.NONE); }
+            private static LocalizedMessages.@NotNull Key key(String path) {
+                return key(path, LocalizedMessages.StyleOptions.NONE);
+            }
 
             private static LocalizedMessages.Key key(String path, LocalizedMessages.StyleOptions styleOptions) {
                 return MessageKeys.key("menu.editing" + path, styleOptions);
             }
         }
+
         public static class List {
             public static final LocalizedMessages.Key TITLE = key(".title");
             public static final LocalizedMessages.Key PREVIOUS = key(".prev", new LocalizedMessages.StyleOptions().setUnderline(true));
@@ -388,11 +450,15 @@ public class MessageKeys {
             public static final LocalizedMessages.Key ITEM_OPTIONS = key(".item.options");
             public static final LocalizedMessages.Key ITEM_CACHE = key(".item.cache");
 
-            private static LocalizedMessages.Key key(String path) { return key(path, LocalizedMessages.StyleOptions.NONE); }
+            private static LocalizedMessages.Key key(String path) {
+                return key(path, LocalizedMessages.StyleOptions.NONE);
+            }
+
             private static LocalizedMessages.Key key(String path, LocalizedMessages.StyleOptions styleOptions) {
                 return MessageKeys.key("menu.list" + path, styleOptions);
             }
         }
+
         public static class Log {
             public static final LocalizedMessages.Key TITLE = key(".title");
             public static final LocalizedMessages.Key PICK_TITLE = key(".pick.title");
@@ -414,12 +480,15 @@ public class MessageKeys {
             public static final LocalizedMessages.Key SET_MESSAGE = key(".setmessage",
                     new LocalizedMessages.StyleOptions().setColor(ChatColor.LIGHT_PURPLE).setUnderline(true).setClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/log message "));
 
-            private static LocalizedMessages.Key key(String path) { return key(path, LocalizedMessages.StyleOptions.NONE); }
+            private static LocalizedMessages.Key key(String path) {
+                return key(path, LocalizedMessages.StyleOptions.NONE);
+            }
 
             private static LocalizedMessages.Key key(String path, LocalizedMessages.StyleOptions styleOptions) {
                 return MessageKeys.key("menu.log" + path, styleOptions);
             }
         }
+
         public static final LocalizedMessages.Key CONFIRMATION = key(menu + ".confirmation.title");
         public static final LocalizedMessages.Key CANCEL = key(menu + ".cancel", new LocalizedMessages.StyleOptions().setColor(ChatColor.DARK_GRAY).setBold(true));
         public static final LocalizedMessages.Key CLOSE = key(menu + ".close", new LocalizedMessages.StyleOptions().setColor(ChatColor.RED).setBold(true));
@@ -430,74 +499,84 @@ public class MessageKeys {
         public static final LocalizedMessages.Key ITEM_OUT_OF_BOUNDS = key(menu + ".item.outofbounds");
         public static final LocalizedMessages.Key PERM_CHANGE = key(menu + ".permchange", new LocalizedMessages.StyleOptions().setColor(ChatColor.RED));
     }
-    public static class Permission {
-        public static final LocalizedMessages.Key NO_PERMISSION = key(".none");
-        public static final LocalizedMessages.Key NO_PERMISSION_EDITCACHE = key(".none.editcache");
-        public static final LocalizedMessages.Key NO_PERMISSION_ADMIN = key(".none.mcadmin");
-        public static final LocalizedMessages.Key NO_PERMISSION_ADMIN_RELOAD = key(".none.mcadmin.reload");
-        public static final LocalizedMessages.Key NO_PERMISSION_ADMIN_DATA = key(".none.mcadmin.data");
 
-        private static LocalizedMessages.Key key(String path) { return MessageKeys.key("permission" + path); }
-    }
-    public static class Usage {
-        public static final LocalizedMessages.Key CREATE = key(".addcache");
-        public static final LocalizedMessages.Key CREATE_OPTIONS = key(".addcache.options");
-        public static final LocalizedMessages.Key CREATE_CANCEL = key(".addcache.cancel");
-        public static final LocalizedMessages.Key CREATE_CODE = key(".addcache.code");
-        public static final LocalizedMessages.Key CREATE_COORDS = key(".addcache.coords");
-        public static final LocalizedMessages.Key CREATE_NAVIGATION_COORDS = key(".addcache.lodecoords");
-        public static final LocalizedMessages.Key CREATE_NAME = key(".addcache.name");
-        public static final LocalizedMessages.Key ADD_SAVE = key(".addcache.save");
-        public static final LocalizedMessages.Key ADD_TYPE = key(".addcache.type");
-        public static final LocalizedMessages.Key ARCHIVE = key(".archivecache");
-        public static final LocalizedMessages.Key DELETE = key(".deletecache");
-        public static final LocalizedMessages.Key DISABLE = key(".disablecache");
-        public static final LocalizedMessages.Key EDIT = key(".editcache");
-        public static final LocalizedMessages.Key EDIT_OPTIONS = key(".editcache.options");
-        public static final LocalizedMessages.Key EDIT_CANCEL = key(".editcache.cancel");
-        public static final LocalizedMessages.Key EDIT_CODE = key(".editcache.code");
-        public static final LocalizedMessages.Key EDIT_COORDS = key(".editcache.coords");
-        public static final LocalizedMessages.Key EDIT_NAVIGATION_COORDS = key(".editcache.lodecoords");
-        public static final LocalizedMessages.Key EDIT_NAME = key(".editcache.name");
-        public static final LocalizedMessages.Key EDIT_SAVE = key(".editcache.save");
-        public static final LocalizedMessages.Key LIST = key(".listcaches");
-        public static final LocalizedMessages.Key LOCATE = key(".locatecache");
-        public static final LocalizedMessages.Key LOCATE_COORD_OPTIONS = key(".locatecache.options.coord");
-        public static final LocalizedMessages.Key LOCATE_LODE_OPTIONS = key(".locatecache.options.lode");
-        public static final LocalizedMessages.Key LOGBOOK = key(".logbook");
-        public static final LocalizedMessages.Key LOG = key(".logcache");
-        public static final LocalizedMessages.Key LOG_FOUND = key(".logcache.found");
-        public static final LocalizedMessages.Key MAINTAINER = key(".maintainer");
-        public static final LocalizedMessages.Key ADMIN = key(".mcadmin");
-        public static final LocalizedMessages.Key STATS = key(".mcstats");
-        public static final LocalizedMessages.Key PUBLISH = key(".publishcache");
+        public static class Permission {
+            public static final LocalizedMessages.Key NO_PERMISSION = key(".none");
+            public static final LocalizedMessages.Key NO_PERMISSION_EDITCACHE = key(".none.editcache");
+            public static final LocalizedMessages.Key NO_PERMISSION_ADMIN = key(".none.mcadmin");
+            public static final LocalizedMessages.Key NO_PERMISSION_ADMIN_RELOAD = key(".none.mcadmin.reload");
+            public static final LocalizedMessages.Key NO_PERMISSION_ADMIN_DATA = key(".none.mcadmin.data");
 
-        private static LocalizedMessages.Key key(String path) { return MessageKeys.key("usage" + path, new LocalizedMessages.StyleOptions().setColor(ChatColor.RED)); }
-    }
-    public static class Misc {
-        public static class Cache {
-            public static final LocalizedMessages.Key TYPE_TRADITIONAL = key(".type.traditional");
-            public static final LocalizedMessages.Key TYPE_MYSTERY = key(".type.mystery");
-            public static final LocalizedMessages.Key TYPE_MULTI = key(".type.multi");
-            public static final LocalizedMessages.Key TYPE_INVALID = key(".type.invalid");
-            public static final LocalizedMessages.Key STATUS_PUBLISHED = key(".status.published");
-            public static final LocalizedMessages.Key STATUS_NEEDS_MAINTENANCE = key(".status.needs_maintenance");
-            public static final LocalizedMessages.Key STATUS_DISABLED = key(".status.disabled");
-            public static final LocalizedMessages.Key STATUS_ARCHIVED = key(".status.archived");
-            public static final LocalizedMessages.Key STATUS_REVIEWING = key(".status.reviewing");
-            public static final LocalizedMessages.Key STATUS_INVALID = key(".status.invalid");
-            public static final LocalizedMessages.Key YAML = key(".yaml_error");
-            public static final LocalizedMessages.Key YCODE_0 = key(".yaml_code_0");
-            public static final LocalizedMessages.Key YCODE_1 = key(".yaml_code_1");
-            public static final LocalizedMessages.Key YCODE_2 = key(".yaml_code_2");
-            public static final LocalizedMessages.Key YCODE_3 = key(".yaml_code_3");
-            public static final LocalizedMessages.Key YCODE_4 = key(".yaml_code_4");
-            public static final LocalizedMessages.Key YCODE_5 = key(".yaml_code_5");
-            public static final LocalizedMessages.Key YCODE_OTHER = key(".yaml_code_other");
-
-            private static LocalizedMessages.Key key(String path) { return MessageKeys.key("minecache" + path); }
+            private static LocalizedMessages.Key key(String path) {
+                return MessageKeys.key("permission" + path);
+            }
         }
-        public static final LocalizedMessages.Key LOCALE_NAME = key("locale.name");
+
+        public static class Usage {
+            public static final LocalizedMessages.Key CREATE = key(".addcache");
+            public static final LocalizedMessages.Key CREATE_OPTIONS = key(".addcache.options");
+            public static final LocalizedMessages.Key CREATE_CANCEL = key(".addcache.cancel");
+            public static final LocalizedMessages.Key CREATE_CODE = key(".addcache.code");
+            public static final LocalizedMessages.Key CREATE_COORDS = key(".addcache.coords");
+            public static final LocalizedMessages.Key CREATE_NAVIGATION_COORDS = key(".addcache.lodecoords");
+            public static final LocalizedMessages.Key CREATE_NAME = key(".addcache.name");
+            public static final LocalizedMessages.Key ADD_SAVE = key(".addcache.save");
+            public static final LocalizedMessages.Key ADD_TYPE = key(".addcache.type");
+            public static final LocalizedMessages.Key ARCHIVE = key(".archivecache");
+            public static final LocalizedMessages.Key DELETE = key(".deletecache");
+            public static final LocalizedMessages.Key DISABLE = key(".disablecache");
+            public static final LocalizedMessages.Key EDIT = key(".editcache");
+            public static final LocalizedMessages.Key EDIT_OPTIONS = key(".editcache.options");
+            public static final LocalizedMessages.Key EDIT_CANCEL = key(".editcache.cancel");
+            public static final LocalizedMessages.Key EDIT_CODE = key(".editcache.code");
+            public static final LocalizedMessages.Key EDIT_COORDS = key(".editcache.coords");
+            public static final LocalizedMessages.Key EDIT_NAVIGATION_COORDS = key(".editcache.lodecoords");
+            public static final LocalizedMessages.Key EDIT_NAME = key(".editcache.name");
+            public static final LocalizedMessages.Key EDIT_SAVE = key(".editcache.save");
+            public static final LocalizedMessages.Key LIST = key(".listcaches");
+            public static final LocalizedMessages.Key LOCATE = key(".locatecache");
+            public static final LocalizedMessages.Key LOCATE_COORD_OPTIONS = key(".locatecache.options.coord");
+            public static final LocalizedMessages.Key LOCATE_LODE_OPTIONS = key(".locatecache.options.lode");
+            public static final LocalizedMessages.Key LOGBOOK = key(".logbook");
+            public static final LocalizedMessages.Key LOG = key(".logcache");
+            public static final LocalizedMessages.Key LOG_FOUND = key(".logcache.found");
+            public static final LocalizedMessages.Key MAINTAINER = key(".maintainer");
+            public static final LocalizedMessages.Key ADMIN = key(".mcadmin");
+            public static final LocalizedMessages.Key STATS = key(".mcstats");
+            public static final LocalizedMessages.Key PUBLISH = key(".publishcache");
+
+            private static LocalizedMessages.Key key(String path) {
+                return MessageKeys.key("usage" + path, new LocalizedMessages.StyleOptions().setColor(ChatColor.RED));
+            }
+        }
+
+        public static class Misc {
+            public static class Cache {
+                public static final LocalizedMessages.Key TYPE_TRADITIONAL = key(".type.traditional");
+                public static final LocalizedMessages.Key TYPE_MYSTERY = key(".type.mystery");
+                public static final LocalizedMessages.Key TYPE_MULTI = key(".type.multi");
+                public static final LocalizedMessages.Key TYPE_INVALID = key(".type.invalid");
+                public static final LocalizedMessages.Key STATUS_PUBLISHED = key(".status.published");
+                public static final LocalizedMessages.Key STATUS_NEEDS_MAINTENANCE = key(".status.needs_maintenance");
+                public static final LocalizedMessages.Key STATUS_DISABLED = key(".status.disabled");
+                public static final LocalizedMessages.Key STATUS_ARCHIVED = key(".status.archived");
+                public static final LocalizedMessages.Key STATUS_REVIEWING = key(".status.reviewing");
+                public static final LocalizedMessages.Key STATUS_INVALID = key(".status.invalid");
+                public static final LocalizedMessages.Key YAML = key(".yaml_error");
+                public static final LocalizedMessages.Key YCODE_0 = key(".yaml_code_0");
+                public static final LocalizedMessages.Key YCODE_1 = key(".yaml_code_1");
+                public static final LocalizedMessages.Key YCODE_2 = key(".yaml_code_2");
+                public static final LocalizedMessages.Key YCODE_3 = key(".yaml_code_3");
+                public static final LocalizedMessages.Key YCODE_4 = key(".yaml_code_4");
+                public static final LocalizedMessages.Key YCODE_5 = key(".yaml_code_5");
+                public static final LocalizedMessages.Key YCODE_OTHER = key(".yaml_code_other");
+
+                private static LocalizedMessages.Key key(String path) {
+                    return MessageKeys.key("minecache" + path);
+                }
+            }
+
+            public static final LocalizedMessages.Key LOCALE_NAME = key("locale.name");
     }
 
     // Makes some common keys more accessible

@@ -42,7 +42,7 @@ public abstract class MCMenu {
     /**
      * An empty slot item, with a gray stained glass pane and no title
      */
-    public static final MenuItem EMPTY_SLOT_ITEM = new MenuItem("", new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1, DyeColor.GRAY.getDyeData()), List.of());
+    public static final MenuItem EMPTY_SLOT_ITEM = new ErrorMenuItem("", new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1, DyeColor.GRAY.getDyeData()), List.of());
 
     /**
      * Creates an error item, a bedrock item with a custom name

@@ -1,6 +1,7 @@
 package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.event.minecache.MinecacheEditedEvent;
 import net.realdarkstudios.minecaching.api.menu.EditCacheMenu;
 import net.realdarkstudios.minecaching.api.menu.MCMenus;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
@@ -10,20 +11,17 @@ import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.api.event.minecache.MinecacheEditedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public class EditCacheCommand implements CommandExecutor, TabExecutor {
+public class EditCacheCommand extends MCCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         UUID uuid;
@@ -41,7 +39,9 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        if (sender instanceof Player plr) {
+        if (playerCheck(sender)) {
+            assert sender instanceof Player;
+            Player plr = (Player) sender;
             Minecache cache = MinecachingAPI.get().getMinecache(args.length > 0 ? args[0] : "NULL");
             if (cache.equals(Minecache.EMPTY)) {
                 EditCacheMenu menu = MCMenus.get().getEditCacheMenu(pdo, pdo.getEditingCache());
@@ -121,7 +121,6 @@ public class EditCacheCommand implements CommandExecutor, TabExecutor {
                 }
                 case "name" -> {
                     if (args.length < 2) {
-
                         LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
                         LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_NAME, label);
                         return true;

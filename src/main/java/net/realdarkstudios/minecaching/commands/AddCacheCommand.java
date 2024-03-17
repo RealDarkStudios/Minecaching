@@ -8,20 +8,16 @@ import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class AddCacheCommand implements CommandExecutor, TabExecutor {
+public class AddCacheCommand extends MCCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player plr)) {
-            LocalizedMessages.send(sender, MessageKeys.Error.NON_CONSOLE_COMMAND);
-            return true;
-        }
+        if (!playerCheck(sender)) return true;
+        Player plr = (Player) sender;
 
         PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(plr);
 

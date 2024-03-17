@@ -45,10 +45,10 @@ Then,
 <dependency>
   <groupId>net.realdarkstudios</groupId>
   <artifactId>Minecaching</artifactId>
-  <version>snapshot-24w11b</version>
+  <version>snapshot-0.3.1.0-24w11c</version>
   <!-- Versions before 0.3.0.5 used X.X.X.X-SNAPSHOT-X versioning -->
-  <!-- Versions after will use snapshot-YYwWWX, where YY represents the year, WW the week, and X the snapshot # (in letters) that week -->
-  <!-- For example, snapshot-24w11b was released the 11th week of 2024, and is the second snapshot that week -->
+  <!-- Versions after will use snapshot-X.X.X.X-YYwWWX, where YY represents the year, WW the week, and X the snapshot # (in letters) that week -->
+  <!-- For example, snapshot-0.3.1.0-24w11c is for 0.3.1.0 and was released the 11th week of 2024, and is the third snapshot that week -->
 </dependency>
 ```
 

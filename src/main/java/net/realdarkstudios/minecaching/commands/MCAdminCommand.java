@@ -12,14 +12,12 @@ import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class MCAdminCommand implements CommandExecutor, TabExecutor {
+public class MCAdminCommand extends MCCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
@@ -88,7 +86,7 @@ public class MCAdminCommand implements CommandExecutor, TabExecutor {
                 }
                 case "log" -> {
                     if (args.length >= 3 && !MinecachingAPI.get().getMinecache(args[2]).equals(Minecache.EMPTY)) {
-                        LogMenu menu = new LogMenu(MinecachingAPI.get().getMinecache(args[2]), MinecachingAPI.get().getPlayerData(plr), Minecaching.getInstance());
+                        LogMenu menu = new LogMenu(MinecachingAPI.get().getMinecache(args[2]), MinecachingAPI.get().getPlayerData(plr));
                         menu.open(plr);
                     }
                 }

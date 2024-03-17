@@ -38,7 +38,7 @@ public class LogPickMenuItem extends CacheMenuItem {
     public void onItemClick(MenuItemClickEvent event) {
         PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(event.getPlayer());
         pdo.setLocatingId(cache.id());
-        LogMenu menu = new LogMenu(cache, pdo, Minecaching.getInstance());
+        LogMenu menu = new LogMenu(cache, pdo);
         menu.open(event.getPlayer());
     }
 }

@@ -2,22 +2,20 @@ package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.event.minecache.StartLocatingMinecacheEvent;
+import net.realdarkstudios.minecaching.api.event.minecache.StopLocatingMinecacheEvent;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.api.event.minecache.StartLocatingMinecacheEvent;
-import net.realdarkstudios.minecaching.api.event.minecache.StopLocatingMinecacheEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
@@ -28,13 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class LocateCacheCommand implements CommandExecutor, TabExecutor {
+public class LocateCacheCommand extends MCCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player plr)) {
-            LocalizedMessages.send(sender, MessageKeys.Error.NON_CONSOLE_COMMAND);
-            return true;
-        }
+        if (!playerCheck(sender)) return true;
+        Player plr = (Player) sender;
 
         if (args.length < 1) {
             LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
@@ -73,10 +69,7 @@ public class LocateCacheCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        if (cache.equals(Minecache.EMPTY) && !gettingNewCompass) {
-            LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE, id);
-            return true;
-        }
+        if (!gettingNewCompass && cacheCheck(sender, cache, id)) return true;
 
         if ((!plr.getWorld().equals(cache.world()))) {
             LocalizedMessages.send(sender, MessageKeys.Error.Misc.LOCATE_DIFFERENT_WORLD, id);

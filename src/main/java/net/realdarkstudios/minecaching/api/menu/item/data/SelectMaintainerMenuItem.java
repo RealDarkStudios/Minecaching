@@ -1,30 +1,35 @@
 package net.realdarkstudios.minecaching.api.menu.item.data;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.menu.impl.item.SkullMenuItem;
+import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
+import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
+import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.UUID;
 
-public class SelectMaintainerMenuItem extends SkullMenuItem {
+public class SelectMaintainerMenuItem extends MenuItem {
     private final Minecache cache;
-    private final UUID uuid;
-    private final String name;
+    private final PlayerDataObject pdo;
 
-    public SelectMaintainerMenuItem(Minecache cache, String name, UUID uuid) {
-        super(name, uuid, List.of());
-        this.name = name;
-        this.uuid = uuid;
+    public SelectMaintainerMenuItem(Minecache cache, PlayerDataObject pdo) {
+        super(pdo.getUsername(), pdo.getSkullItemStack(), List.of());
         this.cache = cache;
+        this.pdo = pdo;
+    }
+
+    @Override
+    public ItemStack getIcon(Player player) {
+        return pdo.getSkullItemStack();
     }
 
     @Override
     public void onItemClick(MenuItemClickEvent event) {
-        MinecachingAPI.get().saveMinecache(cache.setMaintaner(uuid), false);
+        MinecachingAPI.get().saveMinecache(cache.setMaintaner(pdo.getUniqueID()), false);
         LocalizedMessages.send(event.getPlayer(), MessageKeys.Menu.Data.SET_MAINTAINER, cache.id(), name);
 
         event.setClose(true);

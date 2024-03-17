@@ -8,7 +8,27 @@ VERSION
 
 CHANGELOG:
 
-snapshot-24w11b (for 0.3.1.0):
+Snapshot 24w11c for 0.3.1.0:
+Added:
+- MCCommand Class which implements CommandExecutor and TabExecutor by default
+- AutoUpdater#parseVersion
+- Minecache#hasMaintainer
+- /maintainer (for console use). If you are executing as a player it will open the data menu
+- PlayerDataObject#getSkullItemStack (drastically improves SetMaintainerMenu load times)
+- SkullMenuItem#getSkull (old #getIcon but using an OfflinePlayer)
+- LocalizedMessages#sendComponent
+- MCUtils#LINKED_CACHE_KEY (used for the new experimental cache containers)
+
+Changes:
+- (EXPERIMENTAL) Added Cache Containers, currently only chests are supported. Left click to log the cache, Sneak + Left click to open cache menu (for trackables in the future?). Trying to break it gives you an error message, error.misc.cacheblock
+- Added maintainer field in CacheMenuItem
+- Guess what? I had to change the snapshot versioning slightly again for correct ordering (now snapshot-X.X.X.X-YYwWWx)
+- MCMenu#EMPTY_SLOT_ITEM now is an ErrorMenuItem
+- ErrorMenuItems now play the villager hurr noise
+- LocalizedMessages#send now sends the console the LocalizedMessages.Key#console output
+- LogMenu no longer takes in a Plugin input
+
+Snapshot 24w11b for 0.3.1.0:
 Added:
 - MinecachingAPI#init
 - MinecachingAPI#hasInitialized

@@ -4,8 +4,10 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.misc.Localization;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class LocalizedMessages {
@@ -20,6 +22,11 @@ public class LocalizedMessages {
          send(sender, key, key.styleOptions(), formatArgs);
     }
 
+    public static void sendComponent(CommandSender sender, TextComponent textComponent) {
+        if (!(sender instanceof Player plr)) MinecachingAPI.info("Can't send component to non-player!");
+        else plr.spigot().sendMessage(textComponent);
+    }
+
     /**
      * Sends the translated key with the format arguments
      * @param sender The {@link CommandSender} to send the message to
@@ -29,7 +36,8 @@ public class LocalizedMessages {
      * @since 0.3.1.0
      */
     public static void send(CommandSender sender, LocalizedMessages.Key key, StyleOptions styleOverride, Object... formatArgs) {
-        sender.spigot().sendMessage(styleOverride.applyStyle(translation(key, MessageKeys.ERROR, formatArgs).getText()));
+        if (sender instanceof Player plr) plr.spigot().sendMessage(styleOverride.applyStyle(translation(key, MessageKeys.ERROR, formatArgs).getText()));
+        else sender.spigot().sendMessage(styleOverride.applyStyle(translationC(key, MessageKeys.ERROR, formatArgs)));
     }
 
     /**
@@ -42,6 +50,10 @@ public class LocalizedMessages {
      */
     public static TextComponent translation(@NotNull LocalizedMessages.Key primaryKey, @NotNull LocalizedMessages.Key backupKey, Object... formatArgs) {
         return primaryKey.localizationHasPath() ? primaryKey.translateComponent(formatArgs) : backupKey.equals(MessageKeys.TRANSLATION_MISSING) ? backupKey.translateComponent(formatArgs) : translation(backupKey, MessageKeys.TRANSLATION_MISSING, formatArgs);
+    }
+
+    public static String translationC(@NotNull LocalizedMessages.Key primaryKey, @NotNull LocalizedMessages.Key backupKey, Object... formatArgs) {
+        return primaryKey.localizationHasPath() ? primaryKey.console(formatArgs) : backupKey.equals(MessageKeys.TRANSLATION_MISSING) ? backupKey.console(formatArgs) : translationC(backupKey, MessageKeys.TRANSLATION_MISSING, formatArgs);
     }
 
 

@@ -5,6 +5,7 @@ import me.scarsz.mojang.exception.ProfileFetchException;
 import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.log.LogType;
+import net.realdarkstudios.minecaching.api.menu.impl.item.SkullMenuItem;
 import net.realdarkstudios.minecaching.api.misc.Notification;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStorage;
@@ -15,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -33,6 +35,7 @@ public class PlayerDataObject {
     private CacheListMenuOptions clmOptions;
     private LogType logType;
     private LocalDateTime cacheCooldownExpire;
+    private ItemStack skullItemStack;
 
     public PlayerDataObject(UUID uniqueID, YamlConfiguration yaml, File file) {
         this.uniqueID = uniqueID;
@@ -41,6 +44,8 @@ public class PlayerDataObject {
     }
 
     public String getUsername() {
+        if (getUniqueID().equals(MCUtils.EMPTY_UUID)) return "[CONSOLE]";
+
         try {
             if (getOfflinePlayer().hasPlayedBefore() && !getOfflinePlayer().getName().isEmpty()) return getOfflinePlayer().getName();
             else return getGameProfile().getName();
@@ -96,6 +101,10 @@ public class PlayerDataObject {
     public void purgeNotifications() {
         this.notifications = new ArrayList<>();
         saveData();
+    }
+
+    public ItemStack getSkullItemStack() {
+        return skullItemStack;
     }
 
     public Minecache getCreatingCache() {
@@ -292,6 +301,8 @@ public class PlayerDataObject {
 
         creatingCache.setID(yaml.getString("creating_id") == null ? "NULL" : yaml.getString("creating_id"));
         editingCache.setID(yaml.getString("editing_id") == null ? "NULL" : yaml.getString("editing_id"));
+
+        this.skullItemStack = getUniqueID().equals(MCUtils.EMPTY_UUID) ? null : new SkullMenuItem(getUsername(), getUniqueID(), List.of()).getSkull(getOfflinePlayer());
     }
 
     public void saveData() {

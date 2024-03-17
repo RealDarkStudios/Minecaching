@@ -20,7 +20,8 @@ public class CacheMenuItem extends MenuItem {
                 MessageKeys.Menu.Data.PREVIEW_TYPE.translateWithOtherStyle(getTypeStyle(cache.type()), cache.type().getTranslation()),
                 MessageKeys.Menu.Data.PREVIEW_STATUS.translateWithOtherStyle(getStatusStyle(cache.status()), cache.status().getTranslation()),
                 MCUtils.formatLocation(MessageKeys.Menu.Data.PREVIEW_NAVIGATION_COORDS.translate(), cache.navLocation()),
-                MessageKeys.Menu.Data.PREVIEW_AUTHOR.translate(MCUtils.uuidName(cache.owner())),
+                cache.hasMaintainer() ? MessageKeys.Menu.Data.PREVIEW_MAINTAINER.translate(MCUtils.uuidName(cache.maintainer())) : "",
+                MessageKeys.Menu.Data.PREVIEW_AUTHOR.translate(MCUtils.uuidName(cache.originalAuthor())),
                 MessageKeys.Menu.Data.PREVIEW_HIDDEN.translate(cache.hidden().format(DateTimeFormatter.ofPattern("MM/dd/yy hh:mma"))),
                 MessageKeys.Menu.Data.PREVIEW_FINDS.translate(cache.finds()),
                 MessageKeys.Menu.Data.PREVIEW_FAVORITES.translate(cache.favorites())));

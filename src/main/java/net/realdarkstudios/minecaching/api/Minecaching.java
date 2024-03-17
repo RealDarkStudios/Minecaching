@@ -61,6 +61,7 @@ public final class Minecaching extends JavaPlugin {
             getCommand("locatecache").setExecutor(new LocateCacheCommand());
             getCommand("logcache").setExecutor(new LogCacheCommand());
             getCommand("logbook").setExecutor(new LogbookCommand());
+            getCommand("maintainer").setExecutor(new MaintainerCommand());
 
             // Debug Events check
             if (Config.getInstance().debugEvents()) MinecachingAPI.tInfo(MessageKeys.Command.Admin.DEBUG_EVENTS_ON, Config.getInstance().getDebugEventsLevel());

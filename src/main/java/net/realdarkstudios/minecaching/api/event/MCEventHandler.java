@@ -1,7 +1,11 @@
 package net.realdarkstudios.minecaching.api.event;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.menu.LogMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenuHolder;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.AutoUpdater;
@@ -14,13 +18,19 @@ import net.realdarkstudios.minecaching.api.util.MCUtils;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -30,6 +40,65 @@ import java.util.List;
 import java.util.Objects;
 
 public class MCEventHandler implements Listener {
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (event.getBlock().getState() instanceof Chest chest) {
+            if (chest.getPersistentDataContainer().has(MCUtils.LINKED_CACHE_KEY, PersistentDataType.STRING)) {
+                String id = chest.getPersistentDataContainer().get(MCUtils.LINKED_CACHE_KEY, PersistentDataType.STRING);
+                MinecachingAPI.get().getFilteredCaches(c -> c.id().equals(id))
+                        .stream().filter(c -> c.location().equals(event.getBlock().getLocation()))
+                        .forEach(c -> {
+                            MinecachingAPI.info("Block Break (Cache Chest)");
+                            sendBlockBreakComponent(event.getPlayer(), c.id());
+                            event.setCancelled(true);
+                        });
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        Player p = event.getPlayer();
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && Objects.equals(event.getHand(), EquipmentSlot.HAND) &&  event.hasBlock() && event.getClickedBlock().getState() instanceof Chest chest) {
+            if (chest.getPersistentDataContainer().has(MCUtils.LINKED_CACHE_KEY, PersistentDataType.STRING)) {
+                String id = chest.getPersistentDataContainer().get(MCUtils.LINKED_CACHE_KEY, PersistentDataType.STRING);
+                assert id != null;
+                PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(p);
+                Minecache c = MinecachingAPI.get().getMinecache(id);
+                if (!p.isSneaking() && c.location().equals(chest.getLocation())) {
+                    event.setCancelled(true);
+                    // open log menu
+                    pdo.setLogCode(c.code());
+                    LogMenu menu = new LogMenu(c, pdo);
+                    menu.open(p);
+                } else if (c.location().equals(chest.getLocation())) {
+                    event.setUseInteractedBlock(Event.Result.ALLOW);
+                    event.setUseItemInHand(Event.Result.DENY);
+                }
+                else event.setUseInteractedBlock(Event.Result.DEFAULT);
+            }
+        } else if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) && Objects.equals(event.getHand(), EquipmentSlot.HAND) && event.hasBlock() && event.getClickedBlock().getState() instanceof Chest chest) {
+            if (chest.getPersistentDataContainer().has(MCUtils.LINKED_CACHE_KEY, PersistentDataType.STRING)) {
+                String id = chest.getPersistentDataContainer().get(MCUtils.LINKED_CACHE_KEY, PersistentDataType.STRING);
+                assert id != null;
+                Minecache c = MinecachingAPI.get().getMinecache(id);
+                if (c.location().equals(chest.getLocation())) {
+                    event.setUseInteractedBlock(Event.Result.ALLOW);
+                    event.setUseItemInHand(Event.Result.DENY);
+                }
+                else event.setUseInteractedBlock(Event.Result.DEFAULT);
+            }
+        }
+    }
+
+    private void sendBlockBreakComponent(Player player, String id) {
+        TextComponent toSend = MessageKeys.Error.Misc.CACHE_BLOCK.translateComponentWithOtherStyle(new LocalizedMessages.StyleOptions().setColor(ChatColor.RED), id);
+        toSend.addExtra(MessageKeys.Error.Misc.CACHE_BLOCK_CLICK_HERE.translateComponentWithOtherStyle(LocalizedMessages.StyleOptions.ERROR
+                .setClickEvent(ClickEvent.Action.RUN_COMMAND, "/deletecache openmenu " + id)));
+
+        LocalizedMessages.sendComponent(player, toSend);
+    }
+
     @EventHandler
     public void onPlayerLogin(PlayerJoinEvent event) {
         new BukkitRunnable() {

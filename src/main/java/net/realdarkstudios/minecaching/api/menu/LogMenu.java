@@ -1,6 +1,7 @@
 package net.realdarkstudios.minecaching.api.menu;
 
 import net.md_5.bungee.api.ChatColor;
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.log.LogType;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItemState;
@@ -12,7 +13,6 @@ import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 
@@ -20,8 +20,8 @@ public class LogMenu extends MCMenu {
     private final Minecache cache;
     private final PlayerDataObject author;
 
-    public LogMenu(Minecache cache, PlayerDataObject author, JavaPlugin plugin) {
-        super(MessageKeys.Menu.Log.TITLE, MenuSize.THREE_ROW, plugin, cache.id());
+    public LogMenu(Minecache cache, PlayerDataObject author) {
+        super(MessageKeys.Menu.Log.TITLE, MenuSize.THREE_ROW, Minecaching.getInstance(), cache.id());
         this.cache = cache;
         this.author = author;
 

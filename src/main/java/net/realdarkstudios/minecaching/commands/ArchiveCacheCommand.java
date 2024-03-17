@@ -1,23 +1,21 @@
 package net.realdarkstudios.minecaching.commands;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.event.minecache.MinecacheArchivedEvent;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
 import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.api.event.minecache.MinecacheArchivedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArchiveCacheCommand implements CommandExecutor, TabExecutor {
+public class ArchiveCacheCommand extends MCCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
@@ -37,10 +35,8 @@ public class ArchiveCacheCommand implements CommandExecutor, TabExecutor {
 
         Minecache cache = MinecachingAPI.get().getMinecache(args[0]);
 
-        if (cache.equals(Minecache.EMPTY)) {
-            LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE, cache.id());
-            return false;
-        } else if (cache.status().equals(MinecacheStatus.ARCHIVED) || cache.status().equals(MinecacheStatus.INVALID)) {
+        if (cacheCheck(sender, cache, args[0])) return true;
+        else if (cache.status().equals(MinecacheStatus.ARCHIVED) || cache.status().equals(MinecacheStatus.INVALID)) {
             LocalizedMessages.send(sender, MessageKeys.Error.Misc.ARCHIVE_CANT_ARCHIVE);
         } else {
             MinecacheArchivedEvent event = new MinecacheArchivedEvent(cache, sender);

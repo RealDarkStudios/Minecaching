@@ -1,6 +1,7 @@
 package net.realdarkstudios.minecaching.api.menu.impl.item;
 
 import me.scarsz.mojang.Head;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,8 +15,7 @@ public class SkullMenuItem extends MenuItem {
         this.uuid = uuid;
     }
 
-    @Override
-    public ItemStack getIcon(Player player) {
+    public ItemStack getSkull(OfflinePlayer player) {
         ItemStack item;
         if (uuid != null) {
             item = Head.create(uuid);
@@ -24,5 +24,10 @@ public class SkullMenuItem extends MenuItem {
         }
 
         return applyText(item);
+    }
+
+    @Override
+    public ItemStack getIcon(Player player) {
+        return getSkull(player);
     }
 }

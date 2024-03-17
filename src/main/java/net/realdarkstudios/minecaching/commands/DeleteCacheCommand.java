@@ -1,31 +1,41 @@
 package net.realdarkstudios.minecaching.commands;
 
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.event.minecache.MinecacheDeletedEvent;
+import net.realdarkstudios.minecaching.api.menu.CacheDataMenu;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.api.event.minecache.MinecacheDeletedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeleteCacheCommand implements CommandExecutor, TabExecutor {
+public class DeleteCacheCommand extends MCCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length != 1) {
+        if (args.length < 1) {
             LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
             LocalizedMessages.send(sender, MessageKeys.Usage.DELETE, label);
             return true;
         }
 
         String id = args[0].trim();
+
+        if (id.equals("openmenu")) {
+            if (sender instanceof Player plr && args.length >= 2) {
+                CacheDataMenu menu = new CacheDataMenu(MessageKeys.Menu.Data.TITLE, MinecachingAPI.get().getMinecache(args[1]),
+                        Minecaching.getInstance(), MinecachingAPI.get().getPlayerData(plr));
+                menu.open(plr);
+            }
+            return true;
+        }
+
         Minecache cache = MinecachingAPI.get().getMinecache(id);
         if (cache.equals(Minecache.EMPTY)) {
             LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE, cache.id());

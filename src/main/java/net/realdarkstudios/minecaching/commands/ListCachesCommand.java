@@ -11,17 +11,17 @@ import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class ListCachesCommand implements CommandExecutor, TabExecutor {
+public class ListCachesCommand extends MCCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player plr) {
+        if (playerCheck(sender)) {
+            Player plr = (Player) sender;
+
             CacheListMenu menu = new CacheListMenu(MessageKeys.Menu.List.TITLE, Minecaching.getInstance(), plr);
             menu.open(plr);
             

@@ -61,7 +61,7 @@ public class EditCacheMenu extends MCMenu {
                 List.of()));
         setItem(23, new EditCacheCoordMenuItem(coordCheck(cache.location()) ?
                 MessageKeys.Menu.Edit.ITEM_LOCATION.translate(MCUtils.formatLocation(
-                        MessageKeys.Menu.Data.PREVIEW_COORDS.translate(), cache.navLocation())) :
+                        MessageKeys.Menu.Data.PREVIEW_COORDS.translate(), cache.location())) :
                 MessageKeys.Menu.Edit.ITEM_LOCATION_COORDS.translate(),
                 new ItemStack(coordCheck(cache.location()) ? Material.GREEN_WOOL : Material.RED_WOOL),
                 List.of()));

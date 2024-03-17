@@ -37,7 +37,7 @@ public class LogCreateMenuItem extends MenuItem {
         if (cache.type().equals(MinecacheType.TRADITIONAL) || cache.type().equals(MinecacheType.MYSTERY)) {
             if (!logType.equals(LogType.FOUND) || cache.code().equals(pdo.getLogCode())) {
                 if (!logType.equals(LogType.FOUND) || event.getPlayer().getLocation().distance(cache.location()) < 25) {
-                    if (!(logType.equals(LogType.NOTE) || logType.equals(LogType.FLAG)) && event.getPlayer().getUniqueId().equals(cache.owner())) {
+                    if (!(logType.equals(LogType.NOTE) || logType.equals(LogType.FLAG)) && event.getPlayer().getUniqueId().equals(cache.owner()) || event.getPlayer().getUniqueId().equals(cache.originalAuthor())) {
                         LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Log.LOG_OWNED_CACHE);
                         return;
                     }

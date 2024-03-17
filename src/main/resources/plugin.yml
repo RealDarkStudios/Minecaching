@@ -77,7 +77,14 @@ commands:
     description: "Disables a minecache"
     usage: "/disablecache <id>"
     aliases: [discache, dic, disable]
+    permission: minecaching.disablecache
     permission-message: "You do not have permission to disable caches!"
+  maintainer:
+    description: "Sets a different player as the maintainer"
+    usage: "/maintainer <id> <username/uuid>"
+    aliases: [mt]
+    permission: minecaching.maintainer
+    permission-message: "You do not have permission to change maintainers"
 permissions:
   minecaching.addcache:
     default: true
@@ -109,3 +116,5 @@ permissions:
     default: true
   minecaching.admin.bypass.datamenu:
     default: op
+  minecaching.maintainer:
+    default: true

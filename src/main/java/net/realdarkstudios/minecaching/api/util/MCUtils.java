@@ -1,5 +1,6 @@
 package net.realdarkstudios.minecaching.api.util;
 
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.log.Log;
 import net.realdarkstudios.minecaching.api.log.LogType;
@@ -9,6 +10,7 @@ import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.event.minecache.LogCreatedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -26,6 +28,7 @@ public class MCUtils {
      * The placeholder {@link UUID}
      */
     public static final UUID EMPTY_UUID = UUID.fromString(EMPTY_UUID_STRING);
+    public static final NamespacedKey LINKED_CACHE_KEY = new NamespacedKey(Minecaching.getInstance(), "cache");
 
     /**
      * Generates a cache ID of the given length
@@ -175,7 +178,7 @@ public class MCUtils {
      * @return The UUID name
      */
     public static String uuidName(UUID uuid) {
-        return uuid.equals(EMPTY_UUID) ? "[CONSOLE]" : Bukkit.getOfflinePlayer(uuid).getName();
+        return uuid.equals(EMPTY_UUID) ? "[CONSOLE]" : MinecachingAPI.get().hasPlayerData(uuid) ? MinecachingAPI.get().getPlayerData(uuid).getUsername() : Bukkit.getOfflinePlayer(uuid).getName();
     }
 
     /**

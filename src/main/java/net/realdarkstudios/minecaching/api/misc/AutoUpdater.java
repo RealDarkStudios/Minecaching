@@ -6,12 +6,13 @@ import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.module.ModuleDescriptor;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class AutoUpdater {
     private static String readURL = "https://maven.digitalunderworlds.com/" + Config.getInstance().getUpdateBranch() + "s/net/realdarkstudios/Minecaching/maven-metadata.xml";
@@ -78,7 +79,9 @@ public class AutoUpdater {
                                 line = str;
                                 // Check for end of <versions> block
                                 if (!line.contains("</versions>")) {
-                                    if (!line.contains("SNAPSHOT") || branch.equals("snapshot")) versionList.append(line.trim().replace("</version>", ""));
+                                    if (!line.toLowerCase().contains("snapshot") || branch.equals("snapshot")) {
+                                        versionList.append(versionParse(line));
+                                    }
                                 } else break;
                             }
 
@@ -88,13 +91,22 @@ public class AutoUpdater {
                             versionsA = Arrays.copyOfRange(versionsA, 1, versionsA.length);
 
                             // Sort accoring to ModuleDescriptor.Version::parse
-                            List<ModuleDescriptor.Version> versions = Stream.of(versionsA).map(ModuleDescriptor.Version::parse).sorted().toList();
+                            List<ModuleDescriptor.Version> versions = new ArrayList<>();
+
+                            // Will continue to next version if one fails to parse
+                            for (String v: versionsA) {
+                                try {
+                                    versions.add(ModuleDescriptor.Version.parse(v));
+                                } catch (IllegalArgumentException ignored) {
+                                }
+                            }
+
                             // Get the most recent version
                             String laterV = versions.get(versions.size() - 1).toString();
                             MinecachingAPI.tInfo(MessageKeys.Plugin.Update.LATEST, branch, laterV);
 
                             // Compare laterV to plugin version
-                            switch (ModuleDescriptor.Version.parse(Minecaching.getInstance().getDescription().getVersion()).compareTo(ModuleDescriptor.Version.parse(laterV))) {
+                            switch (ModuleDescriptor.Version.parse(versionParse(Minecaching.getVersion()).replace("<version>", "")).compareTo(ModuleDescriptor.Version.parse(laterV))) {
                                 case -1 -> {
                                     // BEHIND
                                     MinecachingAPI.tInfo(MessageKeys.Plugin.Update.STATUS_BEHIND);
@@ -119,7 +131,7 @@ public class AutoUpdater {
                         }
 
                     }
-                } catch (Exception e) {
+                } catch (IOException e) {
                     MinecachingAPI.tWarning(MessageKeys.Plugin.Update.FAIL_TO_CHECK);
                     e.printStackTrace();
                 }
@@ -129,5 +141,32 @@ public class AutoUpdater {
         }.runTaskAsynchronously(Minecaching.getInstance());
 
         lastUpdateCheck = result[0];
+    }
+
+    private static String versionParse(String line) {
+        String l = line.replace("</version>", "").replace("<version>", "").trim();
+
+        // handles conversion to the older format (X.X.X.X-SNAPSHOT-X) so that im comparing apples to apples
+        if (l.startsWith("snapshot-")) {
+            // handle specific case (snapshot-24w11b)
+            if (l.equals("snapshot-24w11b")) l = "0.3.1.0-snapshot-24w11b";
+            else {
+                // example: snapshot-0.3.1.0-24w11c
+                String[] lparts = l.split("-");
+                l = String.format("%s-%s-%s", lparts[1], lparts[0], lparts[2]);
+            }
+        } else if (l.equals("0.3.1.0-24w10a")) l = "0.3.1.0-snapshot-24w10a";
+        else if (l.equals("0.3.1.0-24w11a")) l = "0.3.1.0-snapshot-24w11a";
+
+        return "<version>" + l;
+    }
+
+    /**
+     * Converts a version to the representation used by the AutoUpdater
+     * @param versionToParse The string to parse as a version
+     * @return A string with the format of how the AutoUpdate compares versions
+     */
+    public static String parseVersion(String versionToParse) {
+        return versionParse(versionToParse).replace("<version>", "");
     }
 }

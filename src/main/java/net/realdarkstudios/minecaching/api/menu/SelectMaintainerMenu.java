@@ -40,8 +40,7 @@ public class SelectMaintainerMenu extends PaginationMenu {
 
         for (PlayerDataObject pdo: MinecachingAPI.get().getAllKnownPlayers()) {
             if (pdo != null && !pdo.getUniqueID().equals(cache.originalAuthor()) && !pdo.getUniqueID().equals(MCUtils.EMPTY_UUID)) items.add(
-                    Bukkit.getOnlineMode() ? new SelectMaintainerMenuItem(cache, pdo.getUsername(), pdo.getUniqueID()) :
-                                             new SelectMaintainerOfflineMenuItem(cache, pdo.getUsername(), pdo.getUniqueID()));
+                    Bukkit.getOnlineMode() ? new SelectMaintainerMenuItem(cache, pdo) : new SelectMaintainerOfflineMenuItem(cache, pdo));
         }
 
         if (items.isEmpty()) {
