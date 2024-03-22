@@ -192,7 +192,9 @@ public class LocateCacheCommand extends MCCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player plr)) return List.of();
-        if (!MinecachingAPI.get().getPlayerData(plr).getLocatingId().equals("NULL")) return Config.getInstance().useLodestoneBasedLocating() ? List.of("cancel", "compass") : List.of("cancel", "coords");
-        return args.length == 0 ? MinecachingAPI.get().getAllKnownCacheIDs() : args.length == 1 ? MinecachingAPI.get().getFilteredCacheIDs(s -> s.contains(args[0])) : List.of();
+        if (!MinecachingAPI.get().getPlayerData(plr).getLocatingId().equals("NULL")) return Config.getInstance().useLodestoneBasedLocating() ?
+                List.of("cancel", "compass").stream().filter(s -> s.contains(args[0])).toList() :
+                List.of("cancel", "coords").stream().filter(s -> s.contains(args[0])).toList();
+        return args.length == 1 ? MinecachingAPI.get().getFilteredCacheIDs(s -> s.contains(args[0])) : List.of();
     }
 }

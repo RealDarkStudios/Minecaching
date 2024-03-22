@@ -36,7 +36,7 @@ public class MinecachingAPI {
     /**
      * Defines the expected Config Data Version
      */
-    public static final int CONFIG_DATA_VERSION = 10;
+    public static final int CONFIG_DATA_VERSION = 11;
     /**
      * Defines the expected Minecache Data Version
      */
@@ -59,6 +59,7 @@ public class MinecachingAPI {
     private static LogbookStorage logbookStorage;
     private static LocalizationProvider localizationProvider;
     private static Logger logger;
+    private static AutoUpdater autoUpdater;
 
     MinecachingAPI() {
     }
@@ -129,6 +130,10 @@ public class MinecachingAPI {
 
     public static LocalizationProvider getLocalizationProvider() {
         return localizationProvider;
+    }
+
+    public static AutoUpdater getUpdater() {
+        return autoUpdater;
     }
 
     /**
@@ -723,6 +728,7 @@ public class MinecachingAPI {
         if (!logFolder.exists()) logFolder.mkdirs();
 
         config.load();
+
         minecachingLocalization = localizationProvider.load(Minecaching.getInstance());
 
         // Load Message Keys for later use
@@ -735,7 +741,7 @@ public class MinecachingAPI {
             else tWarning(MessageKeys.Plugin.Data.NOT_ATTEMPTING_UPDATE, "Config");
         }
 
-        AutoUpdater.updateBranch(config.getUpdateBranch());
+        autoUpdater.updateBranch(config.getUpdateBranch());
         if (config.experimentalFeatures()) {
             MinecachingAPI.tInfo(MessageKeys.Plugin.EXPERIMENTAL);
         }
@@ -780,6 +786,7 @@ public class MinecachingAPI {
         cacheStorage = MinecacheStorage.getInstance();
         playerStorage = PlayerStorage.getInstance();
         logbookStorage = LogbookStorage.getInstance();
+        autoUpdater = new MCAutoUpdater();
         hasInitialized = true;
     }
 

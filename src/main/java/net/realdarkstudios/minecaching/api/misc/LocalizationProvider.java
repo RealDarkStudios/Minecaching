@@ -57,7 +57,7 @@ public class LocalizationProvider {
         try {
             json = loadJson(plugin, locale);
             if (json.isJsonNull()) throw new Exception("JSON is null!");
-            MinecachingAPI.info(String.format(plugin.equals(Minecaching.getInstance()) ? json.get("plugin.localization.loaded").toString() :
+            MinecachingAPI.info(String.format(plugin.equals(Minecaching.getInstance()) ? formatStr(json.get("plugin.localization.loaded").toString()) :
                             MessageKeys.Plugin.LOCALIZATION_LOADED.getRawMessage(),
                     json.has("locale.name") ? json.get("locale.name").toString() : localeNames.get(locale),
                     json.has("plugin.name") ? json.get("plugin.name") + " (" + plugin.getName() + ")" : plugin.getName()));
@@ -74,7 +74,10 @@ public class LocalizationProvider {
 
             try {
                 json = loadJson(plugin, Locale.US);
-                MinecachingAPI.info(String.format(json.get("plugin.localization.loaded").toString(), json.has("locale.name") ? json.get("locale.name").toString() : localeNames.get(locale), json.has("plugin.name") ? json.get("plugin.name") + " (" + plugin.getName() + ")" : plugin.getName()));
+                MinecachingAPI.info(String.format(plugin.equals(Minecaching.getInstance()) ? formatStr(json.get("plugin.localization.loaded").toString()) :
+                                MessageKeys.Plugin.LOCALIZATION_LOADED.getRawMessage(),
+                        json.has("locale.name") ? json.get("locale.name").toString() : localeNames.get(locale),
+                        json.has("plugin.name") ? json.get("plugin.name") + " (" + plugin.getName() + ")" : plugin.getName()));
             } catch (Exception e1) {
                 MinecachingAPI.warning(String.format("Unable to set a language for plugin: %s!", plugin.getName()));
                 if (plugin.equals(Minecaching.getInstance())) Minecaching.getInstance().onDisable();
@@ -130,5 +133,9 @@ public class LocalizationProvider {
     public static LocalizationProvider getInstance() {
         if (Minecaching.getAPI().hasInitialized()) return MinecachingAPI.getLocalizationProvider();
         else return new LocalizationProvider();
+    }
+
+    private String formatStr(String str) {
+        return str.substring(1, str.length() - 1).replace("\\n", "\n").replace("\\\"", "\"");
     }
 }

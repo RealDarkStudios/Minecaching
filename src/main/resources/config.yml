@@ -4,7 +4,7 @@
 # +-------------+
 
 # Do not touch!
-CONFIG_VERSION: 10
+CONFIG_VERSION: 11
 MINECACHE_DATA_VERSION: 5
 PLAYER_DATA_VERSION: 6
 LOGBOOK_DATA_VERSION: 1
@@ -15,7 +15,7 @@ LOGBOOK_DATA_VERSION: 1
 LOCALE: en-US
 
 # Determines whether the plugin will automatically update
-# Defaults: true
+# Defaults: false
 AUTO_UPDATE: true
 # Determines the branch to use for the auto updater
 # release: Release versions, such as 0.2.2.1, 0.2.2.2, 0.2.2.3
@@ -65,12 +65,16 @@ FIND_LODESTONE_DISTANCE: 25
 # Defaults: false (Coordinate-based)
 USE_LODESTONE_BASED_LOCATING: false
 
+# Determines how long the wait between placing caches is (in seconds). Set to 0 to disable.
+# Default: 300 (5 minutes)
+CACHE_CREATE_COOLDOWN: 300
+
 # Determines which types are enabled on the server
-# Available Types: TRADITIONAL, MYSTERY, MULTI
+# Available Types: traditional, mystery, multi
 ENABLED_TYPES:
-  - TRADITIONAL
-  - MYSTERY
-  - MULTI
+  - traditional
+  - mystery
+  - multi
 
 # Defines how the 'score' is calculated for the Most Accomplished stat.
 # FIND is how many points for you get for finding a cache

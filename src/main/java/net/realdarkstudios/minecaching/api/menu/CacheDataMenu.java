@@ -3,6 +3,7 @@ package net.realdarkstudios.minecaching.api.menu;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.item.GoBackMenuItem;
+import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.menu.item.data.*;
 import net.realdarkstudios.minecaching.api.menu.item.edit.EditCacheMenuItem;
 import net.realdarkstudios.minecaching.api.menu.item.log.FavoriteCacheItem;
@@ -35,12 +36,18 @@ public class CacheDataMenu extends MCMenu {
         fillEmptySlots();
 
         PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(player);
+        PlayerDataObject author = MinecachingAPI.get().getPlayerData(cache.originalAuthor());
+        PlayerDataObject maintainer = MinecachingAPI.get().getPlayerData(cache.maintainer());
         boolean bypassPerm = player.hasPermission("minecaching.admin.bypass.datamenu");
         boolean playerAllowed = cache.owner().equals(pdo.getUniqueID()) || cache.originalAuthor().equals(pdo.getUniqueID()) || bypassPerm;
 
         setItem(0, new GoBackMenuItem(new ItemStack(Material.RED_CONCRETE), List.of()));
         if (playerAllowed) setItem(1, new EditCacheMenuItem(cache));
-        setItem(4, new CacheMenuItem(MessageKeys.Menu.Data.PREVIEW.translate(cache.id(), cache.name()), cache));
+        setItem(3, new CacheMenuItem(MessageKeys.Menu.Data.PREVIEW.translate(cache.id(), cache.name()), cache));
+        setItem(5, new MenuItem(MessageKeys.Menu.Data.PREVIEW_AUTHOR.translate(author.getUsername()),
+                author.getSkullItemStack(), List.of()));
+        if (cache.hasMaintainer()) setItem(6, new MenuItem(MessageKeys.Menu.Data.PREVIEW_MAINTAINER.translate(maintainer.getUsername()),
+                maintainer.getSkullItemStack(), List.of()));
         if (playerAllowed) setItem(7, new OpenConfirmationMenuItem(new OpenMaintainerMenuItem(cache, this), this));
         if (playerAllowed) setItem(8, new OpenConfirmationMenuItem(new DeleteCacheMenuItem(cache), this));
         setItem(18, new FavoriteCacheItem(cache, pdo));

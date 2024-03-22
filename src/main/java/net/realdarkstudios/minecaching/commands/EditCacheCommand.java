@@ -223,15 +223,13 @@ public class EditCacheCommand extends MCCommand {
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player plr) {
             if (MinecachingAPI.get().getPlayerData(plr).getEditingCache().id().equals("NULL")) return List.of();
-            else return List.of("name", "code");
+            else return List.of("name", "code").stream().filter(s -> s.contains(args[0])).toList();
         }
 
         PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(MCUtils.EMPTY_UUID);
 
-        if (args.length == 0 && (pdo.getEditingCache() == null || pdo.getEditingCache().id().equals("NULL")))
-            return MinecachingAPI.get().getAllKnownCacheIDs();
-        else if (args.length == 1 && (pdo.getEditingCache() == null || pdo.getEditingCache().id().equals("NULL"))) {
-            return MinecachingAPI.get().getAllKnownCacheIDs();
+        if (args.length == 1 && (pdo.getEditingCache() == null || pdo.getEditingCache().id().equals("NULL"))) {
+            return MinecachingAPI.get().getFilteredCacheIDs(c -> c.contains(args[0]));
         } else {
             if (args.length == 1) {
                 return (pdo.getEditingCache() == null || pdo.getEditingCache().id().equals("NULL")) ? List.of() :

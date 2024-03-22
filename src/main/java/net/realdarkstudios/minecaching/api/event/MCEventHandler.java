@@ -8,7 +8,6 @@ import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.LogMenu;
 import net.realdarkstudios.minecaching.api.menu.impl.MCMenuHolder;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
-import net.realdarkstudios.minecaching.api.misc.AutoUpdater;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.misc.Notification;
 import net.realdarkstudios.minecaching.api.misc.NotificationType;
@@ -48,7 +47,6 @@ public class MCEventHandler implements Listener {
                 MinecachingAPI.get().getFilteredCaches(c -> c.id().equals(id))
                         .stream().filter(c -> c.location().equals(event.getBlock().getLocation()))
                         .forEach(c -> {
-                            MinecachingAPI.info("Block Break (Cache Chest)");
                             sendBlockBreakComponent(event.getPlayer(), c.id());
                             event.setCancelled(true);
                         });
@@ -94,18 +92,19 @@ public class MCEventHandler implements Listener {
     private void sendBlockBreakComponent(Player player, String id) {
         TextComponent toSend = MessageKeys.Error.Misc.CACHE_BLOCK.translateComponentWithOtherStyle(new LocalizedMessages.StyleOptions().setColor(ChatColor.RED), id);
         toSend.addExtra(MessageKeys.Error.Misc.CACHE_BLOCK_CLICK_HERE.translateComponentWithOtherStyle(LocalizedMessages.StyleOptions.ERROR
-                .setClickEvent(ClickEvent.Action.RUN_COMMAND, "/deletecache openmenu " + id)));
+                .setClickEvent(ClickEvent.Action.RUN_COMMAND, "/deletecache openmenu " + id)
+                .setUnderline(true)));
 
-        LocalizedMessages.sendComponent(player, toSend);
+        LocalizedMessages.sendComponents(player, toSend);
     }
 
     @EventHandler
     public void onPlayerLogin(PlayerJoinEvent event) {
         new BukkitRunnable() {
             public void run() {
-                if (AutoUpdater.hasUpdate() && event.getPlayer().hasPermission("minecaching.admin")) {
+                if (MinecachingAPI.getUpdater().hasUpdate() && event.getPlayer().hasPermission("minecaching.admin")) {
                     LocalizedMessages.send(event.getPlayer(), Config.getInstance().autoUpdate() ? MessageKeys.Plugin.Update.AVAILABE_AUTO :
-                                    MessageKeys.Plugin.Update.AVAILABLE, AutoUpdater.getNewestVersion());
+                                    MessageKeys.Plugin.Update.AVAILABLE, MinecachingAPI.getUpdater().getNewestVersion(), Minecaching.getVersion());
                 }
 
                 PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(event.getPlayer().getUniqueId());

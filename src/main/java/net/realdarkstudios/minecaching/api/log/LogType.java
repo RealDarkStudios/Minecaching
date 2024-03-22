@@ -5,7 +5,7 @@ import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.ChatColor;
 
-public enum LogType  {
+public enum LogType {
     FOUND("found", ChatColor.GOLD),
     DNF("dnf", ChatColor.BLUE),
     NOTE("note", ChatColor.GRAY),

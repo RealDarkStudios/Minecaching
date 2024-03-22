@@ -2,17 +2,18 @@ package net.realdarkstudios.minecaching.api.util;
 
 import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.event.minecache.LogCreatedEvent;
 import net.realdarkstudios.minecaching.api.log.Log;
 import net.realdarkstudios.minecaching.api.log.LogType;
 import net.realdarkstudios.minecaching.api.log.LogbookDataObject;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;
-import net.realdarkstudios.minecaching.api.event.minecache.LogCreatedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.util.*;
 
@@ -153,6 +154,10 @@ public class MCUtils {
         }
     }
 
+    public static String formatLocation(String beginning, Vector location) {
+        return String.format("%s: (%d, %d, %d)", beginning, location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
     /**
      * Formats a location into a nicer format
      * @param beginning The beginning part, where ": " gets appended after it
@@ -161,6 +166,14 @@ public class MCUtils {
      */
     public static String formatLocation(String beginning, Location location) {
         return String.format("%s: (%d, %d, %d)", beginning, location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    public static String formatLocation(Vector location) {
+        return String.format("(%d, %d, %d)", location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    public static String formatLocation(Location location) {
+        return String.format("(%d, %d, %d)", location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     /**

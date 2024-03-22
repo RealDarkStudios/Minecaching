@@ -8,6 +8,71 @@ VERSION
 
 CHANGELOG:
 
+Prerelease 0.3.1.0-pre1/2:
+Added:
+- /mca conf, to easily change config values in-game (not all config options are able to be changed here)
+- /maintainer tab completion (for console only)
+- MCAutoUpdater
+- AutoUpdater.Version (dedicated version class!)
+- AutoUpdater#parseMavenMetadata
+- AutoUpdater#parseJSON (adds compatibility with json-based updaters, there is also a way to define a custom one)
+- Config#setAutoUpdate
+- Config#setUpdateBranch
+- Config#setDebugEvents
+- Config#setDebugEventsLevel
+- Config#setCacheBounds
+- Config#getCacheBounds
+- Config#getMinLocation
+- Config#getMaxLocation
+- Config#setMinCacheDistance
+- Config#setMaxLodestoneDistance
+- Config#setFindLodestoneDistance
+- Config#setCacheCreateCooldown
+- Config#setEnabledTypes
+- Config#modifyType
+- More MCUtils#formatLocation variations
+- MessageKeys.Error.Create.OUT_OF_BOUNDS
+- StatsScoreOptions#favorite
+- StatsScoreOptions#find
+- StatsScoreOptions#ftf
+- StatsScoreOptions#hideAD
+- StatsScoreOptions#hideNM
+- StatsScoreOptions#hideP
+- StatsScoreOptions#hideR
+- StatsScoreOptions#setFavorite
+- StatsScoreOptions#setFind
+- StatsScoreOptions#setFTF
+- StatsScoreOptions#setHideAD
+- StatsScoreOptions#setHideNM
+- StatsScoreOptions#setHideP
+- StatsScoreOptions#setHideR
+
+
+Refactors:
+- AutoUpdater is now abstract
+- AutoUpdater#parseVersion (ret. String) -> AutoUpdater#parseVersion (ret. Version)
+- LocalizedMessages#sendComponent -> LocalizedMessages#sendComponents
+- MCStatsCommand#determinePublishedHides -> MCStatsCommand#determineValidHides
+
+Changes:
+- Artifact ID is now 'minecaching'. The last release under the Minecaching artifact will be 0.3.1.0, as this will force essential AutoUpdater upgrades.
+- After 0.3.1.0, there will be a major change as I switch over to the new RDSCommons Plugin. The version after this will become 0.4.0.0, as this is a breaking API change.
+- Undeprecated TextComponentBuilder
+- TextComponentBuilder formatting (bold, italic, etc.) take in a boolean input now
+- Add filtering by player input to command
+- CacheDataMenu now shows the skulls of the owner and maintainer, if applicable
+- Added Config option CACHE_CREATE_COOLDOWN
+- Config ENABLED_TYPES entries are now lowercased.
+- Config version is now 11
+- Added bounds check to CreateCacheMenu and CreateCacheSaveMenuItem
+- StyleOptions.ERROR is no longer underlined
+- MCMenus now update when returning to parent
+- README.md badges point to new maven artifacts (release will show up as not found for the time being)
+- SelectMaintainerMenuItem (and the offline version) now go back to CacheDataMenu instead of closing
+- And more...
+
+!! ARTIFACT ID CHANGE: Minecaching -> minecaching !!
+
 Snapshot 24w11c for 0.3.1.0:
 Added:
 - MCCommand Class which implements CommandExecutor and TabExecutor by default

@@ -9,10 +9,9 @@ import net.realdarkstudios.minecaching.api.misc.Localization;
 /**
  * A builder for {@link TextComponent}s
  * @since before 0.1.4.3-2
- * @deprecated Since 0.3.1.0 | Use {@link net.md_5.bungee.api.chat.ComponentBuilder}.
  * For localized messages, see {@link LocalizedMessages} and {@link LocalizedMessages.StyleOptions}
  */
-@Deprecated(since = "0.3.1.0", forRemoval = true)
+
 public class TextComponentBuilder {
     private final String message;
     private boolean bold = false, italic = false, underlined = false, strikethrough = false, obfuscated = false;
@@ -37,11 +36,11 @@ public class TextComponentBuilder {
     public static TextComponentBuilder fromTextComponent(TextComponent from) {
         TextComponentBuilder b = new TextComponentBuilder(from.getText());
         if (from.hasFormatting()) {
-            if (from.isBold()) b.bold();
-            if (from.isItalic()) b.italic();
-            if (from.isUnderlined()) b.underline();
-            if (from.isStrikethrough()) b.strikethrough();
-            if (from.isObfuscated()) b.obfuscate();
+            if (from.isBold()) b.bold(true);
+            if (from.isItalic()) b.italic(true);
+            if (from.isUnderlined()) b.underline(true);
+            if (from.isStrikethrough()) b.strikethrough(true);
+            if (from.isObfuscated()) b.obfuscate(true);
         }
         if (from.getColor() != null) b.color(from.getColor());
         if (from.getClickEvent() != null) b.clickEvent(from.getClickEvent().getAction(), from.getClickEvent().getValue());
@@ -49,13 +48,19 @@ public class TextComponentBuilder {
         return b;
     }
 
+    public static TextComponentBuilder fromTranslation(LocalizedMessages.Key key, Object... formatArgs) {
+        return new TextComponentBuilder(key.translate(formatArgs));
+    }
+
     /**
      * Static method to create a {@link TextComponentBuilder} from a translation path. Uses the Minecaching localization
      * @param key The translation path
      * @param substitutions The substitutions (or format args). Uses {@link String#format(String, Object...)}
      * @return The TextComponentBuilder
+     * @deprecated Please use {@link #fromTranslation(LocalizedMessages.Key, Object...)} instead
      * @since 0.2.2.1-SNAPSHOT-1
      */
+    @Deprecated(since = "0.3.1.0", forRemoval = true)
     public static TextComponentBuilder fromTranslation(String key, Object... substitutions) {
         return new TextComponentBuilder(MinecachingAPI.getLocalization().getTranslation(key, substitutions));
     }
@@ -66,8 +71,10 @@ public class TextComponentBuilder {
      * @param localization The localization to use
      * @param substitutions The substitutions (or format args). Uses {@link String#format(String, Object...)}
      * @return The TextComponentBuilder
+     * @deprecated Please use {@link #fromTranslation(LocalizedMessages.Key, Object...)} instead
      * @since 0.3.0.5
      */
+    @Deprecated(since = "0.3.1.0", forRemoval = true)
     public static TextComponentBuilder fromTranslation(String key, Localization localization, Object... substitutions) {
         return new TextComponentBuilder(localization.getTranslation(key, substitutions));
     }
@@ -87,8 +94,8 @@ public class TextComponentBuilder {
      * @return This TextComponentBuilder
      * @since pre-0.1.4.3-2
      */
-    public TextComponentBuilder bold() {
-        this.bold = true;
+    public TextComponentBuilder bold(boolean bold) {
+        this.bold = bold;
         return this;
     }
 
@@ -97,8 +104,8 @@ public class TextComponentBuilder {
      * @return This TextComponentBuilder
      * @since pre-0.1.4.3-2
      */
-    public TextComponentBuilder italic() {
-        this.italic = true;
+    public TextComponentBuilder italic(boolean italic) {
+        this.italic = italic;
         return this;
     }
 
@@ -107,8 +114,8 @@ public class TextComponentBuilder {
      * @return This TextComponentBuilder
      * @since pre-0.1.4.3-2
      */
-    public TextComponentBuilder underline() {
-        this.underlined = true;
+    public TextComponentBuilder underline(boolean underline) {
+        this.underlined = underline;
         return this;
     }
 
@@ -117,8 +124,8 @@ public class TextComponentBuilder {
      * @return This TextComponentBuilder
      * @since pre-0.1.4.3-2
      */
-    public TextComponentBuilder strikethrough() {
-        this.strikethrough = true;
+    public TextComponentBuilder strikethrough(boolean strikethrough) {
+        this.strikethrough = strikethrough;
         return this;
     }
 
@@ -127,8 +134,8 @@ public class TextComponentBuilder {
      * @return This TextComponentBuilder
      * @since pre-0.1.4.3-2
      */
-    public TextComponentBuilder obfuscate() {
-        this.obfuscated = true;
+    public TextComponentBuilder obfuscate(boolean obfuscated) {
+        this.obfuscated = obfuscated;
         return this;
     }
 

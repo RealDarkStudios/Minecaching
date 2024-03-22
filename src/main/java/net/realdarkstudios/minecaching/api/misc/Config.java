@@ -2,11 +2,17 @@ package net.realdarkstudios.minecaching.api.misc;
 
 import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.minecache.MinecacheType;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
+import org.checkerframework.common.value.qual.IntRange;
 import org.joml.Math;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,6 +38,9 @@ public class Config {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // try to ensure types are lowercased
+        setEnabledTypes(getEnabledTypes());
     }
 
     public void save() {
@@ -71,88 +80,190 @@ public class Config {
     }
 
     public Locale getServerLocale() {
-        return yaml.contains("LOCALE") ? Locale.forLanguageTag(yaml.getString("LOCALE")) : Locale.forLanguageTag("en-US");
+        return Locale.forLanguageTag(yaml.getString("LOCALE", "en-US"));
     }
 
     public boolean autoUpdate() {
-        return yaml.getBoolean("AUTO_UPDATE");
+        return yaml.getBoolean("AUTO_UPDATE", false);
+    }
+
+    public void setAutoUpdate(boolean autoUpdate) {
+        yaml.set("AUTO_UPDATE", autoUpdate);
+        save();
     }
 
     public String getUpdateBranch() {
         return yaml.getString("UPDATE_BRANCH", "release").equals("snapshot") ? "snapshot" : "release";
     }
 
+    public void setUpdateBranch(String branch) {
+        yaml.set("UPDATE_BRANCH", branch.equals("snapshot") ? "snapshot" : branch.equals("release") ? "release" : getUpdateBranch());
+        save();
+    }
+
     public boolean experimentalFeatures() {
-        return yaml.getBoolean("EXPERIMENTAL_FEATURES");
+        return yaml.getBoolean("EXPERIMENTAL_FEATURES", false);
     }
 
     public boolean debugEvents() {
-        return yaml.getBoolean("DEBUG_EVENTS");
+        return yaml.getBoolean("DEBUG_EVENTS", false);
+    }
+
+    public void setDebugEvents(boolean debugEvents) {
+        yaml.set("DEBUG_EVENTS", debugEvents);
+        save();
     }
 
     public int getDebugEventsLevel() {
-        return Math.clamp(0, 2, yaml.getInt("DEBUG_EVENTS_LEVEL"));
+        return Math.clamp(0, 2, yaml.getInt("DEBUG_EVENTS_LEVEL", 0));
     }
 
+    public void setDebugEventsLevel(@IntRange(from = 0, to = 2) int level) {
+        yaml.set("DEBUG_EVENTS_LEVEL", level);
+        save();
+    }
+
+    public void setCacheBounds(BoundingBox bounds) {
+        yaml.set("MIN_X", (int) bounds.getMinX());
+        yaml.set("MIN_Y", (int) bounds.getMinY());
+        yaml.set("MIN_Z", (int) bounds.getMinZ());
+        yaml.set("MAX_X", (int) bounds.getMaxX());
+        yaml.set("MAX_Y", (int) bounds.getMaxY());
+        yaml.set("MAX_Z", (int) bounds.getMaxZ());
+        save();
+    }
+
+    public BoundingBox getCacheBounds() {
+        return BoundingBox.of(getMinLocation(), getMaxLocation());
+    }
+
+    public Vector getMinLocation() {
+        return new Vector(getMinX(), getMinY(), getMinZ());
+    }
+
+    public Vector getMaxLocation() {
+        return new Vector(getMaxX(), getMaxY(), getMaxZ());
+    }
     public int getMaxX() {
-        return yaml.getInt("MAX_X");
+        return yaml.getInt("MAX_X", 30000000);
     }
 
     public int getMinX() {
-        return yaml.getInt("MIN_X");
+        return yaml.getInt("MIN_X", -30000000);
     }
 
     public int getMaxY() {
-        return yaml.getInt("MAX_Y");
+        return yaml.getInt("MAX_Y", 319);
     }
 
     public int getMinY() {
-        return yaml.getInt("MIN_Y");
+        return yaml.getInt("MIN_Y", -64);
     }
 
     public int getMaxZ() {
-        return yaml.getInt("MAX_Z");
+        return yaml.getInt("MAX_Z", 30000000);
     }
 
     public int getMinZ() {
-        return yaml.getInt("MIN_Z");
+        return yaml.getInt("MIN_Z", -30000000);
     }
+
     public int getMinCacheDistance() {
-        return yaml.getInt("MIN_CACHE_DISTANCE");
+        return yaml.getInt("MIN_CACHE_DISTANCE", 25);
+    }
+
+    public void setMinCacheDistance(@IntRange(from = 0, to = 10000) int minCacheDistance) {
+        yaml.set("MIN_CACHE_DISTANCE", minCacheDistance);
+        save();
     }
 
     public int getMaxLodestoneDistance() {
-        return yaml.getInt("MAX_LODESTONE_DISTANCE");
+        return yaml.getInt("MAX_LODESTONE_DISTANCE", 50);
     }
-    public int getFindLodestoneDistance() {
-        return yaml.getInt("FIND_LODESTONE_DISTANCE");
-    }
-    public boolean useLodestoneBasedLocating() {
-        return yaml.getBoolean("USE_LODESTONE_BASED_LOCATING");
+    public void setMaxLodestoneDistance(@IntRange(from = 0, to = 10000) int maxLodestoneDistance) {
+        yaml.set("MAX_LODESTONE_DISTANCE", maxLodestoneDistance);
+        save();
     }
 
-    public List<?> getEnabledTypes() {
-        return yaml.getList("ENABLED_TYPES");
+    public int getFindLodestoneDistance() {
+        return yaml.getInt("FIND_LODESTONE_DISTANCE", 25);
+    }
+    public void setFindLodestoneDistance(@IntRange(from = 0, to = 10000) int findLodestoneDistance) {
+        yaml.set("FIND_LODESTONE_DISTANCE", findLodestoneDistance);
+        save();
+    }
+
+    public boolean useLodestoneBasedLocating() {
+        return yaml.getBoolean("USE_LODESTONE_BASED_LOCATING", false);
+    }
+
+    public int getCacheCreateCooldown() {
+        return yaml.getInt("CACHE_CREATE_COOLDOWN", 300);
+    }
+
+    public void setCacheCreateCooldown(int cooldown) {
+        yaml.set("CACHE_CREATE_COOLDOWN", cooldown);
+        save();
+    }
+
+    public List<String> getEnabledTypes() {
+        List<String> enabledTypes;
+
+        try {
+            enabledTypes = (List<String>) yaml.getList("ENABLED_TYPES", List.of("traditional", "mystery", "multi"));
+        } catch (Exception e) {
+            enabledTypes = List.of("traditional", "mystery", "multi");
+        }
+
+        enabledTypes.replaceAll(String::toLowerCase);
+        enabledTypes.removeAll(List.of("default", "current"));
+
+        return enabledTypes;
+    }
+
+    public void setEnabledTypes(List<String> types) {
+        types.replaceAll(String::toLowerCase);
+        types.removeAll(List.of("default", "current"));
+        yaml.set("ENABLED_TYPES", types);
+        save();
+    }
+
+    public void modifyType(MinecacheType type, boolean enable) {
+        ArrayList<String> enabledTypes = new ArrayList<>(getEnabledTypes());
+
+        if (enabledTypes.contains(type.getId()) && !enable) {
+            enabledTypes.removeAll(Collections.singleton(type.getId()));
+        } else if (!enabledTypes.contains(type.getId()) && enable) {
+            enabledTypes.add(type.getId());
+        }
+
+        setEnabledTypes(enabledTypes);
+        save();
+    }
+
+    public void setStatsScoreOptions(StatsScoreOptions sso) {
+        sso.toYaml(yaml, "STATS_SCORE_OPTIONS");
+        save();
     }
 
     public StatsScoreOptions getStatsScoreOptions() {
-        return StatsScoreOptions.fromYaml(yaml, "STATS_SCORE_OPTIONS");
+        return yaml.contains("STATS_SCORE_OPTIONS") ? StatsScoreOptions.fromYaml(yaml, "STATS_SCORE_OPTIONS") : StatsScoreOptions.DEFAULT_OPTIONS;
     }
 
     public void updateData() {
         try {
             int configVersion = getConfigVersion();
-            int minecacheDataVersion = configVersion < 4 ? yaml.getInt("MINECACHE_VERSION") : getMinecacheDataVersion();
-            int playerDataVersion = configVersion < 4 ? yaml.getInt("PLAYER_VERSION") : getPlayerDataVersion();
-            int logbookDataVersion = configVersion < 4 ? 0 : getLogbookDataVersion();
+            int minecacheDataVersion = getMinecacheDataVersion();
+            int playerDataVersion = getPlayerDataVersion();
+            int logbookDataVersion = getLogbookDataVersion();
 
-            Locale serverLocale = configVersion < 7 ? Locale.forLanguageTag("en_US") : getServerLocale();
+            Locale serverLocale = getServerLocale();
 
-            boolean autoUpdate = configVersion >=8 && autoUpdate();
+            boolean autoUpdate = autoUpdate();
             String updateBranch = getUpdateBranch();
-            boolean experimentalFeatures = configVersion >=8 && experimentalFeatures();
-            boolean debugEvents = configVersion >= 5 && debugEvents();
-            int debugEventsLevel = configVersion < 5 ? 0 : getDebugEventsLevel();
+            boolean experimentalFeatures = experimentalFeatures();
+            boolean debugEvents = debugEvents();
+            int debugEventsLevel = getDebugEventsLevel();
 
             int maxY = getMaxY();
             int minY = getMinY();
@@ -160,16 +271,20 @@ public class Config {
             int minX = getMinX();
             int maxZ = getMaxZ();
             int minZ = getMinZ();
-            int minCacheDistance = configVersion < 9 ? 25 : getMinCacheDistance();
+            int minCacheDistance = getMinCacheDistance();
 
             int maxLodestoneDistance = getMaxLodestoneDistance();
-            int findLodestoneDistance = configVersion < 3 ? 25 : getFindLodestoneDistance();
-            boolean useLodestoneBasedLocating = configVersion >= 6 && useLodestoneBasedLocating();
+            int findLodestoneDistance = getFindLodestoneDistance();
+            boolean useLodestoneBasedLocating = useLodestoneBasedLocating();
 
-            List<?> enabledTypes = getEnabledTypes();
+            int cacheCreateCooldown = getCacheCreateCooldown();
 
-            StatsScoreOptions statsScoreOptions = configVersion < 10 ? StatsScoreOptions.DEFAULT_OPTIONS : getStatsScoreOptions();
+            List<String> enabledTypes = getEnabledTypes();
+            enabledTypes.replaceAll(String::toLowerCase);
 
+            StatsScoreOptions statsScoreOptions = getStatsScoreOptions();
+
+            // Goes back to the empty file, therefore we need to get all values above
             Minecaching.getInstance().saveResource("config.yml", true);
             load();
 
@@ -192,6 +307,7 @@ public class Config {
             yaml.set("MAX_LODESTONE_DISTANCE", maxLodestoneDistance);
             yaml.set("FIND_LODESTONE_DISTANCE", findLodestoneDistance);
             yaml.set("USE_LODESTONE_BASED_LOCATING", useLodestoneBasedLocating);
+            yaml.set("CACHE_CREATE_COOLDOWN", cacheCreateCooldown);
             yaml.set("ENABLED_TYPES", enabledTypes);
             statsScoreOptions.toYaml(yaml, "STATS_SCORE_OPTIONS");
             yaml.set("CONFIG_VERSION", MinecachingAPI.CONFIG_DATA_VERSION);

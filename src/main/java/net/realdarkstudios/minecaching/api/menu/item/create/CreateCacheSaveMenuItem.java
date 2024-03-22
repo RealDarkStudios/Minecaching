@@ -37,15 +37,20 @@ public class CreateCacheSaveMenuItem extends MenuItem {
         Minecache cache = pdo.getCreatingCache();
 
         if (!timeCheck(pdo)) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.TIME, LocalDateTime.now().until(pdo.getCacheCooldownExpireTime(), ChronoUnit.MINUTES));
+            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.TIME,
+                    LocalDateTime.now().until(pdo.getCacheCooldownExpireTime(), ChronoUnit.MINUTES));
         } else if (cache.name() == null) {
             LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_NAME);
         } else if (cache.code() == null || cache.code().isEmpty()) {
             LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_CODE);
         } else if (cache.x() == 0 && cache.y() == 0 && cache.z() == 0) {
             LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_COORDS);
+        } else if (!isInBoundsCheck(cache.location())) {
+            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.OUT_OF_BOUNDS, MCUtils.formatLocation(cache.location()),
+                    MCUtils.formatLocation(Config.getInstance().getMinLocation()), MCUtils.formatLocation(Config.getInstance().getMaxLocation()));
         } else if (!cacheDistanceCheck(cache.location())) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.TOO_CLOSE);
+            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.TOO_CLOSE,
+                    Config.getInstance().getMinCacheDistance());
         } else if (cache.nx() == 0 && cache.ny() == 0 && cache.nz() == 0) {
             LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_NAV_COORDS);
         } else if (!distanceCheck(cache.location(), cache.navLocation(), Config.getInstance().getMaxLodestoneDistance())) {
@@ -74,7 +79,7 @@ public class CreateCacheSaveMenuItem extends MenuItem {
 
             pdo.addHide(cache.id());
             pdo.setCreatingCache(Minecache.EMPTY.setID("NULL"));
-            pdo.setCacheCooldownExpire(LocalDateTime.now().plusMinutes(15));
+            pdo.setCacheCooldownExpire(LocalDateTime.now().plusSeconds(Config.getInstance().getCacheCreateCooldown()));
 
             MinecachingAPI.get().save();
             MinecachingAPI.get().update();
@@ -93,6 +98,10 @@ public class CreateCacheSaveMenuItem extends MenuItem {
 
     public static boolean distanceCheck(Location a, Location b, int maxDist) {
         return a.distance(b) <= maxDist;
+    }
+
+    private static boolean isInBoundsCheck(Location loc) {
+        return Config.getInstance().getCacheBounds().contains(loc.toVector(), loc.toVector());
     }
 
     private boolean timeCheck(PlayerDataObject pdo) {

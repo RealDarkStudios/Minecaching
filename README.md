@@ -1,5 +1,5 @@
-![Latest Release](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fmaven.digitalunderworlds.com%2Freleases%2Fnet%2Frealdarkstudios%2FMinecaching%2Fmaven-metadata.xml&label=Latest%20Release)
-![Latest Snapshot](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fmaven.digitalunderworlds.com%2Fsnapshots%2Fnet%2Frealdarkstudios%2FMinecaching%2Fmaven-metadata.xml&label=Latest%20Snapshot)
+![Latest Release](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fmaven.digitalunderworlds.com%2Freleases%2Fnet%2Frealdarkstudios%2Fminecaching%2Fmaven-metadata.xml&label=Latest%20Release)
+![Latest Snapshot](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fmaven.digitalunderworlds.com%2Fsnapshots%2Fnet%2Frealdarkstudios%2Fminecaching%2Fmaven-metadata.xml&label=Latest%20Snapshot)
 
 Bring [Geocaching](https://www.geocaching.com) to your Minecraft server!
 

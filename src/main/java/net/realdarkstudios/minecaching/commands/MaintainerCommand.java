@@ -6,18 +6,20 @@ import net.realdarkstudios.minecaching.api.menu.CacheDataMenu;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class MaintainerCommand extends MCCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length < 2) {
+        if (args.length < 1) {
             LocalizedMessages.send(sender, MessageKeys.Error.INCORRECT_ARG_COUNT);
             LocalizedMessages.send(sender, MessageKeys.Usage.MAINTAINER, label);
             return true;
@@ -56,6 +58,25 @@ public class MaintainerCommand extends MCCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        return null;
+        if (sender instanceof Player) return args.length == 1 ? MinecachingAPI.get().getFilteredCacheIDs(s -> s.contains(args[0])) : List.of();
+
+        ArrayList<String> toReturn = new ArrayList<>();
+
+        String cacheID = args[0];
+        if (MinecachingAPI.get().getMinecache(cacheID).equals(Minecache.EMPTY)) return MinecachingAPI.get().getFilteredCacheIDs(s -> s.contains(args[0]));
+        Minecache cache = MinecachingAPI.get().getMinecache(cacheID);
+
+        PlayerDataObject author = MinecachingAPI.get().getPlayerData(cache.originalAuthor());
+        PlayerDataObject owner = MinecachingAPI.get().getPlayerData(cache.owner());
+
+        List<PlayerDataObject> availablePlrs = new ArrayList<>(MinecachingAPI.get().getAllKnownPlayers());
+        availablePlrs.removeAll(List.of(author, owner, MinecachingAPI.get().getPlayerData(MCUtils.EMPTY_UUID)));
+
+        availablePlrs.forEach(pdo -> {
+            toReturn.add(pdo.getUsername());
+            toReturn.add(pdo.getUniqueID().toString());
+        });
+
+        return toReturn.stream().filter(s -> s.contains(args[1])).toList();
     }
 }

@@ -48,8 +48,9 @@ public class CreateCacheMenu extends MCMenu {
         boolean loc = coordCheck(cache.location());
         boolean cachedist = loc && cacheDistanceCheck(cache.location());
         boolean lodedist = loc && navLoc && distanceCheck(cache.location(), cache.navLocation(), Config.getInstance().getMaxLodestoneDistance());
+        boolean boundsCheck = isInBoundsCheck(cache.location());
 
-        boolean ready = name && code && navLoc && loc && cachedist && lodedist && timeCheck;
+        boolean ready = name && code && navLoc && loc && cachedist && lodedist && timeCheck && boundsCheck;
 
         setItem(8, new CloseMenuItem());
 
@@ -88,6 +89,10 @@ public class CreateCacheMenu extends MCMenu {
             setItem(31, new CreateCacheSaveMenuItem(MessageKeys.Menu.SAVE.translateWithOtherStyle(
                     ready ? MessageKeys.Menu.SAVE.styleOptions() : new LocalizedMessages.StyleOptions().setColor(ChatColor.RED)),
                     new ItemStack(ready ? Material.LIME_CONCRETE : Material.BEDROCK), List.of(MessageKeys.Menu.SAVE_LORE.translate(),
+                    !ready && !boundsCheck ? MessageKeys.Error.Create.OUT_OF_BOUNDS.translate(
+                            MCUtils.formatLocation(cache.location()),
+                            MCUtils.formatLocation(Config.getInstance().getMinLocation()),
+                            MCUtils.formatLocation(Config.getInstance().getMaxLocation())) : "",
                     !ready && !timeCheck ? MessageKeys.Error.Create.TIME.translate(
                             LocalDateTime.now().until(author.getCacheCooldownExpireTime(), ChronoUnit.MINUTES)) : "",
                     !ready && !cachedist && loc ? MessageKeys.Error.Create.TOO_CLOSE.translate(
@@ -109,6 +114,10 @@ public class CreateCacheMenu extends MCMenu {
 
     private static boolean distanceCheck(Location a, Location b, int maxDist) {
         return a.distance(b) <= maxDist;
+    }
+
+    private static boolean isInBoundsCheck(Location loc) {
+        return Config.getInstance().getCacheBounds().contains(loc.toVector(), loc.toVector());
     }
 
     private boolean timeCheck(PlayerDataObject pdo) {

@@ -22,9 +22,9 @@ public class LocalizedMessages {
          send(sender, key, key.styleOptions(), formatArgs);
     }
 
-    public static void sendComponent(CommandSender sender, TextComponent textComponent) {
+    public static void sendComponents(CommandSender sender, TextComponent... textComponents) {
         if (!(sender instanceof Player plr)) MinecachingAPI.info("Can't send component to non-player!");
-        else plr.spigot().sendMessage(textComponent);
+        else plr.spigot().sendMessage(textComponents);
     }
 
     /**
@@ -148,7 +148,7 @@ public class LocalizedMessages {
 
     public static class StyleOptions {
         public static final StyleOptions NONE = new StyleOptions().setColor(ChatColor.RESET);
-        public static final StyleOptions ERROR = new StyleOptions().setColor(ChatColor.RED).setUnderline(true);
+        public static final StyleOptions ERROR = new StyleOptions().setColor(ChatColor.RED);
         public static final StyleOptions SUCCESS = new StyleOptions().setColor(ChatColor.GREEN);
 
         private ClickEvent clickEvent;

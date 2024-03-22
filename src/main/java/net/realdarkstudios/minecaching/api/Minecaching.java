@@ -22,13 +22,13 @@ import java.nio.file.Path;
 
 public final class Minecaching extends JavaPlugin {
     private static Minecaching plugin;
-    private static String version;
+    private static AutoUpdater.Version version;
     private static MinecachingAPI api;
 
     @Override
     public void onEnable() {
         plugin = this;
-        version = getDescription().getVersion();
+        version = AutoUpdater.Version.fromString(getDescription().getVersion());
         api = new MinecachingAPI();
 
         api.init();
@@ -45,7 +45,10 @@ public final class Minecaching extends JavaPlugin {
         } else {
             // Load plugin data
             api.load(true);
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, AutoUpdater::checkForUpdate, 0L,36000L);
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+                MinecachingAPI.getUpdater().updateBranch(Config.getInstance().getUpdateBranch());
+                MinecachingAPI.getUpdater().checkForUpdate();
+            }, 0L,36000L);
 
             // Register commands
             MinecachingAPI.tInfo(MessageKeys.Plugin.REGISTERING_COMMANDS);
@@ -89,9 +92,10 @@ public final class Minecaching extends JavaPlugin {
         }
 
         // Performs auto-update if there is a newer plugin version and the config AUTO_UPDATE option is true
-        if (AutoUpdater.hasUpdate() && Config.getInstance().autoUpdate()) {
-            AutoUpdater.checkForUpdate();
-            String newVersion = AutoUpdater.getNewestVersion();
+        if (MinecachingAPI.getUpdater().hasUpdate() && Config.getInstance().autoUpdate()) {
+            MinecachingAPI.getUpdater().updateBranch(Config.getInstance().getUpdateBranch());
+            MinecachingAPI.getUpdater().checkForUpdate();
+            String newVersion = MinecachingAPI.getUpdater().getNewestVersion();
             MinecachingAPI.tInfo(MessageKeys.Plugin.Update.GETTING, newVersion);
             try {
                 URL download = new URL("https://maven.digitalunderworlds.com/" + Config.getInstance().getUpdateBranch() + "s/net/realdarkstudios/Minecaching/" + newVersion + "/Minecaching-" + newVersion + ".jar");
@@ -123,8 +127,11 @@ public final class Minecaching extends JavaPlugin {
         return plugin;
     }
 
-    public static String getVersion() {
+    public static AutoUpdater.Version getVersion() {
         return version;
+    }
+    public static String getVersionString() {
+        return version.toString();
     }
 
     public static MinecachingAPI getAPI() {

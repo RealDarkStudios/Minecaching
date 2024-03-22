@@ -33,6 +33,69 @@ public class StatsScoreOptions {
         this.perFTF = perFTF;
     }
 
+    public int favorite() {
+        return perFavorite;
+    }
+
+    public int find() {
+        return perFind;
+    }
+
+    public int ftf() {
+        return perFTF;
+    }
+
+    public int hideAD() {
+        return perHideAD;
+    }
+
+    public int hideR() {
+        return perHideR;
+    }
+
+    public int hideNM() {
+        return perHideNM;
+    }
+
+    public int hideP() {
+        return perHideP;
+    }
+
+    public StatsScoreOptions setFavorite(int score) {
+        this.perFavorite = score;
+        return this;
+    }
+
+    public StatsScoreOptions setFind(int score) {
+        this.perFind = score;
+        return this;
+    }
+
+    public StatsScoreOptions setFTF(int score) {
+        this.perFTF = score;
+        return this;
+    }
+
+    public StatsScoreOptions setHideAD(int score) {
+        this.perHideAD = score;
+        return this;
+    }
+
+    public StatsScoreOptions setHideNM(int score) {
+        this.perHideNM = score;
+        return this;
+    }
+
+    public StatsScoreOptions setHideR(int score) {
+        this.perHideR = score;
+        return this;
+    }
+
+    public StatsScoreOptions setHideP(int score) {
+        this.perHideP = score;
+        return this;
+    }
+
     public int calculateScore(PlayerDataObject pdo) {
         int total = 0;
 
@@ -41,14 +104,9 @@ public class StatsScoreOptions {
         List<String> ftfs = pdo.getFTFs();
         int favorites = 0;
 
-        for (String hide: hides) {
-            favorites += MinecachingAPI.get().getMinecache(hide).favorites();
-        }
+        for (Minecache cache: MinecachingAPI.get().getFilteredCaches(c -> hides.contains(c.id()))) {
+            favorites += cache.favorites();
 
-        total += (perFind * finds.size()) + (perFTF * ftfs.size()) + (perFavorite * favorites);
-
-        for (String id: hides) {
-            Minecache cache = MinecachingAPI.get().getMinecache(id);
             if (cache.status().equals(MinecacheStatus.PUBLISHED)) total += perHideP;
             else if (cache.status().equals(MinecacheStatus.NEEDS_MAINTENANCE)) total += perHideNM;
             else if (cache.status().equals(MinecacheStatus.REVIEWING)) total += perHideR;
@@ -57,14 +115,32 @@ public class StatsScoreOptions {
             else total += 0;
         }
 
+        total += (perFind * finds.size()) + (perFTF * ftfs.size()) + (perFavorite * favorites);
+
         return total;
     }
 
     public static StatsScoreOptions fromYaml(YamlConfiguration yaml, String key) {
-        return new StatsScoreOptions();
+        int find, favorite, ftf, hideAD, hideNM, hideR, hideP;
+
+        find = yaml.getInt(key + ".FIND", 1);
+        favorite = yaml.getInt(key + ".FAVORITE", 1);
+        ftf = yaml.getInt(key + ".FTF", 10);
+        hideAD = yaml.getInt(key + ".HIDE_AD", 0);
+        hideNM = yaml.getInt(key + ".HIDE_NM", 2);
+        hideR = yaml.getInt(key + ".HIDE_R", 3);
+        hideP = yaml.getInt(key + ".HIDE_P", 5);
+
+        return new StatsScoreOptions(find, hideAD, hideR, hideNM, hideP, favorite, ftf);
     }
 
     public void toYaml(YamlConfiguration yaml, String key) {
-
+        yaml.set(key + ".FIND", perFind);
+        yaml.set(key + ".FAVORITE", perFavorite);
+        yaml.set(key + ".FTF", perFTF);
+        yaml.set(key + ".HIDE_AD", perHideAD);
+        yaml.set(key + ".HIDE_R", perHideR);
+        yaml.set(key + ".HIDE_NM", perHideNM);
+        yaml.set(key + ".HIDE_P", perHideP);
     }
 }

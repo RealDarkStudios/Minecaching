@@ -253,7 +253,10 @@ public abstract class MCMenu {
                         UUID playerUuid = player.getUniqueId();
                         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                             Player p1 = Bukkit.getPlayer(playerUuid);
-                            if (p1 != null) parent.open(p1);
+                            if (p1 != null) {
+                                parent.open(p1);
+                                parent.update(p1);
+                            }
                         }, 3);
                     }
                 }

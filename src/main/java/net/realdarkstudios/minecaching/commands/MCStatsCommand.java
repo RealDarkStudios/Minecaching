@@ -20,7 +20,7 @@ public class MCStatsCommand extends MCCommand {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         // Stats
         List<PlayerDataObject> mostFinds = MinecachingAPI.get().getSortedPlayers(Comparator.comparingInt(p -> p.getFinds().size()));
-        List<PlayerDataObject> mostHides = MinecachingAPI.get().getSortedPlayers(Comparator.comparingInt(this::determinePublishedHides));
+        List<PlayerDataObject> mostHides = MinecachingAPI.get().getSortedPlayers(Comparator.comparingInt(this::determineValidHides));
         List<PlayerDataObject> mostFTFs = MinecachingAPI.get().getSortedPlayers(Comparator.comparingInt(p -> p.getFTFs().size()));
         List<PlayerDataObject> mostAccomplished = MinecachingAPI.get().getSortedPlayers(Comparator.comparingInt(Config.getInstance().getStatsScoreOptions()::calculateScore));
         List<Minecache> favoriteCaches = MinecachingAPI.get().getSortedCaches(Comparator.comparingInt(Minecache::favorites));
@@ -42,7 +42,7 @@ public class MCStatsCommand extends MCCommand {
         LocalizedMessages.send(sender, MessageKeys.Command.Stats.FAVORITE_CACHE, favoriteCache.id(), favoriteCache.favorites());
         LocalizedMessages.send(sender, MessageKeys.Command.Stats.MOST_FINDS, mostFindsPDO.getUsername(), mostFindsPDO.getFinds().size());
         LocalizedMessages.send(sender, MessageKeys.Command.Stats.MOST_FTFS, mostFTFsPDO.getUsername(), mostFTFsPDO.getFTFs().size());
-        LocalizedMessages.send(sender, MessageKeys.Command.Stats.MOST_HIDES, mostHidesPDO.getUsername(), determinePublishedHides(mostHidesPDO));
+        LocalizedMessages.send(sender, MessageKeys.Command.Stats.MOST_HIDES, mostHidesPDO.getUsername(), determineValidHides(mostHidesPDO));
         LocalizedMessages.send(sender, MessageKeys.Command.Stats.MOST_ACCOMPLISHED,
                 mostAccomplishedPDO.getUsername(), Config.getInstance().getStatsScoreOptions().calculateScore(mostAccomplishedPDO));
 
@@ -58,13 +58,13 @@ public class MCStatsCommand extends MCCommand {
         return pdos.get(pdos.size() - 1).getUniqueID().equals(MCUtils.EMPTY_UUID) ? pdos.get(pdos.size() - 2) : pdos.get(pdos.size() - 1);
     }
 
-    private int determinePublishedHides(PlayerDataObject pdo) {
-        int totalPub = 0;
+    private int determineValidHides(PlayerDataObject pdo) {
+        int totalHides = 0;
 
-        for (String id: pdo.getHides()) {
-            if (MinecachingAPI.get().getMinecache(id).status().equals(MinecacheStatus.PUBLISHED)) totalPub++;
+        for (Minecache cache: MinecachingAPI.get().getFilteredCaches(c -> pdo.getHides().contains(c.id()))) {
+            if (cache.status().equals(MinecacheStatus.PUBLISHED) || cache.status().equals(MinecacheStatus.NEEDS_MAINTENANCE)) totalHides++;
         }
 
-        return totalPub;
+        return totalHides;
     }
 }

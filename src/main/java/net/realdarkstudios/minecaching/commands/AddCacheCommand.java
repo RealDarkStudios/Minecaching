@@ -65,6 +65,6 @@ public class AddCacheCommand extends MCCommand {
         if (!(sender instanceof Player plr)) return List.of();
 
         if (MinecachingAPI.get().getPlayerData(plr).getCreatingCache().equals(Minecache.EMPTY)) return List.of();
-        else return List.of("name", "code");
+        else return args.length == 1 ? List.of("name", "code").stream().filter(s -> s.contains(args[0])).toList() : List.of();
     }
 }

@@ -61,6 +61,6 @@ public class LogCacheCommand extends MCCommand {
         if (!(sender instanceof Player plr)) return List.of();
 
         if (MinecachingAPI.get().getPlayerData(plr).getLocatingId().equals("NULL")) return List.of();
-        else return List.of("message", "code");
+        else return List.of("message", "code").stream().filter(s -> s.contains(args[0])).toList();
     }
 }

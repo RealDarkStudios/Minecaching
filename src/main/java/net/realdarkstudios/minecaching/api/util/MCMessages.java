@@ -18,7 +18,7 @@ public class MCMessages {
      */
     public static final TextComponent NO_PERMISSION = TextComponentBuilder.fromTranslation("permission.none")
             .color(ChatColor.DARK_RED)
-            .bold()
+            .bold(true)
             .build();
 
     /**
@@ -42,7 +42,7 @@ public class MCMessages {
      * @return The translated {@link TextComponent}
      */
     public static TextComponent noPermission(String source, Object... substitutions) {
-        if (MinecachingAPI.getLocalization().hasTranslation("permission.none." + source)) return TextComponentBuilder.fromTranslation("permission.none." + source, substitutions).color(ChatColor.DARK_RED).bold().build();
+        if (MinecachingAPI.getLocalization().hasTranslation("permission.none." + source)) return TextComponentBuilder.fromTranslation("permission.none." + source, substitutions).color(ChatColor.DARK_RED).bold(true).build();
         else return NO_PERMISSION;
     }
 

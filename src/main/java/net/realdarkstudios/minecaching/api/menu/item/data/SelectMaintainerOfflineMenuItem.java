@@ -27,7 +27,7 @@ public class SelectMaintainerOfflineMenuItem extends MenuItem {
         MinecachingAPI.get().saveMinecache(cache.setMaintaner(pdo.getUniqueID()), false);
         LocalizedMessages.send(event.getPlayer(), MessageKeys.Menu.Data.SET_MAINTAINER, cache.id(), name);
 
-        event.setClose(true);
+        event.setGoBack(true);
         super.onItemClick(event);
     }
 }
