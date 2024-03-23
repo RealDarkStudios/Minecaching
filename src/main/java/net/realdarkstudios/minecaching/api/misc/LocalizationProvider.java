@@ -39,6 +39,10 @@ public class LocalizationProvider {
      * @since 0.3.1.0-24w11a
      */
     public Localization load(Plugin plugin, Locale locale) {
+        if (locale.equals(Locale.forLanguageTag("und"))) {
+            locale = Locale.US;
+            MinecachingAPI.warning("Language for plugin " + plugin.getName() + " is 'und'! Using en-US instead!");
+        }
         return pluginMap.containsKey(plugin) ? get(plugin) : loadPlugin(plugin, locale);
     }
 

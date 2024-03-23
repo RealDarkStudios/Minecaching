@@ -4,12 +4,15 @@ import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +20,7 @@ import java.util.function.Function;
 
 public abstract class AutoUpdater {
     private final Plugin plugin;
-    private final String url;
+    private final String dataURL, versionURL;
     private Function<URL, HashMap<Version, String>> parser;
     private static String newVer = "", branch = "";
     private static boolean doUpdate = false;
@@ -27,11 +30,13 @@ public abstract class AutoUpdater {
      * Creates an auto-updater for a given Plugin.
      * There is no need to create more than one auto updater, as this may have bad consequences.
      * @param plugin The {@link Plugin} that owns this auto updater.
-     * @param url The URL to check for updates from. To use branch functionality, add '%s' wherever the branch would go in the URL.
+     * @param dataURL The URL to check for updates from. Put '%b%' wherever the branch would go in the URL.
+     * @param versionURL The URL to grab a version file from. Put '%b%' where the branch would go, and '%v%' where the version would go.
      */
-    public AutoUpdater(Plugin plugin, String url) {
+    public AutoUpdater(Plugin plugin, String dataURL, String versionURL) {
         this.plugin = plugin;
-        this.url = url;
+        this.dataURL = dataURL;
+        this.versionURL = versionURL;
         this.parser = this::parseMavenMetadata;
     }
 
@@ -100,7 +105,7 @@ public abstract class AutoUpdater {
 
                 try {
                     // Grab the info from maven-metadata.xml on the maven
-                    URL readURL = new URL(String.format(url, branch));
+                    URL readURL = new URL(dataURL.replace("%b%", branch));
 
                     versionMap = getParser().apply(readURL);
 
@@ -158,6 +163,29 @@ public abstract class AutoUpdater {
         }.runTaskAsynchronously(Minecaching.getInstance());
 
         lastUpdateCheck = result[0];
+    }
+
+    public void applyUpdate() {
+        String newVersion = getNewestVersion();
+        MinecachingAPI.tInfo(MessageKeys.Plugin.Update.GETTING, newVersion);
+        try {
+            URL download = new URL(versionURL.replace("%b%", branch).replace("%v%", newVersion));
+            ReadableByteChannel rbc = Channels.newChannel(download.openStream());
+            File file = new File(Path.of(plugin.getDataFolder().toURI()).getParent().toString() + "/" + plugin.getName() + "-" + newVersion + ".jar");
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+            fos.close();
+            MinecachingAPI.tInfo(MessageKeys.Plugin.Update.DOWNLOADED);
+
+            Method getFileMethod = JavaPlugin.class.getDeclaredMethod("getFile");
+            getFileMethod.setAccessible(true);
+            File curfile = (File) getFileMethod.invoke(plugin);
+            MinecachingAPI.tInfo(MessageKeys.Plugin.Update.APPLIED);
+            curfile.deleteOnExit();
+        } catch (Exception e) {
+            MinecachingAPI.tWarning(MessageKeys.Plugin.Update.FAIL);
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -296,6 +324,17 @@ public abstract class AutoUpdater {
 
         public boolean isPrerelease() {
             return prerelease;
+        }
+
+        @Override
+        public String toString() {
+            if (prerelease) {
+                return String.format("%d.%d.%d.%d-pre%d", majorapi, minorapi, build, patch, prereleaseVer);
+            } else if (snapshot) {
+                return String.format("snapshot.%d.%d.%d.%d-%s", majorapi, minorapi, build, patch, snapshotVer);
+            } else {
+                return String.format("%d.%d.%d.%d", majorapi, minorapi, build, patch);
+            }
         }
 
         public static Version fromString(String version) {

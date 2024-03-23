@@ -1,6 +1,12 @@
 package net.realdarkstudios.minecaching.api.menu.impl.item;
 
 import me.scarsz.mojang.Head;
+import me.scarsz.mojang.Mojang;
+import me.scarsz.mojang.exception.ProfileFetchException;
+import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +24,17 @@ public class SkullMenuItem extends MenuItem {
     public ItemStack getSkull(OfflinePlayer player) {
         ItemStack item;
         if (uuid != null) {
-            item = Head.create(uuid);
+            if (uuid.equals(MCUtils.EMPTY_UUID)) {
+                item = new ItemStack(Material.PLAYER_HEAD);
+            } else {
+                try {
+                    if (Mojang.fetch(uuid) == null) throw new ProfileFetchException(uuid.toString(), new Exception("Could not fetch data for UUID " + uuid));
+                    item = !Bukkit.getOnlineMode() || uuid.equals(MCUtils.EMPTY_UUID) ? new ItemStack(Material.PLAYER_HEAD) : Head.create(uuid);
+                } catch (ProfileFetchException e) {
+                    MinecachingAPI.warning(e.getMessage());
+                    item = new ItemStack(Material.PLAYER_HEAD);
+                }
+            }
         } else {
             item = Head.create(player);
         }

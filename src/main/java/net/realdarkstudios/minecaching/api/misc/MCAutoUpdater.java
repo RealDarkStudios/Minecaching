@@ -6,7 +6,9 @@ import java.io.IOException;
 
 public class MCAutoUpdater extends AutoUpdater {
     public MCAutoUpdater() {
-        super(Minecaching.getInstance(), "https://maven.digitalunderworlds.com/%ss/net/realdarkstudios/minecaching/maven-metadata.xml");
+        super(Minecaching.getInstance(),
+                "https://maven.digitalunderworlds.com/%b%s/net/realdarkstudios/minecaching/maven-metadata.xml",
+                "https://maven.digitalunderworlds.com/%b%s/net/realdarkstudios/minecaching/%v%/minecaching-%v%.jar");
         setParser(this::parseMavenMetadata);
     }
 

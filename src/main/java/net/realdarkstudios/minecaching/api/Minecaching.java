@@ -12,14 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.file.Path;
-
 public final class Minecaching extends JavaPlugin {
     private static Minecaching plugin;
     private static AutoUpdater.Version version;
@@ -75,7 +67,7 @@ public final class Minecaching extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new MCDebugEventHandler(), this);
             getServer().getPluginManager().registerEvents(new MCEventHandler(), this);
 
-            MinecachingAPI.tInfo(MessageKeys.Plugin.ENABLED, version);
+            MinecachingAPI.tInfo(MessageKeys.Plugin.ENABLED, getVersionString());
         }
     }
 
@@ -93,32 +85,11 @@ public final class Minecaching extends JavaPlugin {
 
         // Performs auto-update if there is a newer plugin version and the config AUTO_UPDATE option is true
         if (MinecachingAPI.getUpdater().hasUpdate() && Config.getInstance().autoUpdate()) {
-            MinecachingAPI.getUpdater().updateBranch(Config.getInstance().getUpdateBranch());
-            MinecachingAPI.getUpdater().checkForUpdate();
-            String newVersion = MinecachingAPI.getUpdater().getNewestVersion();
-            MinecachingAPI.tInfo(MessageKeys.Plugin.Update.GETTING, newVersion);
-            try {
-                URL download = new URL("https://maven.digitalunderworlds.com/" + Config.getInstance().getUpdateBranch() + "s/net/realdarkstudios/Minecaching/" + newVersion + "/Minecaching-" + newVersion + ".jar");
-                ReadableByteChannel rbc = Channels.newChannel(download.openStream());
-                File file = new File(Path.of(getDataFolder().toURI()).getParent().toString() + "/Minecaching-" + newVersion + ".jar");
-                FileOutputStream fos = new FileOutputStream(file);
-                fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-                fos.close();
-                MinecachingAPI.tInfo(MessageKeys.Plugin.Update.DOWNLOADED);
-
-                Method getFileMethod = JavaPlugin.class.getDeclaredMethod("getFile");
-                getFileMethod.setAccessible(true);
-                File curfile = (File) getFileMethod.invoke(this);
-                MinecachingAPI.tInfo(MessageKeys.Plugin.Update.APPLIED);
-                curfile.deleteOnExit();
-            } catch (Exception e) {
-                MinecachingAPI.tWarning(MessageKeys.Plugin.Update.FAIL);
-                e.printStackTrace();
-            }
+            MinecachingAPI.getUpdater().applyUpdate();
         } else MinecachingAPI.tInfo(MessageKeys.Plugin.Update.AUTO_DISABLED_DOWNLOAD);
 
         // Save all plugin data
-        String disabledMsg = MessageKeys.Plugin.DISABLED.console(version);
+        String disabledMsg = MessageKeys.Plugin.DISABLED.console(getVersionString());
         api.save();
         getLogger().info(disabledMsg);
     }
@@ -130,6 +101,7 @@ public final class Minecaching extends JavaPlugin {
     public static AutoUpdater.Version getVersion() {
         return version;
     }
+
     public static String getVersionString() {
         return version.toString();
     }

@@ -6,10 +6,10 @@ import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.log.LogType;
 import net.realdarkstudios.minecaching.api.menu.impl.item.SkullMenuItem;
-import net.realdarkstudios.minecaching.api.misc.Notification;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStorage;
 import net.realdarkstudios.minecaching.api.misc.Config;
+import net.realdarkstudios.minecaching.api.misc.Notification;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
 import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
@@ -47,7 +47,7 @@ public class PlayerDataObject {
         if (getUniqueID().equals(MCUtils.EMPTY_UUID)) return "[CONSOLE]";
 
         try {
-            if (getOfflinePlayer().hasPlayedBefore() && !getOfflinePlayer().getName().isEmpty()) return getOfflinePlayer().getName();
+            if (getOfflinePlayer().hasPlayedBefore() && getOfflinePlayer().getName() != null) return getOfflinePlayer().getName();
             else return getGameProfile().getName();
         } catch (Exception e) {
             return getGameProfile().getName();
@@ -302,8 +302,8 @@ public class PlayerDataObject {
         creatingCache.setID(yaml.getString("creating_id") == null ? "NULL" : yaml.getString("creating_id"));
         editingCache.setID(yaml.getString("editing_id") == null ? "NULL" : yaml.getString("editing_id"));
 
-        this.skullItemStack = getUniqueID().equals(MCUtils.EMPTY_UUID) ? null : new SkullMenuItem(getUsername(), getUniqueID(), List.of()).getSkull(getOfflinePlayer());
-    }
+        this.skullItemStack = new SkullMenuItem(getUsername(), getUniqueID(), List.of()).getSkull(getOfflinePlayer());
+      }
 
     public void saveData() {
         yaml.set("ftfs", this.ftfs);

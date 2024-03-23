@@ -8,6 +8,17 @@ VERSION
 
 CHANGELOG:
 
+Release 0.3.1.0
+Added:
+- AutoUpdater#applyUpdate
+- Version#toString (I thought I already had this but I guess not)
+
+Changes:
+- (BUGFIX) Servers that have player data that is from offline mode would not load. This has been corrected.
+- AutoUpdater constructor now takes in a dataURL (for checking versions) and a versionURL (for grabbing versions).
+- LocalizationProvider#load now checks if the Locale is the Locale for "und" and sets it to Locale.US if it is.
+- SkullMenuItem#getSkull now checks for valid game profile instead of PlayerDataObject
+
 Prerelease 0.3.1.0-pre1/2:
 Added:
 - /mca conf, to easily change config values in-game (not all config options are able to be changed here)
