@@ -1,14 +1,14 @@
 package net.realdarkstudios.minecaching.commands;
 
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.player.PlayerStorage;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -25,28 +25,39 @@ public class MCStatsCommand extends MCCommand {
         List<PlayerDataObject> mostAccomplished = MinecachingAPI.get().getSortedPlayers(Comparator.comparingInt(Config.getInstance().getStatsScoreOptions()::calculateScore));
         List<Minecache> favoriteCaches = MinecachingAPI.get().getSortedCaches(Comparator.comparingInt(Minecache::favorites));
         List<Minecache> newestCaches = MinecachingAPI.get().getSortedCaches(Comparator.comparing(Minecache::hidden));
-        Minecache newestCache = newestCaches.get(newestCaches.size() - 1);
-        Minecache newestCache2 = newestCaches.get(newestCaches.size() - 2);
-        Minecache newestCache3 = newestCaches.get(newestCaches.size() - 3);
-        Minecache favoriteCache = favoriteCaches.get(favoriteCaches.size() - 1);
+        Minecache newestCache = !newestCaches.isEmpty() ? newestCaches.get(newestCaches.size() - 1) : null;
+        Minecache newestCache2 = newestCaches.size() > 1 ? newestCaches.get(newestCaches.size() - 2) : null;
+        Minecache newestCache3 = newestCaches.size() > 2 ?newestCaches.get(newestCaches.size() - 3) : null;
+        Minecache favoriteCache = !favoriteCaches.isEmpty() ? favoriteCaches.get(favoriteCaches.size() - 1) : null;
         PlayerDataObject mostFindsPDO = validateTopPDO(mostFinds);
         PlayerDataObject mostHidesPDO = validateTopPDO(mostHides);
         PlayerDataObject mostFTFsPDO = validateTopPDO(mostFTFs);
         PlayerDataObject mostAccomplishedPDO = validateTopPDO(mostAccomplished);
 
-        LocalizedMessages.send(sender, MessageKeys.Command.Stats.HEADER);
-        LocalizedMessages.send(sender, MessageKeys.Command.Stats.CACHES, MinecachingAPI.get().getAllKnownCaches().size());
-        LocalizedMessages.send(sender, MessageKeys.Command.Stats.PLAYERS, MinecachingAPI.get().getAllKnownPlayers().size());
-        LocalizedMessages.send(sender, MessageKeys.Command.Stats.FINDS, PlayerStorage.getInstance().totalFinds());
-        LocalizedMessages.send(sender, MessageKeys.Command.Stats.NEWEST_CACHES, newestCache.id(), newestCache2.id(), newestCache3.id());
-        LocalizedMessages.send(sender, MessageKeys.Command.Stats.FAVORITE_CACHE, favoriteCache.id(), favoriteCache.favorites());
-        LocalizedMessages.send(sender, MessageKeys.Command.Stats.MOST_FINDS, mostFindsPDO.getUsername(), mostFindsPDO.getFinds().size());
-        LocalizedMessages.send(sender, MessageKeys.Command.Stats.MOST_FTFS, mostFTFsPDO.getUsername(), mostFTFsPDO.getFTFs().size());
-        LocalizedMessages.send(sender, MessageKeys.Command.Stats.MOST_HIDES, mostHidesPDO.getUsername(), determineValidHides(mostHidesPDO));
-        LocalizedMessages.send(sender, MessageKeys.Command.Stats.MOST_ACCOMPLISHED,
+        LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.HEADER);
+        LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.CACHES, MinecachingAPI.get().getAllKnownCaches().size());
+        LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.PLAYERS, MinecachingAPI.get().getAllKnownPlayers().size() - 1);
+        LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.FINDS, PlayerStorage.getInstance().totalFinds());
+        if (newestCache == null)
+            LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.NEWEST_CACHES, none(), none(), none());
+        else if (newestCache2 == null)
+            LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.NEWEST_CACHES, newestCache.id(), none(), none());
+        else if (newestCache3 == null)
+            LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.NEWEST_CACHES, newestCache.id(), newestCache2.id(), none());
+        else LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.NEWEST_CACHES, newestCache.id(), newestCache2.id(), newestCache3.id());
+        if (favoriteCache == null) LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.FAVORITE_CACHE, none(), 0);
+        else LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.FAVORITE_CACHE, favoriteCache.id(), favoriteCache.favorites());
+        LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.MOST_FINDS, mostFindsPDO.getUsername(), mostFindsPDO.getFinds().size());
+        LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.MOST_FTFS, mostFTFsPDO.getUsername(), mostFTFsPDO.getFTFs().size());
+        LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.MOST_HIDES, mostHidesPDO.getUsername(), determineValidHides(mostHidesPDO));
+        LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.MOST_ACCOMPLISHED,
                 mostAccomplishedPDO.getUsername(), Config.getInstance().getStatsScoreOptions().calculateScore(mostAccomplishedPDO));
 
         return true;
+    }
+
+    private String none() {
+        return MCMessageKeys.Command.Stats.NONE.getMessage();
     }
 
     @Override

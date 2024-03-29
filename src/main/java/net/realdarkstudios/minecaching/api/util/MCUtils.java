@@ -1,5 +1,6 @@
 package net.realdarkstudios.minecaching.api.util;
 
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.event.minecache.LogCreatedEvent;
@@ -87,27 +88,27 @@ public class MCUtils {
     public static boolean locationInvalid(CommandSender sender, int x, int y, int z) {
         Config cfg = Config.getInstance();
         if (x > cfg.getMaxX()) {
-            LocalizedMessages.send(sender, MessageKeys.Error.ABOVE_COORD_LIMIT, "X", x, cfg.getMaxX());
+            LocalizedMessages.send(sender, MCMessageKeys.Error.ABOVE_COORD_LIMIT, "X", x, cfg.getMaxX());
             return true;
         }
         if (x < cfg.getMinX()) {
-            LocalizedMessages.send(sender, MessageKeys.Error.BELOW_COORD_LIMIT, "X", x, cfg.getMaxX());
+            LocalizedMessages.send(sender, MCMessageKeys.Error.BELOW_COORD_LIMIT, "X", x, cfg.getMaxX());
             return true;
         }
         if (y > cfg.getMaxY()) {
-            LocalizedMessages.send(sender, MessageKeys.Error.ABOVE_COORD_LIMIT, "Y", y, cfg.getMaxY());
+            LocalizedMessages.send(sender, MCMessageKeys.Error.ABOVE_COORD_LIMIT, "Y", y, cfg.getMaxY());
             return true;
         }
         if (y < cfg.getMinY()) {
-            LocalizedMessages.send(sender, MessageKeys.Error.BELOW_COORD_LIMIT, "Y", y, cfg.getMaxY());
+            LocalizedMessages.send(sender, MCMessageKeys.Error.BELOW_COORD_LIMIT, "Y", y, cfg.getMaxY());
             return true;
         }
         if (z > cfg.getMaxZ()) {
-            LocalizedMessages.send(sender, MessageKeys.Error.ABOVE_COORD_LIMIT, "Z", z, cfg.getMaxZ());
+            LocalizedMessages.send(sender, MCMessageKeys.Error.ABOVE_COORD_LIMIT, "Z", z, cfg.getMaxZ());
             return true;
         }
         if (z < cfg.getMinZ()) {
-            LocalizedMessages.send(sender, MessageKeys.Error.BELOW_COORD_LIMIT, "Z", z, cfg.getMaxZ());
+            LocalizedMessages.send(sender, MCMessageKeys.Error.BELOW_COORD_LIMIT, "Z", z, cfg.getMaxZ());
             return true;
         }
         return false;

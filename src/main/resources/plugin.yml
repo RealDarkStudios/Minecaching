@@ -5,6 +5,7 @@ api-version: '1.19'
 prefix: Minecaching
 load: POSTWORLD
 authors: [RealDarkStudios / RDS]
+depend: [RDSCommons]
 description: Bring Geocaching to your Minecraft server!
 commands:
   addcache:

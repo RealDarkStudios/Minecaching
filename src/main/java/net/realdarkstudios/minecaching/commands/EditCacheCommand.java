@@ -1,5 +1,6 @@
 package net.realdarkstudios.minecaching.commands;
 
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.event.minecache.MinecacheEditedEvent;
 import net.realdarkstudios.minecaching.api.menu.EditCacheMenu;
@@ -8,9 +9,8 @@ import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.misc.NotificationType;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -34,8 +34,8 @@ public class EditCacheCommand extends MCCommand {
         PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(uuid);
 
         if (args.length < 1 && pdo.getEditingCache().id().equals("NULL")) {
-            LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
-            LocalizedMessages.send(sender, MessageKeys.Usage.EDIT, label);
+            LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_USAGE);
+            LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT, label);
             return true;
         }
 
@@ -51,8 +51,8 @@ public class EditCacheCommand extends MCCommand {
                 switch (args[0]) {
                     case "name" -> {
                         if (args.length < 2) {
-                            LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
-                            LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_NAME, label);
+                            LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_USAGE);
+                            LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT_NAME, label);
                             return true;
                         } else {
                             StringBuilder name = new StringBuilder();
@@ -66,8 +66,8 @@ public class EditCacheCommand extends MCCommand {
                     }
                     case "code" -> {
                         if (args.length < 2) {
-                            LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
-                            LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_CODE, label);
+                            LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_USAGE);
+                            LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT_CODE, label);
                             return true;
                         } else {
                             pdo.setEditingCache(pdo.getEditingCache().setCode(args[1].trim()));
@@ -75,7 +75,7 @@ public class EditCacheCommand extends MCCommand {
                             menu.update(plr);
                         }
                     }
-                    default -> LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE, cache.id());
+                    default -> LocalizedMessages.send(sender, MCMessageKeys.Error.CANT_FIND_CACHE, cache.id());
                 }
 
                 return true;
@@ -87,27 +87,27 @@ public class EditCacheCommand extends MCCommand {
                 EditCacheMenu menu = MCMenus.get().getEditCacheMenu(pdo, cache);
                 menu.open(plr);
             } else {
-                LocalizedMessages.send(sender, MessageKeys.Permission.NO_PERMISSION_EDITCACHE);
+                LocalizedMessages.send(sender, MCMessageKeys.Permission.NO_PERMISSION_EDITCACHE);
             }
         } else {
             Minecache cache = pdo.getEditingCache();
             if (args.length < 1) {
-                LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
-                LocalizedMessages.send(sender, MessageKeys.Usage.EDIT, label);
+                LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_USAGE);
+                LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT, label);
                 return true;
             } else if (args.length == 1 && (cache == null || cache.id().equals("NULL"))) {
                 String id = args[0];
 
                 if (MinecachingAPI.get().getMinecache(id).equals(Minecache.EMPTY)) {
-                    LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE, id);
+                    LocalizedMessages.send(sender, MCMessageKeys.Error.CANT_FIND_CACHE, id);
                     return true;
                 }
 
-                LocalizedMessages.send(sender, MessageKeys.Command.Edit.EDIT, id);
+                LocalizedMessages.send(sender, MCMessageKeys.Command.Edit.EDIT, id);
                 pdo.setEditingCache(MinecachingAPI.get().getMinecache(id));
                 return true;
             } else if (args.length == 1 && args[0].startsWith("MC-") && !cache.id().equals("NULL")) {
-                LocalizedMessages.send(sender, MessageKeys.Error.Edit.ALREADY_EDITING, cache.id());
+                LocalizedMessages.send(sender, MCMessageKeys.Error.Edit.ALREADY_EDITING, cache.id());
                 return true;
             }
 
@@ -115,14 +115,14 @@ public class EditCacheCommand extends MCCommand {
 
             switch (subCommand) {
                 case "cancel" -> {
-                    LocalizedMessages.send(sender, MessageKeys.Command.Edit.CANCEL, cache.id());
+                    LocalizedMessages.send(sender, MCMessageKeys.Command.Edit.CANCEL, cache.id());
                     cache = Minecache.EMPTY;
                     cache.setID("NULL");
                 }
                 case "name" -> {
                     if (args.length < 2) {
-                        LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
-                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_NAME, label);
+                        LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_USAGE);
+                        LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT_NAME, label);
                         return true;
                     } else {
                         StringBuilder name = new StringBuilder();
@@ -130,7 +130,7 @@ public class EditCacheCommand extends MCCommand {
                             name.append(args[i]).append(" ");
                         }
                         cache.setName(name.toString().trim());
-                        LocalizedMessages.send(sender, MessageKeys.Command.Edit.NAME, cache.name());
+                        LocalizedMessages.send(sender, MCMessageKeys.Command.Edit.NAME, cache.name());
                     }
                 }
                 case "lodecoords" -> {
@@ -140,15 +140,15 @@ public class EditCacheCommand extends MCCommand {
                         y = MCUtils.interpretCoordinate(args[2], "y");
                         z = MCUtils.interpretCoordinate(args[3], "z");
                     } else {
-                        LocalizedMessages.send(sender, MessageKeys.Error.INCORRECT_ARG_COUNT);
-                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_NAVIGATION_COORDS, label);
+                        LocalizedMessages.send(sender, MCMessageKeys.Error.INCORRECT_ARG_COUNT);
+                        LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT_NAVIGATION_COORDS, label);
                         return true;
                     }
 
                     if (MCUtils.locationInvalid(sender, x, y, z)) return true;
 
                     cache.setNavLocation(new Location(cache.world(), x, y, z));
-                    LocalizedMessages.send(sender, MessageKeys.Command.Edit.NAV_COORDS, cache.world().getName(), x, y, z);
+                    LocalizedMessages.send(sender, MCMessageKeys.Command.Edit.NAV_COORDS, cache.world().getName(), x, y, z);
                 }
                 case "coords" -> {
                     int x, y, z;
@@ -157,56 +157,56 @@ public class EditCacheCommand extends MCCommand {
                         y = MCUtils.interpretCoordinate(args[2], "y");
                         z = MCUtils.interpretCoordinate(args[3], "z");
                     } else {
-                        LocalizedMessages.send(sender, MessageKeys.Error.INCORRECT_ARG_COUNT);
-                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_COORDS, label);
+                        LocalizedMessages.send(sender, MCMessageKeys.Error.INCORRECT_ARG_COUNT);
+                        LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT_COORDS, label);
                         return true;
                     }
 
                     if (MCUtils.locationInvalid(sender, x, y, z)) return true;
 
                     cache.setLocation(new Location(cache.world(), x, y, z));
-                    LocalizedMessages.send(sender, MessageKeys.Command.Edit.COORDS, cache.world().getName(), x, y, z);
+                    LocalizedMessages.send(sender, MCMessageKeys.Command.Edit.COORDS, cache.world().getName(), x, y, z);
 
                 }
                 case "code" -> {
                     if (args.length < 2) {
-                        LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
-                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_CODE, label);
+                        LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_USAGE);
+                        LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT_CODE, label);
                         return true;
                     } else {
                         cache.setCode(args[1].trim());
-                        LocalizedMessages.send(sender, MessageKeys.Command.Edit.CODE, cache.code());
+                        LocalizedMessages.send(sender, MCMessageKeys.Command.Edit.CODE, cache.code());
                     }
                 }
                 case "save" -> {
                     if (cache.name() == null) {
-                        LocalizedMessages.send(sender, MessageKeys.Error.Edit.NO_NAME);
-                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_NAME, label);
+                        LocalizedMessages.send(sender, MCMessageKeys.Error.Edit.NO_NAME);
+                        LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT_NAME, label);
                     } else if (cache.code() == null) {
-                        LocalizedMessages.send(sender, MessageKeys.Error.Edit.NO_CODE);
-                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_COORDS, label);
+                        LocalizedMessages.send(sender, MCMessageKeys.Error.Edit.NO_CODE);
+                        LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT_COORDS, label);
                     } else if (cache.x() == 0 && cache.y() == 0 && cache.z() == 0) {
-                        LocalizedMessages.send(sender, MessageKeys.Error.Edit.NO_COORDS);
-                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_COORDS, label);
+                        LocalizedMessages.send(sender, MCMessageKeys.Error.Edit.NO_COORDS);
+                        LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT_COORDS, label);
                     } else if (cache.nx() == 0 && cache.ny() == 0 && cache.nz() == 0) {
-                        LocalizedMessages.send(sender, MessageKeys.Error.Edit.NO_NAV_COORDS);
-                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_NAVIGATION_COORDS, label);
+                        LocalizedMessages.send(sender, MCMessageKeys.Error.Edit.NO_NAV_COORDS);
+                        LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT_NAVIGATION_COORDS, label);
                     } else if (cache.navLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
-                        LocalizedMessages.send(sender, MessageKeys.Error.Edit.NAV_COORDS_TOO_FAR);
-                        LocalizedMessages.send(sender, MessageKeys.Usage.EDIT_NAVIGATION_COORDS, label);
+                        LocalizedMessages.send(sender, MCMessageKeys.Error.Edit.NAV_COORDS_TOO_FAR);
+                        LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT_NAVIGATION_COORDS, label);
                     } else {
                         MinecacheEditedEvent event = new MinecacheEditedEvent(cache, sender);
                         Bukkit.getPluginManager().callEvent(event);
 
                         if (event.isCancelled()) {
-                            LocalizedMessages.send(sender, MessageKeys.Error.Edit.GENERAL);
+                            LocalizedMessages.send(sender, MCMessageKeys.Error.Edit.GENERAL);
                             return true;
                         }
 
                         MinecachingAPI.get().createNotification(cache.owner(), MCUtils.EMPTY_UUID, NotificationType.EDIT, cache);
 
                         MinecachingAPI.get().saveMinecache(cache, false);
-                        LocalizedMessages.send(sender, MessageKeys.Command.Edit.SAVE, cache.id(), cache.name());
+                        LocalizedMessages.send(sender, MCMessageKeys.Command.Edit.SAVE, cache.id(), cache.name());
                         cache = Minecache.EMPTY;
                         cache.setID("NULL");
                     }

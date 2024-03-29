@@ -1,8 +1,8 @@
 package net.realdarkstudios.minecaching.api.menu.item.misc;
 
-import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
-import net.realdarkstudios.minecaching.api.menu.impl.item.GoBackMenuItem;
-import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
+import net.realdarkstudios.commons.event.MenuItemClickEvent;
+import net.realdarkstudios.commons.menu.MCMenu;
+import net.realdarkstudios.commons.menu.item.GoBackMenuItem;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;

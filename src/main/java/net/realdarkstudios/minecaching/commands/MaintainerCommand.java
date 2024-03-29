@@ -1,13 +1,13 @@
 package net.realdarkstudios.minecaching.commands;
 
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.CacheDataMenu;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,8 +20,8 @@ public class MaintainerCommand extends MCCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
-            LocalizedMessages.send(sender, MessageKeys.Error.INCORRECT_ARG_COUNT);
-            LocalizedMessages.send(sender, MessageKeys.Usage.MAINTAINER, label);
+            LocalizedMessages.send(sender, MCMessageKeys.Error.INCORRECT_ARG_COUNT);
+            LocalizedMessages.send(sender, MCMessageKeys.Usage.MAINTAINER, label);
             return true;
         }
 
@@ -31,7 +31,7 @@ public class MaintainerCommand extends MCCommand {
         if (cacheCheck(sender, cache, cacheID)) return true;
 
         if (sender instanceof Player plr) {
-            CacheDataMenu menu = new CacheDataMenu(MessageKeys.Menu.Data.TITLE, cache, Minecaching.getInstance(), MinecachingAPI.get().getPlayerData(plr));
+            CacheDataMenu menu = new CacheDataMenu(MCMessageKeys.Menu.Data.TITLE, cache, Minecaching.getInstance(), MinecachingAPI.get().getPlayerData(plr));
             menu.open(plr);
             return true;
         }
@@ -45,13 +45,13 @@ public class MaintainerCommand extends MCCommand {
             try {
                 pdo = MinecachingAPI.get().getFilteredPlayers(p -> p.getUsername().equals(args[1])).get(0);
             } catch (Exception e6535897) {
-                LocalizedMessages.send(sender, MessageKeys.Error.Misc.MAINTAINER_NOT_FOUND, args[1]);
+                LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.MAINTAINER_NOT_FOUND, args[1]);
                 return true;
             }
         }
 
         MinecachingAPI.get().saveMinecache(cache.setMaintaner(pdo.getUniqueID()), false);
-        LocalizedMessages.send(sender, MessageKeys.Menu.Data.SET_MAINTAINER, cache.id(), pdo.getUsername());
+        LocalizedMessages.send(sender, MCMessageKeys.Menu.Data.SET_MAINTAINER, cache.id(), pdo.getUsername());
 
         return true;
     }

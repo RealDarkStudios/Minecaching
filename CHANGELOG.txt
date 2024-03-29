@@ -1,12 +1,72 @@
 HOW TO READ:
 
-VERSION
-- Changes listed
+{ UPDATE NAME BELOW THE UPDATES FOR THAT VERSION }
+[edited text or clarifications from the commit notes]
 
-{ UPDATE NAME (only 0.1.7.0 and up), BELOW THE UPDATES FOR THAT VERSION }
-[edited text or clarifications]
+VERSION
+Added:
+- Things that were added, such as classes or methods
+
+Removed:
+- Things removed, such as classes or methods
+
+Refactors:
+- Changes in names or parameters for methods
+
+Changes:
+- Other changes
+
 
 CHANGELOG:
+
+Snapshot 24w13a for 0.4.0.0
+Added:
+- MAVEN SOURCES + JAVADOCS to (hopefully) all future Minecaching releases
+- MCMessageKeys.Command.Stats.NONE
+- MinecachingAPI#getCommonsAPI
+
+Removed:
+- MinecachingAPI#getConfigDataVersion
+- MinecachingAPI#getMinecacheDataVersion
+- MinecachingAPI#getPlayerDataVersion
+- MinecachingAPI#getLogbookDataVersion
+- MinecachingAPI#tInfo(String, Object...)
+- MinecachingAPI#tWarning(String, Object...)
+- (ALL CLASSES BELOW ARE IN RDSCommons)
+- AutoUpdater
+- BaseEvent
+- BooleanMenuItem
+- CancellableBaseEvent
+- CloseMenuItem
+- ErrorMenuItem
+- GoBackMenuItem
+- Localization
+- LocalizationProvider
+- MCMenu
+- MCMenuHolder
+- MenuItem
+- MenuItemClickEvent
+- MenuItemState
+- MultiStateMenuItem
+- PaginationMenu
+- PaginationMenuItem
+- PaginationPageItem
+- RefreshPaginationMenuItem
+- SkullMenuItem
+- TextComponentBuilder
+
+Refactors:
+- MessageKeys -> MCMessageKeys
+
+Changes:
+- (BUGFIX) Added checks if there are 0 caches (caused issues with adding caches and stats)
+- Switched over to RDSCommons
+- UUID check is now in PlayerDataObject#update
+- RDSCommons dependency
+- MinecachingAPI#getLogger now returns an RDSLogHelper
+- And more
+
+
 
 Release 0.3.1.0
 Added:

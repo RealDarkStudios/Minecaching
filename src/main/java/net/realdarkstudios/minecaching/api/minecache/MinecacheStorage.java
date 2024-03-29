@@ -3,8 +3,8 @@ package net.realdarkstudios.minecaching.api.minecache;
 import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.misc.Config;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import javax.naming.SizeLimitExceededException;
@@ -40,7 +40,7 @@ public class MinecacheStorage {
 
         updateMaps();
 
-        MinecachingAPI.tInfo(MessageKeys.Plugin.Data.LOADED_CACHES, minecaches.size());
+        MinecachingAPI.tInfo(MCMessageKeys.Plugin.Data.LOADED_CACHES, minecaches.size());
     }
 
     public void updateMaps() {
@@ -151,7 +151,7 @@ public class MinecacheStorage {
                 cache.toYaml(yaml, cache.id());
             }
 
-            MinecachingAPI.tInfo(MessageKeys.Plugin.Data.UPDATE_SUCCEEDED,  "Minecache Data", Config.getInstance().getMinecacheDataVersion(), MinecachingAPI.MINECACHE_DATA_VERSION);
+            MinecachingAPI.tInfo(MCMessageKeys.Plugin.Data.UPDATE_SUCCEEDED,  "Minecache Data", Config.getInstance().getMinecacheDataVersion(), MinecachingAPI.MINECACHE_DATA_VERSION);
 
             Config.getInstance().setMinecacheDataVersion(MinecachingAPI.MINECACHE_DATA_VERSION);
             Config.getInstance().save();
@@ -159,7 +159,7 @@ public class MinecacheStorage {
             save();
             updateMaps();
         } catch (Exception e) {
-            MinecachingAPI.tWarning(MessageKeys.Plugin.Data.UPDATE_FAILED,  "Minecache Data", Config.getInstance().getMinecacheDataVersion(), MinecachingAPI.MINECACHE_DATA_VERSION);
+            MinecachingAPI.tWarning(MCMessageKeys.Plugin.Data.UPDATE_FAILED,  "Minecache Data", Config.getInstance().getMinecacheDataVersion(), MinecachingAPI.MINECACHE_DATA_VERSION);
         }
     }
 }

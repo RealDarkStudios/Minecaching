@@ -3,18 +3,18 @@ package net.realdarkstudios.minecaching.api.event;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.realdarkstudios.commons.menu.MCMenuHolder;
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.LogMenu;
-import net.realdarkstudios.minecaching.api.menu.impl.MCMenuHolder;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.misc.Notification;
 import net.realdarkstudios.minecaching.api.misc.NotificationType;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Chest;
@@ -90,8 +90,8 @@ public class MCEventHandler implements Listener {
     }
 
     private void sendBlockBreakComponent(Player player, String id) {
-        TextComponent toSend = MessageKeys.Error.Misc.CACHE_BLOCK.translateComponentWithOtherStyle(new LocalizedMessages.StyleOptions().setColor(ChatColor.RED), id);
-        toSend.addExtra(MessageKeys.Error.Misc.CACHE_BLOCK_CLICK_HERE.translateComponentWithOtherStyle(LocalizedMessages.StyleOptions.ERROR
+        TextComponent toSend = MCMessageKeys.Error.Misc.CACHE_BLOCK.translateComponentWithOtherStyle(new LocalizedMessages.StyleOptions().setColor(ChatColor.RED), id);
+        toSend.addExtra(MCMessageKeys.Error.Misc.CACHE_BLOCK_CLICK_HERE.translateComponentWithOtherStyle(LocalizedMessages.StyleOptions.ERROR
                 .setClickEvent(ClickEvent.Action.RUN_COMMAND, "/deletecache openmenu " + id)
                 .setUnderline(true)));
 
@@ -103,15 +103,15 @@ public class MCEventHandler implements Listener {
         new BukkitRunnable() {
             public void run() {
                 if (MinecachingAPI.getUpdater().hasUpdate() && event.getPlayer().hasPermission("minecaching.admin")) {
-                    LocalizedMessages.send(event.getPlayer(), Config.getInstance().autoUpdate() ? MessageKeys.Plugin.Update.AVAILABE_AUTO :
-                                    MessageKeys.Plugin.Update.AVAILABLE, MinecachingAPI.getUpdater().getNewestVersion(), Minecaching.getVersion());
+                    LocalizedMessages.send(event.getPlayer(), Config.getInstance().autoUpdate() ? MCMessageKeys.Plugin.Update.AVAILABE_AUTO :
+                                    MCMessageKeys.Plugin.Update.AVAILABLE, MinecachingAPI.getUpdater().getNewestVersion(), Minecaching.getInstance().getVersion());
                 }
 
                 PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(event.getPlayer().getUniqueId());
                 pdo.updateData();
 
                 if (!pdo.getNotifications().isEmpty()) {
-                    LocalizedMessages.send(event.getPlayer(), MessageKeys.Plugin.Notification.NOTIFICATION_ALERT);
+                    LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Plugin.Notification.NOTIFICATION_ALERT);
                     for (Notification notification : pdo.getNotifications()) {
                         if (notification.getType() == NotificationType.INVALID && notification.getInitiator().equals(MCUtils.EMPTY_UUID) && notification.getCache().equals(Minecache.EMPTY)) continue;
                         LocalizedMessages.send(event.getPlayer(), notification.getType().getTranslationKey(), notification.getCache().id(), MCUtils.uuidName(notification.getInitiator()));
@@ -160,7 +160,7 @@ public class MCEventHandler implements Listener {
                         Inventory inv = p.getOpenInventory().getTopInventory();
                         if (inv.getHolder() instanceof MCMenuHolder) p.closeInventory();
                     }
-                    LocalizedMessages.send(p, MessageKeys.Menu.PERM_CHANGE);
+                    LocalizedMessages.send(p, MCMessageKeys.Menu.PERM_CHANGE);
                 }
             }
 

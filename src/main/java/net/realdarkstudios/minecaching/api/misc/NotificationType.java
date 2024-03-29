@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.api.misc;
 
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
+import net.realdarkstudios.commons.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 
 public enum NotificationType {
     EDIT("edit"),
@@ -36,13 +36,13 @@ public enum NotificationType {
 
     public LocalizedMessages.Key getTranslationKey() {
         return switch (this) {
-            case ARCHIVAL -> MessageKeys.Plugin.Notification.NOTIFICATION_ARCHIVAL;
-            case DELETION -> MessageKeys.Plugin.Notification.NOTIFICATION_DELETION;
-            case DISABLE -> MessageKeys.Plugin.Notification.NOTIFICATION_DISABLE;
-            case EDIT -> MessageKeys.Plugin.Notification.NOTIFICATION_EDIT;
-            case FLAG -> MessageKeys.Plugin.Notification.NOTIFICATION_FLAG;
-            case PUBLISH -> MessageKeys.Plugin.Notification.NOTIFICATION_PUBLISH;
-            default -> MessageKeys.ERROR;
+            case ARCHIVAL -> MCMessageKeys.Plugin.Notification.NOTIFICATION_ARCHIVAL;
+            case DELETION -> MCMessageKeys.Plugin.Notification.NOTIFICATION_DELETION;
+            case DISABLE -> MCMessageKeys.Plugin.Notification.NOTIFICATION_DISABLE;
+            case EDIT -> MCMessageKeys.Plugin.Notification.NOTIFICATION_EDIT;
+            case FLAG -> MCMessageKeys.Plugin.Notification.NOTIFICATION_FLAG;
+            case PUBLISH -> MCMessageKeys.Plugin.Notification.NOTIFICATION_PUBLISH;
+            default -> MCMessageKeys.ERROR;
         };
     }
 }

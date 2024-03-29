@@ -1,13 +1,13 @@
 package net.realdarkstudios.minecaching.commands;
 
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.LogMenu;
 import net.realdarkstudios.minecaching.api.menu.LogPickMenu;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ public class LogCacheCommand extends MCCommand {
         LogMenu menu = new LogMenu(cache, pdo);
         if (args.length > 0 && args[0].equals("message")) {
             if (args.length < 2) {
-                LocalizedMessages.send(sender, MessageKeys.Error.Log.EMPTY_MESSAGE);
+                LocalizedMessages.send(sender, MCMessageKeys.Error.Log.EMPTY_MESSAGE);
             } else {
                 StringBuilder msg = new StringBuilder();
                 for (int i = 1; i < args.length; i++) {
@@ -43,7 +43,7 @@ public class LogCacheCommand extends MCCommand {
             }
         } else if (args.length > 0 && args[0].equals("code")) {
             if (args.length < 2) {
-                LocalizedMessages.send(sender, MessageKeys.Error.Log.EMPTY_CODE);
+                LocalizedMessages.send(sender, MCMessageKeys.Error.Log.EMPTY_CODE);
 
             } else {
                 String code = args[1];

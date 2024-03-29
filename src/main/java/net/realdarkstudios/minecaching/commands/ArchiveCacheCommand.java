@@ -1,12 +1,12 @@
 package net.realdarkstudios.minecaching.commands;
 
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.event.minecache.MinecacheArchivedEvent;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -19,12 +19,12 @@ public class ArchiveCacheCommand extends MCCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
-            LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
-            LocalizedMessages.send(sender, MessageKeys.Usage.ARCHIVE, label);
+            LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_USAGE);
+            LocalizedMessages.send(sender, MCMessageKeys.Usage.ARCHIVE, label);
             return true;
         }
 
-        String reason = MessageKeys.Command.Log.ARCHIVE_DEFAULT_MESSAGE.translate();
+        String reason = MCMessageKeys.Command.Log.ARCHIVE_DEFAULT_MESSAGE.translate();
         if (args.length > 1) {
             StringBuilder rsn = new StringBuilder();
             for (int i = 1; i < args.length; i++) {
@@ -37,18 +37,18 @@ public class ArchiveCacheCommand extends MCCommand {
 
         if (cacheCheck(sender, cache, args[0])) return true;
         else if (cache.status().equals(MinecacheStatus.ARCHIVED) || cache.status().equals(MinecacheStatus.INVALID)) {
-            LocalizedMessages.send(sender, MessageKeys.Error.Misc.ARCHIVE_CANT_ARCHIVE);
+            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.ARCHIVE_CANT_ARCHIVE);
         } else {
             MinecacheArchivedEvent event = new MinecacheArchivedEvent(cache, sender);
             Bukkit.getPluginManager().callEvent(event);
 
             if (event.isCancelled()) {
-                LocalizedMessages.send(sender, MessageKeys.Error.Misc.ARCHIVE);
+                LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.ARCHIVE);
                 return true;
             }
 
             MinecachingAPI.get().archiveMinecache(sender instanceof Player plr ? plr.getUniqueId() : MCUtils.EMPTY_UUID, cache, reason);
-            LocalizedMessages.send(sender, MessageKeys.Command.Misc.ARCHIVE, cache.id());
+            LocalizedMessages.send(sender, MCMessageKeys.Command.Misc.ARCHIVE, cache.id());
         }
 
         return true;

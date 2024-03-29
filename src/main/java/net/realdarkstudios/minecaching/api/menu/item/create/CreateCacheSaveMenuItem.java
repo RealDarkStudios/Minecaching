@@ -1,16 +1,16 @@
 package net.realdarkstudios.minecaching.api.menu.item.create;
 
+import net.realdarkstudios.commons.event.MenuItemClickEvent;
+import net.realdarkstudios.commons.menu.item.MenuItem;
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
 import net.realdarkstudios.minecaching.api.event.minecache.MinecacheCreatedEvent;
-import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -37,24 +37,24 @@ public class CreateCacheSaveMenuItem extends MenuItem {
         Minecache cache = pdo.getCreatingCache();
 
         if (!timeCheck(pdo)) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.TIME,
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.TIME,
                     LocalDateTime.now().until(pdo.getCacheCooldownExpireTime(), ChronoUnit.MINUTES));
         } else if (cache.name() == null) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_NAME);
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.NO_NAME);
         } else if (cache.code() == null || cache.code().isEmpty()) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_CODE);
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.NO_CODE);
         } else if (cache.x() == 0 && cache.y() == 0 && cache.z() == 0) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_COORDS);
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.NO_COORDS);
         } else if (!isInBoundsCheck(cache.location())) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.OUT_OF_BOUNDS, MCUtils.formatLocation(cache.location()),
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.OUT_OF_BOUNDS, MCUtils.formatLocation(cache.location()),
                     MCUtils.formatLocation(Config.getInstance().getMinLocation()), MCUtils.formatLocation(Config.getInstance().getMaxLocation()));
         } else if (!cacheDistanceCheck(cache.location())) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.TOO_CLOSE,
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.TOO_CLOSE,
                     Config.getInstance().getMinCacheDistance());
         } else if (cache.nx() == 0 && cache.ny() == 0 && cache.nz() == 0) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_NAV_COORDS);
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.NO_NAV_COORDS);
         } else if (!distanceCheck(cache.location(), cache.navLocation(), Config.getInstance().getMaxLodestoneDistance())) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NAV_COORDS_TOO_FAR);
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.NAV_COORDS_TOO_FAR);
         } else {
             cache.setStatus(MinecacheStatus.REVIEWING).setAuthor(event.getPlayer().getUniqueId()).setBlockType(cache.location().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(MCUtils.EMPTY_UUID);
 
@@ -62,7 +62,7 @@ public class CreateCacheSaveMenuItem extends MenuItem {
             Bukkit.getPluginManager().callEvent(cEvent);
 
             if (cEvent.isCancelled()) {
-                LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.GENERAL);
+                LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.GENERAL);
             }
 
             MinecachingAPI.get().saveMinecache(cache, true);
@@ -84,13 +84,14 @@ public class CreateCacheSaveMenuItem extends MenuItem {
             MinecachingAPI.get().save();
             MinecachingAPI.get().update();
 
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Command.Create.SAVE, cache.id(), cache.name());
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Command.Create.SAVE, cache.id(), cache.name());
         }
 
         event.setClose(true);
     }
 
     public static boolean cacheDistanceCheck(Location loc) {
+        if (MinecachingAPI.get().getAllKnownCaches().isEmpty()) return true;
         Minecache closestCache = MinecachingAPI.get().getSortedCaches(Comparator.comparingDouble(c -> c.location().distanceSquared(loc))).get(0);
         // Subtract 1 to account for the distance being exactly the minCacheDistance, which in this function would return false because distanceCheck would return true
         return !distanceCheck(closestCache.location(), loc, Config.getInstance().getMinCacheDistance() - 1);

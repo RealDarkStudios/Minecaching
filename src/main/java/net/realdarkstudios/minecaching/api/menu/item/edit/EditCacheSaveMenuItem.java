@@ -1,16 +1,16 @@
 package net.realdarkstudios.minecaching.api.menu.item.edit;
 
+import net.realdarkstudios.commons.event.MenuItemClickEvent;
+import net.realdarkstudios.commons.menu.item.MenuItem;
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
 import net.realdarkstudios.minecaching.api.event.minecache.MinecacheEditedEvent;
-import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.misc.NotificationType;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -35,21 +35,21 @@ public class EditCacheSaveMenuItem extends MenuItem {
         Minecache cache = pdo.getEditingCache();
 
         if (cache.name() == null) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_NAME);
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.NO_NAME);
         } else if (cache.code() == null) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_CODE);
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.NO_CODE);
         } else if (cache.x() == 0 && cache.y() == 0 && cache.z() == 0) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_COORDS);
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.NO_COORDS);
         } else if (cache.nx() == 0 && cache.ny() == 0 && cache.nz() == 0) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NO_NAV_COORDS);
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.NO_NAV_COORDS);
         } else if (cache.navLocation().distance(cache.location()) > Config.getInstance().getMaxLodestoneDistance()) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Create.NAV_COORDS_TOO_FAR);
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.NAV_COORDS_TOO_FAR);
         } else {
             MinecacheEditedEvent cEvent = new MinecacheEditedEvent(cache, event.getPlayer());
             Bukkit.getPluginManager().callEvent(cEvent);
 
             if (cEvent.isCancelled()) {
-                LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Edit.GENERAL);
+                LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Edit.GENERAL);
                 return;
             }
 
@@ -77,7 +77,7 @@ public class EditCacheSaveMenuItem extends MenuItem {
             }
 
             MinecachingAPI.get().saveMinecache(cache, false);
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Command.Edit.SAVE, cache.id(), cache.name());
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Command.Edit.SAVE, cache.id(), cache.name());
             pdo.setEditingCache(Minecache.EMPTY.setID("NULL"));
         }
 
@@ -85,6 +85,7 @@ public class EditCacheSaveMenuItem extends MenuItem {
     }
 
     public static boolean cacheDistanceCheck(Location loc) {
+        if (MinecachingAPI.get().getAllKnownCaches().isEmpty()) return true;
         Minecache closestCache = MinecachingAPI.get().getSortedCaches(Comparator.comparingDouble(c -> c.location().distanceSquared(loc))).get(0);
         // Subtract 1 to account for the distance being exactly the minCacheDistance, which in this function would return false because distanceCheck would return true
         return !distanceCheck(closestCache.location(), loc, Config.getInstance().getMinCacheDistance() - 1);

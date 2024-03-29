@@ -4,7 +4,7 @@ import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import org.bukkit.OfflinePlayer;
 
 import java.io.File;
@@ -23,7 +23,7 @@ public class PlayerStorage {
         if (!file.exists()) file.mkdirs();
 
         File[] plrFiles = file.listFiles(File::isFile);
-        if (plrFiles == null || plrFiles.length == 0) MinecachingAPI.tWarning(MessageKeys.Error.PLAYER_LIST_EMPTY);
+        if (plrFiles == null || plrFiles.length == 0) MinecachingAPI.tWarning(MCMessageKeys.Error.PLAYER_LIST_EMPTY);
 
         HashMap<UUID, PlayerDataObject> players = new HashMap<>();
         for (File plrFile: plrFiles) {
@@ -32,7 +32,7 @@ public class PlayerStorage {
             try {
                 uuid = UUID.fromString(key);
             } catch (Exception e) {
-                MinecachingAPI.tWarning(MessageKeys.Error.PLUGIN_PARSE_UUID, key);
+                MinecachingAPI.tWarning(MCMessageKeys.Error.PLUGIN_PARSE_UUID, key);
                 continue;
             }
 
@@ -48,7 +48,7 @@ public class PlayerStorage {
             plr.load();
         }
 
-        MinecachingAPI.tInfo(MessageKeys.Plugin.Data.LOADED_PLAYERS, playerStorage.size());
+        MinecachingAPI.tInfo(MCMessageKeys.Plugin.Data.LOADED_PLAYERS, playerStorage.size());
     }
 
     public void save() {
@@ -65,7 +65,7 @@ public class PlayerStorage {
         if (!file.exists()) file.mkdirs();
 
         File[] plrFiles = file.listFiles(File::isFile);
-        if (plrFiles == null || plrFiles.length == 0) MinecachingAPI.tWarning(MessageKeys.Error.PLAYER_LIST_EMPTY);
+        if (plrFiles == null || plrFiles.length == 0) MinecachingAPI.tWarning(MCMessageKeys.Error.PLAYER_LIST_EMPTY);
 
         for (File plrFile: plrFiles) {
             String key = plrFile.getName().replace(".yml", "");
@@ -73,7 +73,7 @@ public class PlayerStorage {
             try {
                 uuid = UUID.fromString(key);
             } catch (Exception e) {
-                MinecachingAPI.tWarning(MessageKeys.Error.PLUGIN_PARSE_UUID, key);
+                MinecachingAPI.tWarning(MCMessageKeys.Error.PLUGIN_PARSE_UUID, key);
                 continue;
             }
 
@@ -123,7 +123,7 @@ public class PlayerStorage {
 
     public PlayerDataObject createPlayerData(UUID uuid) {
         PlayerDataObject pdo = PlayerDataObject.get(uuid);
-        MinecachingAPI.tInfo(MessageKeys.Plugin.NEW_PLAYER_DATA, uuid);
+        MinecachingAPI.tInfo(MCMessageKeys.Plugin.NEW_PLAYER_DATA, uuid);
 
         save();
         updateMaps();
@@ -189,7 +189,7 @@ public class PlayerStorage {
                 }
             }
 
-            MinecachingAPI.tWarning(MessageKeys.Plugin.Data.UPDATE_SUCCEEDED, "Player Data", Config.getInstance().getPlayerDataVersion(), MinecachingAPI.PLAYER_DATA_VERSION);
+            MinecachingAPI.tWarning(MCMessageKeys.Plugin.Data.UPDATE_SUCCEEDED, "Player Data", Config.getInstance().getPlayerDataVersion(), MinecachingAPI.PLAYER_DATA_VERSION);
 
             Config.getInstance().setPlayerDataVersion(MinecachingAPI.PLAYER_DATA_VERSION);
             if (playerStorage != null) {
@@ -199,7 +199,7 @@ public class PlayerStorage {
             }
             Config.getInstance().save();
         } catch (Exception e) {
-            MinecachingAPI.tWarning(MessageKeys.Plugin.Data.UPDATE_FAILED, "Player Data", Config.getInstance().getPlayerDataVersion(), MinecachingAPI.PLAYER_DATA_VERSION);
+            MinecachingAPI.tWarning(MCMessageKeys.Plugin.Data.UPDATE_FAILED, "Player Data", Config.getInstance().getPlayerDataVersion(), MinecachingAPI.PLAYER_DATA_VERSION);
         }
     }
 }

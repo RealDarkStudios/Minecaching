@@ -1,16 +1,16 @@
 package net.realdarkstudios.minecaching.api.menu;
 
+import net.realdarkstudios.commons.menu.MCMenu;
+import net.realdarkstudios.commons.menu.PaginationMenu;
+import net.realdarkstudios.commons.menu.item.MenuItem;
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
-import net.realdarkstudios.minecaching.api.menu.impl.PaginationMenu;
-import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.menu.item.data.SelectMaintainerMenuItem;
 import net.realdarkstudios.minecaching.api.menu.item.data.SelectMaintainerOfflineMenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,7 +23,7 @@ public class SelectMaintainerMenu extends PaginationMenu {
     private final Minecache cache;
 
     public SelectMaintainerMenu(Player player, Minecache cache, JavaPlugin plugin, MCMenu parent) {
-        super(MessageKeys.Menu.Data.MAINTAINER_TITLE, plugin, parent, cache.id());
+        super(MCMessageKeys.Menu.Data.MAINTAINER_TITLE, plugin, parent, cache.id());
         this.cache = cache;
 
         update(player);
@@ -45,7 +45,7 @@ public class SelectMaintainerMenu extends PaginationMenu {
 
         if (items.isEmpty()) {
             close(player);
-            LocalizedMessages.send(player, MessageKeys.Command.Misc.NO_SUITABLE_MAINTAINERS);
+            LocalizedMessages.send(player, MCMessageKeys.Command.Misc.NO_SUITABLE_MAINTAINERS);
         }
 
         this.menuItems = items;

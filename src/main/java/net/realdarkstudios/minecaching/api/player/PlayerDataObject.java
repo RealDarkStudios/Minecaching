@@ -2,17 +2,18 @@ package net.realdarkstudios.minecaching.api.player;
 
 import me.scarsz.mojang.Mojang;
 import me.scarsz.mojang.exception.ProfileFetchException;
+import net.realdarkstudios.commons.menu.item.SkullMenuItem;
 import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.log.LogType;
-import net.realdarkstudios.minecaching.api.menu.impl.item.SkullMenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStorage;
 import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.misc.Notification;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -251,6 +252,9 @@ public class PlayerDataObject {
             if (cache.finds() < clmOptions.getMinFinds()) {
                 continue;
             }
+            if (!cache.world().equals(player.getWorld())) {
+                continue;
+            }
             if (clmOptions.getWithinBlocks() > cache.navLocation().distance(player.getLocation())) {
                 continue;
             }
@@ -302,8 +306,15 @@ public class PlayerDataObject {
         creatingCache.setID(yaml.getString("creating_id") == null ? "NULL" : yaml.getString("creating_id"));
         editingCache.setID(yaml.getString("editing_id") == null ? "NULL" : yaml.getString("editing_id"));
 
-        this.skullItemStack = new SkullMenuItem(getUsername(), getUniqueID(), List.of()).getSkull(getOfflinePlayer());
-      }
+        try {
+            if (uniqueID.equals(MCUtils.EMPTY_UUID)) {
+                this.skullItemStack = new ItemStack(Material.PLAYER_HEAD);
+            } else if (Mojang.fetch(uniqueID) == null) throw new ProfileFetchException(uniqueID.toString(), new Exception());
+            else this.skullItemStack = new SkullMenuItem(getUsername(), getUniqueID(), List.of()).getSkull(getOfflinePlayer());
+        } catch (ProfileFetchException e) {
+            this.skullItemStack = new ItemStack(Material.PLAYER_HEAD);
+        }
+    }
 
     public void saveData() {
         yaml.set("ftfs", this.ftfs);
@@ -405,14 +416,14 @@ public class PlayerDataObject {
                 yaml.set("cache_cooldown_expire", LocalDateTime.now().toString());
                 CacheListMenuOptions.DEFAULT_OPTIONS.toYaml(yaml, "clm_options");
             } catch (Exception e) {
-                MinecachingAPI.tWarning(MessageKeys.Error.PLUGIN_CREATE_FILE, uuid + ".yml");
+                MinecachingAPI.tWarning(MCMessageKeys.Error.PLUGIN_CREATE_FILE, uuid + ".yml");
             }
         } else if (Config.getInstance().getPlayerDataVersion() < MinecachingAPI.PLAYER_DATA_VERSION) {
             try {
                 if (!plrFile.canWrite()) throw new Exception();
                 plrFile.createNewFile();
             } catch (Exception e) {
-                MinecachingAPI.tWarning(MessageKeys.Error.PLUGIN_UPDATE_FILE, uuid + ".yml");
+                MinecachingAPI.tWarning(MCMessageKeys.Error.PLUGIN_UPDATE_FILE, uuid + ".yml");
             }
         }
 

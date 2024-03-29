@@ -1,11 +1,11 @@
 package net.realdarkstudios.minecaching.api.log;
 
 import net.realdarkstudios.minecaching.api.Minecaching;
-import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.misc.Config;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
+import net.realdarkstudios.minecaching.api.misc.Config;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -125,7 +125,7 @@ public class LogbookDataObject {
             try {
                 logFile.createNewFile();
             } catch (Exception e) {
-                MinecachingAPI.tWarning(MessageKeys.Error.PLUGIN_CREATE_FILE, id + ".yml");
+                MinecachingAPI.tWarning(MCMessageKeys.Error.PLUGIN_CREATE_FILE, id + ".yml");
             }
         } else if (Config.getInstance().getLogbookDataVersion() != MinecachingAPI.LOGBOOK_DATA_VERSION) {
             try {
@@ -136,7 +136,7 @@ public class LogbookDataObject {
                 ldo.saveData();
                 return ldo;
             } catch (Exception e) {
-                MinecachingAPI.tWarning(MessageKeys.Error.PLUGIN_UPDATE_FILE, id + ".yml");
+                MinecachingAPI.tWarning(MCMessageKeys.Error.PLUGIN_UPDATE_FILE, id + ".yml");
             }
         }
 

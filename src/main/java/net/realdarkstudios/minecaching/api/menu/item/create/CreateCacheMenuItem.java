@@ -1,11 +1,11 @@
 package net.realdarkstudios.minecaching.api.menu.item.create;
 
+import net.realdarkstudios.commons.event.MenuItemClickEvent;
+import net.realdarkstudios.commons.menu.item.MenuItem;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;

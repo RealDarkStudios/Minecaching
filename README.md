@@ -5,14 +5,15 @@ Bring [Geocaching](https://www.geocaching.com) to your Minecraft server!
 
 This plugin allows players to hide and find Minecaches (or "Caches") around the server while allowing operators to manage it.
 
-> DEVELOPERS: v0.3.0.0 came with a lot of package and other changes! See the changelog for more information
+> DEVELOPERS: After v0.3.1.0, the artifact id is now `minecaching`, not `Minecaching`!
+> ! Some functions have also moved to RDSCommons !
 
 ## For Server Owners
 
 Server owners can control many things, such as restrictions on where the caches are placed, the types of allowed caches, and more in the config!
 Operators have access to certain commands to, such as `/verify` and can bypass `/delete` and `/edit` checks.
 
-Setting up the plugin is pretty simple, a drag and drop install should work.
+Setting up the plugin is pretty simple, a drag and drop install should work, however you need to make sure you install [RDSCommons](https://maven.digitalunderworlds.com/#/snapshots/net/realdarkstudios/rdscommons) too.
 For non-english servers, you should change the language in `plugins\Minecaching\config.yml`.
 In there you can also find many other options, such as changing the `/mcstats` scoring, configuring auto-updates, and more.
 
@@ -44,20 +45,17 @@ Then,
 ```xml
 <dependency>
   <groupId>net.realdarkstudios</groupId>
-  <artifactId>Minecaching</artifactId>
-  <version>snapshot-0.3.1.0-24w11c</version>
-  <!-- Versions before 0.3.0.5 used X.X.X.X-SNAPSHOT-X versioning -->
-  <!-- Versions after will use snapshot-X.X.X.X-YYwWWX, where YY represents the year, WW the week, and X the snapshot # (in letters) that week -->
-  <!-- For example, snapshot-0.3.1.0-24w11c is for 0.3.1.0 and was released the 11th week of 2024, and is the third snapshot that week -->
+  <artifactId>minecaching</artifactId>
+  <version>0.4.0.0-snapshot-24w13a</version>
 </dependency>
 ```
-
+You can view versions [here](https://maven.digitalunderworlds.com/#/snapshots/net/realdarkstudios/minecaching)
 
 > NOTE: Only full version releases (such as 0.2.0.7) are available in the Releases maven.
 > If you want to be able to use ANY version, including releases, pick the Snapshot repository!
 </details>
 
-### Recent Changes:
+### Changes:
 With 0.3.0.0, an `EXPERIMENTAL_FEATURES` config option was released. To check it, use `Config.getInstance().experimentalFeatures()`
 
 With 0.3.0.1, The `GUI Menu` framework was added, which is a somewhat modified fork of [AmpMenus](https://github.com/Scarsz/AmpMenus) that is basically just refactors and some minor logic changes.
@@ -72,9 +70,10 @@ As of `0.3.1.0-24w10a`, the `MCMessages` class and `MinecachingAPI#tInfo(String,
 
 To update to the new system:
 **MinecachingAPI#tInfo/tWarning**:
+
 ```java
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 
 // Using "plugin.reloading" as an example
 
@@ -84,7 +83,7 @@ public void onEnable() {
     MinecachingAPI.tInfo("plugin.reloading");
 
     //NEW
-    MinecachingAPI.tInfo(MessageKeys.Plugin.RELOADING);
+    MinecachingAPI.tInfo(MCMessageKeys.Plugin.RELOADING);
 }
 ```
 
@@ -95,10 +94,7 @@ public void onEnable() {
 // Using "error.cantfind" as an example
 
 import net.md_5.bungee.api.ChatColor;
-import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
-import net.realdarkstudios.minecaching.api.util.MCMessages;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 
 @Override
 public void onEnable() {
@@ -110,8 +106,13 @@ public void onEnable() {
     MCMessages.send(sender, ChatColor.RED + "" + ChatColor.UNDERLINE + "cantfind");
 
     //NEW
-    LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE);
+    LocalizedMessages.send(sender, MCMessageKeys.Error.CANT_FIND_CACHE);
 }
 ```
 
 You can view the full issue [here](https://github.com/RealDarkStudios/Minecaching/issues/1)
+
+As of 0.3.1.0, the artifact id moving forward will be `minecaching`. Please update your dependencies!
+
+As of 0.4.0.0, many of the utils such as `AutoUpdater`, `Localization`, `LocalizationProvider`, `LocalizedMessages`, `TextComponentBuilder` and more are moving to a separate `RDSCommons` plugin.
+<br>The packages of these things will be changing from `net.realdarkstudios.minecaching.api.xxx` -> `net.realdarkstudios.commons.xxx`

@@ -1,11 +1,11 @@
 package net.realdarkstudios.minecaching.api.menu.item.create;
 
+import net.realdarkstudios.commons.event.MenuItemClickEvent;
+import net.realdarkstudios.commons.menu.item.MenuItemState;
+import net.realdarkstudios.commons.menu.item.MultiStateMenuItem;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItemState;
-import net.realdarkstudios.minecaching.api.menu.impl.item.MultiStateMenuItem;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheType;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
 
 public class CreateCacheTypeMenuItem extends MultiStateMenuItem {
     public CreateCacheTypeMenuItem(MenuItemState... items) {

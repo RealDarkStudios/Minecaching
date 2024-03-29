@@ -1,13 +1,12 @@
 package net.realdarkstudios.minecaching.api.menu.item.log;
 
-import net.realdarkstudios.minecaching.api.Minecaching;
+import net.realdarkstudios.commons.event.MenuItemClickEvent;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.LogMenu;
 import net.realdarkstudios.minecaching.api.menu.item.misc.CacheMenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +16,7 @@ public class LogPickMenuItem extends CacheMenuItem {
     private final ItemStack display;
 
     public LogPickMenuItem(Minecache cache) {
-        super(MessageKeys.Menu.List.ITEM_CACHE.translate(cache.id(), cache.name()), cache);
+        super(MCMessageKeys.Menu.List.ITEM_CACHE.translate(cache.id(), cache.name()), cache);
 
         display = switch (cache.type()) {
             case TRADITIONAL -> new ItemStack(Material.GREEN_TERRACOTTA);

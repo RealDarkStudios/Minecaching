@@ -1,12 +1,12 @@
 package net.realdarkstudios.minecaching.commands;
 
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.event.minecache.MinecachePublishedEvent;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -19,8 +19,8 @@ public class PublishCacheCommand extends MCCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
-            LocalizedMessages.send(sender, MessageKeys.Error.INCORRECT_USAGE);
-            LocalizedMessages.send(sender, MessageKeys.Usage.PUBLISH, label);
+            LocalizedMessages.send(sender, MCMessageKeys.Error.INCORRECT_USAGE);
+            LocalizedMessages.send(sender, MCMessageKeys.Usage.PUBLISH, label);
 
             return true;
         }
@@ -39,21 +39,21 @@ public class PublishCacheCommand extends MCCommand {
         Minecache cache = MinecachingAPI.get().getMinecache(args[0]);
 
         if (cache.equals(Minecache.EMPTY)) {
-            LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE);
+            LocalizedMessages.send(sender, MCMessageKeys.Error.CANT_FIND_CACHE);
             return false;
         } else if (!(cache.status().equals(MinecacheStatus.REVIEWING) || cache.status().equals(MinecacheStatus.DISABLED))) {
-            LocalizedMessages.send(sender, MessageKeys.Error.Misc.PUBLISH_CANT_PUBLISH);
+            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.PUBLISH_CANT_PUBLISH);
         } else {
             MinecachePublishedEvent event = new MinecachePublishedEvent(cache, sender);
             Bukkit.getPluginManager().callEvent(event);
 
             if (event.isCancelled()) {
-                LocalizedMessages.send(sender, MessageKeys.Error.Misc.PUBLISH);
+                LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.PUBLISH);
                 return true;
             }
 
             MinecachingAPI.get().publishMinecache(sender instanceof Player plr ? plr.getUniqueId() : MCUtils.EMPTY_UUID, cache, reason);
-            LocalizedMessages.send(sender, MessageKeys.Command.Misc.PUBLISH, cache.id());
+            LocalizedMessages.send(sender, MCMessageKeys.Command.Misc.PUBLISH, cache.id());
         }
 
         return true;

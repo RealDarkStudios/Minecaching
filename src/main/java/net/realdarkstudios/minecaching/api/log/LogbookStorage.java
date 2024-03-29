@@ -4,7 +4,7 @@ import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStorage;
 import net.realdarkstudios.minecaching.api.misc.Config;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,7 +64,7 @@ public class LogbookStorage {
             LogbookStorage.getInstance().save();
 
             boolean success = getLogbook(id).delete();
-            MinecachingAPI.tInfo(success ? MessageKeys.Plugin.LOGBOOK_DELETED : MessageKeys.Plugin.LOGBOOK_FAILED_DELETE, id);
+            MinecachingAPI.tInfo(success ? MCMessageKeys.Plugin.LOGBOOK_DELETED : MCMessageKeys.Plugin.LOGBOOK_FAILED_DELETE, id);
             logIDs.removeAll(Collections.singleton(id));
 
             LogbookStorage.getInstance().updateMaps();
@@ -131,7 +131,7 @@ public class LogbookStorage {
                 }
             }
 
-            MinecachingAPI.tInfo(MessageKeys.Plugin.Data.UPDATE_SUCCEEDED,  "Logbook Data", Config.getInstance().getLogbookDataVersion(), MinecachingAPI.LOGBOOK_DATA_VERSION);
+            MinecachingAPI.tInfo(MCMessageKeys.Plugin.Data.UPDATE_SUCCEEDED,  "Logbook Data", Config.getInstance().getLogbookDataVersion(), MinecachingAPI.LOGBOOK_DATA_VERSION);
 
             Config.getInstance().setLogbookDataVersion(MinecachingAPI.LOGBOOK_DATA_VERSION);
             if (logStorage != null) {
@@ -141,7 +141,7 @@ public class LogbookStorage {
             }
             Config.getInstance().save();
         } catch (Exception e) {
-            MinecachingAPI.tWarning(MessageKeys.Plugin.Data.UPDATE_FAILED,  "Logbook Data", Config.getInstance().getLogbookDataVersion(), MinecachingAPI.LOGBOOK_DATA_VERSION);
+            MinecachingAPI.tWarning(MCMessageKeys.Plugin.Data.UPDATE_FAILED,  "Logbook Data", Config.getInstance().getLogbookDataVersion(), MinecachingAPI.LOGBOOK_DATA_VERSION);
         }
     }
 }

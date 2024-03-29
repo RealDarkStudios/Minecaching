@@ -1,12 +1,12 @@
 package net.realdarkstudios.minecaching.api.menu.item.data;
 
+import net.realdarkstudios.commons.event.MenuItemClickEvent;
+import net.realdarkstudios.commons.menu.item.MenuItem;
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
-import net.realdarkstudios.minecaching.api.minecache.Minecache;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
 import net.realdarkstudios.minecaching.api.event.minecache.MinecacheDisabledEvent;
+import net.realdarkstudios.minecaching.api.minecache.Minecache;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +17,7 @@ public class DisableCacheMenuItem extends MenuItem {
     private final Minecache cache;
 
     public DisableCacheMenuItem(Minecache cache) {
-        this(MessageKeys.Menu.Data.ITEM_DISABLE.translate(cache.id()), new ItemStack(Material.GRAY_CONCRETE), List.of(), cache);
+        this(MCMessageKeys.Menu.Data.ITEM_DISABLE.translate(cache.id()), new ItemStack(Material.GRAY_CONCRETE), List.of(), cache);
     }
 
     public DisableCacheMenuItem(String name, ItemStack stack, List<String> lore, Minecache cache) {
@@ -33,12 +33,12 @@ public class DisableCacheMenuItem extends MenuItem {
         Bukkit.getPluginManager().callEvent(pEvent);
 
         if (pEvent.isCancelled()) {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Misc.DISABLE_CANT_DISABLE);
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Misc.DISABLE_CANT_DISABLE);
             return;
         }
 
         MinecachingAPI.get().disableMinecache(event.getPlayer().getUniqueId(), cache);
-        LocalizedMessages.send(event.getPlayer(), MessageKeys.Command.Misc.DISABLE, cache.id());
+        LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Command.Misc.DISABLE, cache.id());
 
         event.setClose(true);
     }

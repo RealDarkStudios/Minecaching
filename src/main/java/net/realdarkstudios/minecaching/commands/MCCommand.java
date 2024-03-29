@@ -1,14 +1,13 @@
 package net.realdarkstudios.minecaching.commands;
 
+import net.realdarkstudios.commons.misc.IBaseCommand;
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import org.bukkit.command.CommandExecutor;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-public abstract class MCCommand implements CommandExecutor, TabExecutor {
+public abstract class MCCommand implements IBaseCommand {
     /**
      * Checks if a cache is valid and sends a message to the sender if not
      * @param sender The {@link CommandSender} to yell at if it doesn't exist
@@ -19,7 +18,7 @@ public abstract class MCCommand implements CommandExecutor, TabExecutor {
     boolean cacheCheck(CommandSender sender, Minecache cache, String id) {
 
         if (cache.equals(Minecache.EMPTY)) {
-            LocalizedMessages.send(sender, MessageKeys.Error.CANT_FIND_CACHE, id);
+            LocalizedMessages.send(sender, MCMessageKeys.Error.CANT_FIND_CACHE, id);
             return true;
         }
 
@@ -33,7 +32,7 @@ public abstract class MCCommand implements CommandExecutor, TabExecutor {
      */
     boolean playerCheck(CommandSender sender) {
         if (!(sender instanceof Player)) {
-            LocalizedMessages.send(sender, MessageKeys.Error.NON_CONSOLE_COMMAND);
+            LocalizedMessages.send(sender, MCMessageKeys.Error.NON_CONSOLE_COMMAND);
             return false;
         }
 

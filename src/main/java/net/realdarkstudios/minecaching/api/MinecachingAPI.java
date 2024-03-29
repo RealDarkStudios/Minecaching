@@ -1,6 +1,11 @@
 package net.realdarkstudios.minecaching.api;
 
 import com.google.common.collect.HashMultimap;
+import net.realdarkstudios.commons.CommonsAPI;
+import net.realdarkstudios.commons.util.Localization;
+import net.realdarkstudios.commons.util.LocalizationProvider;
+import net.realdarkstudios.commons.util.LocalizedMessages;
+import net.realdarkstudios.commons.util.RDSLogHelper;
 import net.realdarkstudios.minecaching.api.log.LogType;
 import net.realdarkstudios.minecaching.api.log.LogbookDataObject;
 import net.realdarkstudios.minecaching.api.log.LogbookStorage;
@@ -8,12 +13,14 @@ import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStorage;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheType;
-import net.realdarkstudios.minecaching.api.misc.*;
+import net.realdarkstudios.minecaching.api.misc.Config;
+import net.realdarkstudios.minecaching.api.misc.MCAutoUpdater;
+import net.realdarkstudios.minecaching.api.misc.Notification;
+import net.realdarkstudios.minecaching.api.misc.NotificationType;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.player.PlayerStorage;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -29,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.logging.Logger;
 
 public class MinecachingAPI {
     private boolean hasInitialized = false;
@@ -58,54 +64,14 @@ public class MinecachingAPI {
     private static PlayerStorage playerStorage;
     private static LogbookStorage logbookStorage;
     private static LocalizationProvider localizationProvider;
-    private static Logger logger;
-    private static AutoUpdater autoUpdater;
+    private static RDSLogHelper logHelper;
+    private static MCAutoUpdater autoUpdater;
 
     MinecachingAPI() {
     }
 
-    /**
-     * Gets the Config Data Version
-     * @return the expected Config Data Version
-     * @since 0.2.1.0
-     * @deprecated Since 0.3.1.0-24w11b | Use {@link MinecachingAPI#CONFIG_DATA_VERSION} instead
-     */
-    @Deprecated(since = "0.3.1.0-24w11b")
-    public static int getConfigDataVersion() {
-        return CONFIG_DATA_VERSION;
-    }
-
-    /**
-     * Gets the Minecache Data Version
-     * @return the expected Minecache Data Version
-     * @since 0.2.1.0
-     * @deprecated Since 0.3.1.0-24w11b | Use {@link MinecachingAPI#MINECACHE_DATA_VERSION} instead
-     */
-    @Deprecated(since = "0.3.1.0-24w11b")
-    public static int getMinecacheDataVersion() {
-        return MINECACHE_DATA_VERSION;
-    }
-
-    /**
-     * Gets the Player Data Version
-     * @return the expected Player Data Version
-     * @since 0.2.1.0
-     * @deprecated Since 0.3.1.0-24w11b | Use {@link MinecachingAPI#PLAYER_DATA_VERSION} instead
-     */
-    @Deprecated(since = "0.3.1.0-24w11b")
-    public static int getPlayerDataVersion() {
-        return PLAYER_DATA_VERSION;
-    }
-
-    /**
-     * Gets the Logbook Data Version
-     * @return the expected Logbook Data Version
-     * @since 0.2.1.0
-     * @deprecated Since 0.3.1.0-24w11b | Use {@link MinecachingAPI#LOGBOOK_DATA_VERSION} instead
-     */
-    @Deprecated(since = "0.3.1.0-24w11b")
-    public static int getLogbookDataVersion() {
-        return LOGBOOK_DATA_VERSION;
+    public static RDSLogHelper getLogger() {
+        return logHelper;
     }
 
     public static Localization getLocalization() {
@@ -132,7 +98,7 @@ public class MinecachingAPI {
         return localizationProvider;
     }
 
-    public static AutoUpdater getUpdater() {
+    public static MCAutoUpdater getUpdater() {
         return autoUpdater;
     }
 
@@ -142,28 +108,14 @@ public class MinecachingAPI {
      * @since 0.2.1.0
      */
     public static void info(String... messages) {
-        for (String msg : messages) {
-            logger.info(msg);
-        }
-    }
-
-    /**
-     * Logs the message using the Minecaching {@link Localization} (with substitutions) at the INFO level
-     * @param key The requested path
-     * @param substitutions The substitutions (or format args)
-     * @since 0.2.2.1
-     * @deprecated Since 0.3.1.0 | Please use {@link MinecachingAPI#tInfo(LocalizedMessages.Key, Object...)} instead
-     */
-    @Deprecated(since = "0.3.1.0", forRemoval = true)
-    public static void tInfo(String key, Object... substitutions) {
-        info(minecachingLocalization.getTranslation(key, substitutions));
+        logHelper.info(messages);
     }
 
     /**
      * Logs the message using the {@link LocalizedMessages} system at the INFO level
      * @param key The {@link LocalizedMessages.Key} to log
      * @param formatArgs The format arguments
-     * @see MessageKeys
+     * @see MCMessageKeys
      * @since 0.3.1.0
      */
     public static void tInfo(LocalizedMessages.Key key, Object... formatArgs) {
@@ -176,28 +128,15 @@ public class MinecachingAPI {
      * @since 0.2.1.0
      */
     public static void warning(String... messages) {
-        for (String msg : messages) {
-            logger.warning(msg);
-        }
+        logHelper.warning(messages);
     }
 
-    /**
-     * Logs the message using the Minecaching {@link Localization} at the INFO level
-     * @param key The requested path
-     * @param substitutions The substitutions (or format args)
-     * @since 0.2.2.1
-     * @deprecated Since 0.3.1.0 | Please use {@link MinecachingAPI#tWarning(LocalizedMessages.Key, Object...)} instead
-     */
-    @Deprecated(since = "0.3.1.0", forRemoval = true)
-    public static void tWarning(String key, Object... substitutions) {
-        warning(minecachingLocalization.getTranslation(key, substitutions));
-    }
 
     /**
      * Logs the message using the {@link LocalizedMessages} system at the WARNING level
      * @param key The {@link LocalizedMessages.Key} to log
      * @param formatArgs The format arguments
-     * @see MessageKeys
+     * @see MCMessageKeys
      * @since 0.3.1.0
      */
     public static void tWarning(LocalizedMessages.Key key, Object... formatArgs) {
@@ -417,7 +356,7 @@ public class MinecachingAPI {
      * @since 0.3.1.0
      */
     public boolean publishMinecache(UUID player, Minecache minecache) {
-        return publishMinecache(player, minecache, MessageKeys.Command.Log.PUBLISH_DEFAULT_MESSAGE.translate(
+        return publishMinecache(player, minecache, MCMessageKeys.Command.Log.PUBLISH_DEFAULT_MESSAGE.translate(
                 LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy")),
                 LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm:ss a"))));
     }
@@ -446,7 +385,7 @@ public class MinecachingAPI {
      * @since 0.3.1.0
      */
     public boolean archiveMinecache(UUID player, Minecache minecache) {
-        return archiveMinecache(player, minecache, MessageKeys.Command.Log.ARCHIVE_DEFAULT_MESSAGE.translate());
+        return archiveMinecache(player, minecache, MCMessageKeys.Command.Log.ARCHIVE_DEFAULT_MESSAGE.translate());
     }
 
     /**
@@ -473,7 +412,7 @@ public class MinecachingAPI {
      * @since 0.3.1.0
      */
     public boolean disableMinecache(UUID player, Minecache minecache) {
-        return disableMinecache(player, minecache, MessageKeys.Command.Log.DISABLE_DEFAULT_MESSAGE.translate());
+        return disableMinecache(player, minecache, MCMessageKeys.Command.Log.DISABLE_DEFAULT_MESSAGE.translate());
     }
 
     /**
@@ -678,9 +617,9 @@ public class MinecachingAPI {
                 entry.getKey().removeFavorite(entry.getValue());
             }
 
-            MinecachingAPI.tInfo(MessageKeys.Command.Admin.CORRECTED_STATS);
+            MinecachingAPI.tInfo(MCMessageKeys.Command.Admin.CORRECTED_STATS);
         } catch (Exception e) {
-            MinecachingAPI.tWarning(MessageKeys.Error.Misc.MCADMIN_CORRECTING_STATS);
+            MinecachingAPI.tWarning(MCMessageKeys.Error.Misc.MCADMIN_CORRECTING_STATS);
         }
     }
 
@@ -701,14 +640,14 @@ public class MinecachingAPI {
      * @see MinecachingAPI#update()
      */
     public void save() {
-        tInfo(MessageKeys.Plugin.SAVE, "Config");
+        tInfo(MCMessageKeys.Plugin.SAVE, "Config");
         config.save();
         localizationProvider.clear();
-        tInfo(MessageKeys.Plugin.SAVE, "Minecache Data");
+        tInfo(MCMessageKeys.Plugin.SAVE, "Minecache Data");
         cacheStorage.save();
-        tInfo(MessageKeys.Plugin.SAVE, "Player Data");
+        tInfo(MCMessageKeys.Plugin.SAVE, "Player Data");
         playerStorage.save();
-        tInfo(MessageKeys.Plugin.SAVE, "Logbook Data");
+        tInfo(MCMessageKeys.Plugin.SAVE, "Logbook Data");
         logbookStorage.save();
     }
 
@@ -729,47 +668,49 @@ public class MinecachingAPI {
 
         config.load();
 
-        minecachingLocalization = localizationProvider.load(Minecaching.getInstance());
+        minecachingLocalization = CommonsAPI.get().registerLocalization(Minecaching.getInstance(), Config.getInstance().getServerLocale());
 
         // Load Message Keys for later use
-        MessageKeys.init();
+        MCMessageKeys.init();
 
-        tInfo(MessageKeys.Plugin.LOAD, "Config");
+        logHelper = minecachingLocalization.getLogHelper();
+
+        tInfo(MCMessageKeys.Plugin.LOAD, "Config");
         if (config.getConfigVersion() < CONFIG_DATA_VERSION) {
-            tWarning(MessageKeys.Plugin.Data.ATTEMPTING_UPDATE, "Config");
+            tWarning(MCMessageKeys.Plugin.Data.ATTEMPTING_UPDATE, "Config");
             if (attemptUpdates) config.updateData();
-            else tWarning(MessageKeys.Plugin.Data.NOT_ATTEMPTING_UPDATE, "Config");
+            else tWarning(MCMessageKeys.Plugin.Data.NOT_ATTEMPTING_UPDATE, "Config");
         }
 
         autoUpdater.updateBranch(config.getUpdateBranch());
         if (config.experimentalFeatures()) {
-            MinecachingAPI.tInfo(MessageKeys.Plugin.EXPERIMENTAL);
+            MinecachingAPI.tInfo(MCMessageKeys.Plugin.EXPERIMENTAL);
         }
 
-        tInfo(MessageKeys.Plugin.LOAD, "Localization");
+        tInfo(MCMessageKeys.Plugin.LOAD, "Localization");
 
-        tInfo(MessageKeys.Plugin.LOAD, "Minecache Data");
+        tInfo(MCMessageKeys.Plugin.LOAD, "Minecache Data");
         cacheStorage.load();
         if (config.getMinecacheDataVersion() < MINECACHE_DATA_VERSION) {
-            tWarning(MessageKeys.Plugin.Data.ATTEMPTING_UPDATE, "Minecache Data");
+            tWarning(MCMessageKeys.Plugin.Data.ATTEMPTING_UPDATE, "Minecache Data");
             if (attemptUpdates) cacheStorage.updateData();
-            else tWarning(MessageKeys.Plugin.Data.NOT_ATTEMPTING_UPDATE, "Minecache Data");
+            else tWarning(MCMessageKeys.Plugin.Data.NOT_ATTEMPTING_UPDATE, "Minecache Data");
         }
 
-        tInfo(MessageKeys.Plugin.LOAD, "Player Data");
+        tInfo(MCMessageKeys.Plugin.LOAD, "Player Data");
         playerStorage.load();
         if (config.getPlayerDataVersion() < PLAYER_DATA_VERSION) {
-            tWarning(MessageKeys.Plugin.Data.ATTEMPTING_UPDATE, "Player Data");
+            tWarning(MCMessageKeys.Plugin.Data.ATTEMPTING_UPDATE, "Player Data");
             if (attemptUpdates) playerStorage.updateData();
-            else tWarning(MessageKeys.Plugin.Data.NOT_ATTEMPTING_UPDATE, "Player Data");
+            else tWarning(MCMessageKeys.Plugin.Data.NOT_ATTEMPTING_UPDATE, "Player Data");
         }
 
-        tInfo(MessageKeys.Plugin.LOAD, "Logbook Data");
+        tInfo(MCMessageKeys.Plugin.LOAD, "Logbook Data");
         logbookStorage.load();
         if (config.getLogbookDataVersion() < LOGBOOK_DATA_VERSION) {
-            tWarning(MessageKeys.Plugin.Data.ATTEMPTING_UPDATE, "Logbook Data");
+            tWarning(MCMessageKeys.Plugin.Data.ATTEMPTING_UPDATE, "Logbook Data");
             if (attemptUpdates) logbookStorage.updateData();
-            else tWarning(MessageKeys.Plugin.Data.NOT_ATTEMPTING_UPDATE, "Logbook Data");
+            else tWarning(MCMessageKeys.Plugin.Data.NOT_ATTEMPTING_UPDATE, "Logbook Data");
         }
 
         correctStats();
@@ -780,9 +721,10 @@ public class MinecachingAPI {
      */
     @ApiStatus.Internal
     void init() {
-        logger = Minecaching.getInstance().getLogger();
+        //logger = Minecaching.getInstance().getLogger();
+        //Use logHelper.getLogger() instead
         config = Config.getInstance();
-        localizationProvider = LocalizationProvider.getInstance();
+        localizationProvider = CommonsAPI.get().getLocalizationProvider();
         cacheStorage = MinecacheStorage.getInstance();
         playerStorage = PlayerStorage.getInstance();
         logbookStorage = LogbookStorage.getInstance();
@@ -805,5 +747,9 @@ public class MinecachingAPI {
      */
     public static MinecachingAPI get() {
         return Minecaching.getAPI();
+    }
+
+    public static CommonsAPI getCommonsAPI() {
+        return CommonsAPI.get();
     }
 }

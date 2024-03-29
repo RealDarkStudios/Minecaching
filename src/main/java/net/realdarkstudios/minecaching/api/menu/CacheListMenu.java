@@ -1,14 +1,14 @@
 package net.realdarkstudios.minecaching.api.menu;
 
+import net.realdarkstudios.commons.menu.PaginationMenu;
+import net.realdarkstudios.commons.menu.item.MenuItem;
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.menu.impl.PaginationMenu;
-import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.menu.item.clm.MinecacheMenuItem;
 import net.realdarkstudios.minecaching.api.menu.item.clm.OpenCLMOptionsMenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +23,7 @@ public class CacheListMenu extends PaginationMenu {
     public CacheListMenu(LocalizedMessages.Key titleKey, JavaPlugin plugin, Player plr) {
         super(titleKey, plugin, null);
 
-        setItem(6, new OpenCLMOptionsMenuItem(MessageKeys.Menu.List.ITEM_OPTIONS.translate(),
+        setItem(6, new OpenCLMOptionsMenuItem(MCMessageKeys.Menu.List.ITEM_OPTIONS.translate(),
                 new ItemStack(Material.GRAY_DYE), List.of(), this));
 
         update(plr);
@@ -41,7 +41,7 @@ public class CacheListMenu extends PaginationMenu {
 
         if (filteredCaches.isEmpty()) {
             close(plr);
-            LocalizedMessages.send(plr, MessageKeys.Command.List.NO_CACHES);
+            LocalizedMessages.send(plr, MCMessageKeys.Command.List.NO_CACHES);
         }
 
         ArrayList<MenuItem> menuItemsN = new ArrayList<>();

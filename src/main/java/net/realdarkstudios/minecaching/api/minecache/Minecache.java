@@ -1,17 +1,19 @@
 package net.realdarkstudios.minecaching.api.minecache;
 
+import net.realdarkstudios.commons.misc.IYamlSerializable;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.util.MCUtils;
 import net.realdarkstudios.minecaching.api.misc.Config;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import javax.naming.SizeLimitExceededException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class Minecache {
+public class Minecache implements IYamlSerializable {
     public static final Minecache EMPTY = new Minecache("NULL", MinecacheType.TRADITIONAL, null, MCUtils.EMPTY_UUID, null, 0, 0, 0, 0, 0, 0, MCUtils.EMPTY_UUID, MinecacheStatus.INVALID, null, null, 0, null, 0, true);
 
     private String id, name, code;
@@ -225,6 +227,7 @@ public class Minecache {
         return invalidated;
     }
 
+    @NotNull
     public static Minecache fromYaml(YamlConfiguration yaml, String key) {
         boolean isInvalidated = false;
         int invalidatedCode = -1;
@@ -298,14 +301,14 @@ public class Minecache {
         }
 
         if (isInvalidated && !ignoreNormalChecks) {
-            MinecachingAPI.tWarning(MessageKeys.Misc.Cache.YAML, key, switch (invalidatedCode) {
-                case 0 -> MessageKeys.Misc.Cache.YCODE_0.translate();
-                case 1 -> MessageKeys.Misc.Cache.YCODE_1.translate();
-                case 2 -> MessageKeys.Misc.Cache.YCODE_2.translate();
-                case 3 -> MessageKeys.Misc.Cache.YCODE_3.translate();
-                case 4 -> MessageKeys.Misc.Cache.YCODE_4.translate();
-                case 5 -> MessageKeys.Misc.Cache.YCODE_5.translate();
-                default -> MessageKeys.Misc.Cache.YCODE_OTHER.translate();
+            MinecachingAPI.tWarning(MCMessageKeys.Misc.Cache.YAML, key, switch (invalidatedCode) {
+                case 0 -> MCMessageKeys.Misc.Cache.YCODE_0.translate();
+                case 1 -> MCMessageKeys.Misc.Cache.YCODE_1.translate();
+                case 2 -> MCMessageKeys.Misc.Cache.YCODE_2.translate();
+                case 3 -> MCMessageKeys.Misc.Cache.YCODE_3.translate();
+                case 4 -> MCMessageKeys.Misc.Cache.YCODE_4.translate();
+                case 5 -> MCMessageKeys.Misc.Cache.YCODE_5.translate();
+                default -> MCMessageKeys.Misc.Cache.YCODE_OTHER.translate();
             });
         }
 

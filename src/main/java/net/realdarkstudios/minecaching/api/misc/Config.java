@@ -3,7 +3,7 @@ package net.realdarkstudios.minecaching.api.misc;
 import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheType;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -311,10 +311,10 @@ public class Config {
             yaml.set("ENABLED_TYPES", enabledTypes);
             statsScoreOptions.toYaml(yaml, "STATS_SCORE_OPTIONS");
             yaml.set("CONFIG_VERSION", MinecachingAPI.CONFIG_DATA_VERSION);
-            MinecachingAPI.tInfo(MessageKeys.Plugin.Data.UPDATE_SUCCEEDED, "Config", configVersion, MinecachingAPI.CONFIG_DATA_VERSION);
+            MinecachingAPI.tInfo(MCMessageKeys.Plugin.Data.UPDATE_SUCCEEDED, "Config", configVersion, MinecachingAPI.CONFIG_DATA_VERSION);
             save();
         } catch (Exception e) {
-            MinecachingAPI.tInfo(MessageKeys.Plugin.Data.UPDATE_FAILED, "Config", getConfigVersion(), MinecachingAPI.CONFIG_DATA_VERSION);
+            MinecachingAPI.tInfo(MCMessageKeys.Plugin.Data.UPDATE_FAILED, "Config", getConfigVersion(), MinecachingAPI.CONFIG_DATA_VERSION);
         }
     }
 

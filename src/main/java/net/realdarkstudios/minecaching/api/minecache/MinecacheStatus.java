@@ -2,6 +2,7 @@ package net.realdarkstudios.minecaching.api.minecache;
 
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.NotNull;
 
 public enum MinecacheStatus {
     PUBLISHED("published", "P", ChatColor.GREEN),
@@ -20,6 +21,7 @@ public enum MinecacheStatus {
         this.color = color;
     }
 
+    @NotNull
     public static MinecacheStatus get(String status) {
         return switch (status.toLowerCase()) {
             case "published", "active" -> PUBLISHED;

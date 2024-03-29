@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.api.event.minecache;
 
+import net.realdarkstudios.commons.event.CancellableBaseEvent;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
-import net.realdarkstudios.minecaching.api.event.CancellableBaseEvent;
 
 public abstract class MinecacheEvent extends CancellableBaseEvent {
     /**

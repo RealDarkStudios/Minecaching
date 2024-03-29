@@ -1,15 +1,15 @@
 package net.realdarkstudios.minecaching.api.menu;
 
 import net.md_5.bungee.api.ChatColor;
+import net.realdarkstudios.commons.menu.MCMenu;
+import net.realdarkstudios.commons.menu.item.MenuItemState;
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.log.LogType;
-import net.realdarkstudios.minecaching.api.menu.impl.MCMenu;
-import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItemState;
 import net.realdarkstudios.minecaching.api.menu.item.log.*;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +21,7 @@ public class LogMenu extends MCMenu {
     private final PlayerDataObject author;
 
     public LogMenu(Minecache cache, PlayerDataObject author) {
-        super(MessageKeys.Menu.Log.TITLE, MenuSize.THREE_ROW, Minecaching.getInstance(), cache.id());
+        super(MCMessageKeys.Menu.Log.TITLE, MenuSize.THREE_ROW, Minecaching.getInstance(), cache.id());
         this.cache = cache;
         this.author = author;
 
@@ -46,31 +46,31 @@ public class LogMenu extends MCMenu {
         setItem(8, new LogCancelMenuItem());
         setItem(18, new FavoriteCacheItem(cache, author));
         setItem(20, new LogTypeMenuItem(
-                new MenuItemState("found", MessageKeys.Menu.Log.TYPE_FOUND.translate(cache.id()), new ItemStack(Material.YELLOW_TERRACOTTA), List.of()),
-                new MenuItemState("dnf", MessageKeys.Menu.Log.TYPE_DNF.translate(cache.id()), new ItemStack(Material.BLUE_TERRACOTTA), List.of()),
-                new MenuItemState("note", MessageKeys.Menu.Log.TYPE_NOTE.translate(cache.id()), new ItemStack(Material.CYAN_TERRACOTTA), List.of()),
-                new MenuItemState("flag", MessageKeys.Menu.Log.TYPE_FLAG.translate(cache.id()), new ItemStack(Material.RED_TERRACOTTA), List.of())
+                new MenuItemState("found", MCMessageKeys.Menu.Log.TYPE_FOUND.translate(cache.id()), new ItemStack(Material.YELLOW_TERRACOTTA), List.of()),
+                new MenuItemState("dnf", MCMessageKeys.Menu.Log.TYPE_DNF.translate(cache.id()), new ItemStack(Material.BLUE_TERRACOTTA), List.of()),
+                new MenuItemState("note", MCMessageKeys.Menu.Log.TYPE_NOTE.translate(cache.id()), new ItemStack(Material.CYAN_TERRACOTTA), List.of()),
+                new MenuItemState("flag", MCMessageKeys.Menu.Log.TYPE_FLAG.translate(cache.id()), new ItemStack(Material.RED_TERRACOTTA), List.of())
         ).fromId(author.getLogType().getId()));
         setItem(22, author.getLogType().equals(LogType.FOUND) ? new LogCodeMenuItem(
-                MessageKeys.Menu.Log.ITEM_CODE.translate(code ? author.getLogCode(): "???"),
+                MCMessageKeys.Menu.Log.ITEM_CODE.translate(code ? author.getLogCode(): "???"),
                 new ItemStack(code ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()) : EMPTY_SLOT_ITEM);
         setItem(24, new LogMessageMenuItem(
-                customMessage ? MessageKeys.Menu.Log.ITEM_CUSTOM_MESSAGE.translate(author.getLogMessage().length()) : MessageKeys.Menu.Log.ITEM_MESSAGE.translate(),
+                customMessage ? MCMessageKeys.Menu.Log.ITEM_CUSTOM_MESSAGE.translate(author.getLogMessage().length()) : MCMessageKeys.Menu.Log.ITEM_MESSAGE.translate(),
                 new ItemStack(customMessage ? Material.GREEN_WOOL : typeDNF || typeFound ? Material.YELLOW_WOOL: Material.RED_WOOL),
                 List.of(customMessage ? author.getLogMessage() : getDefaultMessage())));
-        setItem(26, new LogCreateMenuItem(MessageKeys.Menu.SAVE.translateWithOtherStyle(
-                ready ? MessageKeys.Menu.SAVE.styleOptions() : new LocalizedMessages.StyleOptions().setColor(ChatColor.RED)),
+        setItem(26, new LogCreateMenuItem(MCMessageKeys.Menu.SAVE.translateWithOtherStyle(
+                ready ? MCMessageKeys.Menu.SAVE.styleOptions() : new LocalizedMessages.StyleOptions().setColor(ChatColor.RED)),
                 new ItemStack(ready ? Material.LIME_CONCRETE : Material.BEDROCK),
-                List.of(MessageKeys.Menu.SAVE_LORE.translate())));
+                List.of(MCMessageKeys.Menu.SAVE_LORE.translate())));
 
         super.update(player);
     }
 
     private String getDefaultMessage() {
         return switch (author.getLogType()) {
-            case FOUND -> MessageKeys.Menu.Log.MESSAGE_FOUND.translate();
-            case DNF -> MessageKeys.Menu.Log.MESSAGE_DNF.translate();
-            default -> MessageKeys.Menu.Log.MESSAGE_OTHER.translate();
+            case FOUND -> MCMessageKeys.Menu.Log.MESSAGE_FOUND.translate();
+            case DNF -> MCMessageKeys.Menu.Log.MESSAGE_DNF.translate();
+            default -> MCMessageKeys.Menu.Log.MESSAGE_OTHER.translate();
         };
     }
 }

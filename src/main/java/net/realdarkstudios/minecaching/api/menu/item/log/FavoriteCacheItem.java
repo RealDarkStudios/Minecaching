@@ -1,11 +1,11 @@
 package net.realdarkstudios.minecaching.api.menu.item.log;
 
+import net.realdarkstudios.commons.event.MenuItemClickEvent;
+import net.realdarkstudios.commons.menu.item.MenuItem;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -17,7 +17,7 @@ public class FavoriteCacheItem extends MenuItem {
     private final Minecache cache;
 
     public FavoriteCacheItem(Minecache cache, PlayerDataObject pdo) {
-        super((pdo.getFavorites().contains(cache.id()) ? MessageKeys.Menu.Log.ITEM_UNFAVORITE : MessageKeys.Menu.Log.ITEM_FAVORITE)
+        super((pdo.getFavorites().contains(cache.id()) ? MCMessageKeys.Menu.Log.ITEM_UNFAVORITE : MCMessageKeys.Menu.Log.ITEM_FAVORITE)
                         .translate(cache.id()),
                 new ItemStack(Material.GRAY_DYE), List.of());
         this.cache = cache;

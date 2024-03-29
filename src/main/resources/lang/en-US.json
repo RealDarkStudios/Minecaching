@@ -130,6 +130,7 @@
   "mcstats.mostftfs": "Most FTFs: %s (%d ftfs)",
   "mcstats.mosthides": "Most Hides: %s (%d hides)",
   "mcstats.accomplished": "Most Accomplished: %s (%d score)",
+  "mcstats.none": "None",
   "publishcache.publish": "Published %s",
 
   "plugin.data.loadedplayers": "Loaded %d players!",

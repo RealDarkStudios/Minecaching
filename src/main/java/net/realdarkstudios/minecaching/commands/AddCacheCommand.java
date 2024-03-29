@@ -1,12 +1,12 @@
 package net.realdarkstudios.minecaching.commands;
 
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.menu.CreateCacheMenu;
 import net.realdarkstudios.minecaching.api.menu.MCMenus;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -30,8 +30,8 @@ public class AddCacheCommand extends MCCommand {
             switch (subCmd) {
                 case "name" -> {
                     if (args.length < 2) {
-                        LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
-                        LocalizedMessages.send(sender, MessageKeys.Usage.CREATE_NAME, label);
+                        LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_USAGE);
+                        LocalizedMessages.send(sender, MCMessageKeys.Usage.CREATE_NAME, label);
                         return true;
                     } else {
                         StringBuilder name = new StringBuilder();
@@ -45,8 +45,8 @@ public class AddCacheCommand extends MCCommand {
                 }
                 case "code" -> {
                     if (args.length < 2) {
-                        LocalizedMessages.send(sender, MessageKeys.INCORRECT_USAGE);
-                        LocalizedMessages.send(sender, MessageKeys.Usage.CREATE_CODE, label);
+                        LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_USAGE);
+                        LocalizedMessages.send(sender, MCMessageKeys.Usage.CREATE_CODE, label);
                         return true;
                     } else {
                         pdo.setCreatingCache(pdo.getCreatingCache().setCode(args[1].trim()));

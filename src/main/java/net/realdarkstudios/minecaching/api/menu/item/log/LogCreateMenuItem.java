@@ -1,18 +1,18 @@
 package net.realdarkstudios.minecaching.api.menu.item.log;
 
+import net.realdarkstudios.commons.event.MenuItemClickEvent;
+import net.realdarkstudios.commons.menu.item.MenuItem;
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.event.minecache.MinecacheFoundEvent;
 import net.realdarkstudios.minecaching.api.log.Log;
 import net.realdarkstudios.minecaching.api.log.LogType;
-import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheType;
 import net.realdarkstudios.minecaching.api.misc.NotificationType;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
-import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
-import net.realdarkstudios.minecaching.api.event.minecache.MinecacheFoundEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -38,12 +38,12 @@ public class LogCreateMenuItem extends MenuItem {
             if (!logType.equals(LogType.FOUND) || cache.code().equals(pdo.getLogCode())) {
                 if (!logType.equals(LogType.FOUND) || event.getPlayer().getLocation().distance(cache.location()) < 25) {
                     if (!(logType.equals(LogType.NOTE) || logType.equals(LogType.FLAG)) && event.getPlayer().getUniqueId().equals(cache.owner()) || event.getPlayer().getUniqueId().equals(cache.originalAuthor())) {
-                        LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Log.LOG_OWNED_CACHE);
+                        LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Log.LOG_OWNED_CACHE);
                         return;
                     }
 
                     if ((logType.equals(LogType.FLAG) || logType.equals(LogType.NOTE)) && pdo.getLogMessage().isEmpty()) {
-                        LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Log.NOTE_FLAG_EMPTY);
+                        LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Log.NOTE_FLAG_EMPTY);
                         return;
                     }
 
@@ -54,7 +54,7 @@ public class LogCreateMenuItem extends MenuItem {
                         Bukkit.getPluginManager().callEvent(foundEvent);
 
                         if (foundEvent.isCancelled()) {
-                            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Log.GENERAL);
+                            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Log.GENERAL);
                             super.onItemClick(event);
                             return;
                         }
@@ -68,11 +68,11 @@ public class LogCreateMenuItem extends MenuItem {
                         MinecachingAPI.get().save();
                         MinecachingAPI.get().update();
 
-                        LocalizedMessages.send(event.getPlayer(), MessageKeys.Command.Log.FIND, cache.id(), cache.name());
-                        LocalizedMessages.send(event.getPlayer(), (isFTF ? MessageKeys.Command.Log.FIND_COUNT_WITH_FTFS : MessageKeys.Command.Log.FIND_COUNT),
+                        LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Command.Log.FIND, cache.id(), cache.name());
+                        LocalizedMessages.send(event.getPlayer(), (isFTF ? MCMessageKeys.Command.Log.FIND_COUNT_WITH_FTFS : MCMessageKeys.Command.Log.FIND_COUNT),
                                 pdo.getFinds().size(), isFTF ? pdo.getFTFs().size() : null);
                     } else {
-                        LocalizedMessages.send(event.getPlayer(), MessageKeys.Command.Log.LOG, cache.id(), cache.name());
+                        LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Command.Log.LOG, cache.id(), cache.name());
                     }
 
                     if (logType.equals(LogType.FLAG) && !pdo.getUniqueID().equals(cache.owner())) MinecachingAPI.get().createNotification(cache.owner(), pdo.getUniqueID(), NotificationType.FLAG, cache);
@@ -85,14 +85,14 @@ public class LogCreateMenuItem extends MenuItem {
                     pdo.setLogCode("");
                     return;
                 } else {
-                    LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Log.DISTANCE);
+                    LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Log.DISTANCE);
                 }
             } else {
-                LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Log.CODE);
+                LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Log.CODE);
                 pdo.setLogCode("");
             }
         } else {
-            LocalizedMessages.send(event.getPlayer(), MessageKeys.Error.Log.UNSUPPORTED);
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Log.UNSUPPORTED);
         }
 
         pdo.removeFavorite(pdo.getLocatingId());
@@ -102,9 +102,9 @@ public class LogCreateMenuItem extends MenuItem {
 
     private static String getDefaultMessage(PlayerDataObject pdo) {
         return switch (pdo.getLogType()) {
-            case FOUND -> MessageKeys.Menu.Log.MESSAGE_FOUND.translate();
-            case DNF -> MessageKeys.Menu.Log.MESSAGE_DNF.translate();
-            default -> MessageKeys.Menu.Log.MESSAGE_OTHER.translate();
+            case FOUND -> MCMessageKeys.Menu.Log.MESSAGE_FOUND.translate();
+            case DNF -> MCMessageKeys.Menu.Log.MESSAGE_DNF.translate();
+            default -> MCMessageKeys.Menu.Log.MESSAGE_OTHER.translate();
         };
     }
 }

@@ -1,12 +1,12 @@
 package net.realdarkstudios.minecaching.api.menu.item.data;
 
+import net.realdarkstudios.commons.event.MenuItemClickEvent;
+import net.realdarkstudios.commons.menu.item.MenuItem;
+import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.event.MenuItemClickEvent;
-import net.realdarkstudios.minecaching.api.menu.impl.item.MenuItem;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
-import net.realdarkstudios.minecaching.api.util.LocalizedMessages;
-import net.realdarkstudios.minecaching.api.util.MessageKeys;
+import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -25,7 +25,7 @@ public class SelectMaintainerOfflineMenuItem extends MenuItem {
     @Override
     public void onItemClick(MenuItemClickEvent event) {
         MinecachingAPI.get().saveMinecache(cache.setMaintaner(pdo.getUniqueID()), false);
-        LocalizedMessages.send(event.getPlayer(), MessageKeys.Menu.Data.SET_MAINTAINER, cache.id(), name);
+        LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Menu.Data.SET_MAINTAINER, cache.id(), name);
 
         event.setGoBack(true);
         super.onItemClick(event);
