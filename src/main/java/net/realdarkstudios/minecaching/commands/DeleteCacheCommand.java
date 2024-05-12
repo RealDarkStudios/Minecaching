@@ -6,6 +6,7 @@ import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.event.minecache.MinecacheDeletedEvent;
 import net.realdarkstudios.minecaching.api.menu.CacheDataMenu;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
+import net.realdarkstudios.minecaching.api.misc.MCPermissions;
 import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
 import org.bukkit.Bukkit;
@@ -42,7 +43,7 @@ public class DeleteCacheCommand extends MCCommand {
             return true;
         }
 
-        if ((sender instanceof Player plr && !plr.getUniqueId().equals(cache.owner())) && !sender.isOp()) {
+        if ((sender instanceof Player plr && !plr.getUniqueId().equals(cache.owner())) && !hasPerm(sender, MCPermissions.BYPASS_DELETE_OTHERS)) {
             LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.DELETE_OTHERS);
             return true;
         }

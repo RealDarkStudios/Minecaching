@@ -54,6 +54,21 @@ public class AddCacheCommand extends MCCommand {
                         menu.update(plr);
                     }
                 }
+                case "hint" -> {
+                    if (args.length < 2) {
+                        LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_USAGE);
+                        LocalizedMessages.send(sender, MCMessageKeys.Usage.CREATE_NAME, label);
+                        return true;
+                    } else {
+                        StringBuilder name = new StringBuilder();
+                        for (int i = 1; i < args.length; i++) {
+                            name.append(args[i]).append(" ");
+                        }
+                        pdo.setCreatingCache(pdo.getCreatingCache().setHint(name.toString().replace("&", "§").trim()));
+                        menu.open(plr);
+                        menu.update(plr);
+                    }
+                }
             }
         }
 

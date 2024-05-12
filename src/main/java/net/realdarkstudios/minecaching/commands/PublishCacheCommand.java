@@ -19,7 +19,7 @@ public class PublishCacheCommand extends MCCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.INCORRECT_USAGE);
+            LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_USAGE);
             LocalizedMessages.send(sender, MCMessageKeys.Usage.PUBLISH, label);
 
             return true;
@@ -42,7 +42,7 @@ public class PublishCacheCommand extends MCCommand {
             LocalizedMessages.send(sender, MCMessageKeys.Error.CANT_FIND_CACHE);
             return false;
         } else if (!(cache.status().equals(MinecacheStatus.REVIEWING) || cache.status().equals(MinecacheStatus.DISABLED))) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.PUBLISH_CANT_PUBLISH);
+            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.CANT_PUBLISH);
         } else {
             MinecachePublishedEvent event = new MinecachePublishedEvent(cache, sender);
             Bukkit.getPluginManager().callEvent(event);

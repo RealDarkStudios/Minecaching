@@ -111,7 +111,7 @@ public class MCEventHandler implements Listener {
                 pdo.updateData();
 
                 if (!pdo.getNotifications().isEmpty()) {
-                    LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Plugin.Notification.NOTIFICATION_ALERT);
+                    LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Plugin.Notification.ALERT);
                     for (Notification notification : pdo.getNotifications()) {
                         if (notification.getType() == NotificationType.INVALID && notification.getInitiator().equals(MCUtils.EMPTY_UUID) && notification.getCache().equals(Minecache.EMPTY)) continue;
                         LocalizedMessages.send(event.getPlayer(), notification.getType().getTranslationKey(), notification.getCache().id(), MCUtils.uuidName(notification.getInitiator()));

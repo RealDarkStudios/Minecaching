@@ -11,111 +11,84 @@ commands:
   addcache:
     description: "Adds a Minecache"
     usage: "/addcache <cancel|coords|data|lodecoords|name|save|type>"
-    aliases: [addc, ac, add]
-    permission: minecaching.addcache
+    aliases: [addc, ac, add, create, createc]
+    permission: minecaching.command.create
     permission-message: "You do not have permission to add caches!"
   editcache:
     description: "Edits a Minecache"
     usage: "/editcache <id>"
     aliases: [editc, ec, edit]
-    permission: minecaching.editcache
+    permission: minecaching.command.edit
     permission-message: "You do not have permission to edit caches!"
   locatecache:
     description: "Find a Minecache"
     usage: "/locatecache <id>"
     aliases: [locatec, locate, loc]
-    permission: minecaching.locatecache
+    permission: minecaching.command.locate
     permission-message: "You do not have permission to locate caches!"
   logcache:
     description: "Check if you have found a Minecache"
     usage: "/logcache <found|dnf|note|requestreview|maintenance|archive|disable|publish> <code> [logmessage]"
     aliases: [logc, log]
-    permission: minecaching.logcache
+    permission: minecaching.command.log
     permission-message: "You do not have permission to log caches..."
   logbook:
     description: "Get the logbook for a Minecache"
     usage: "/logbook [booknumber]"
     aliases: [logb, lb]
-    permission: minecaching.logbook
+    permission: minecaching.command.logbook
     permission-message: "You do not have permission to get the logbook!"
   publishcache:
-    description: "[ADMIN] Publishes a cache"
+    description: "Publishes a cache"
     usage: "/publishcache <id>"
     aliases: [pubcache, pubc, pc, publish]
-    permission: minecaching.admin.publishcache
+    permission: minecaching.command.publish
     permission-message: "You do not have permission to publish caches!"
   deletecache:
     description: "Deletes a Minecache"
     usage: "/delcache <id>"
     aliases: [delcache, delc, dc, delete]
-    permission: minecaching.deletecache
+    permission: minecaching.command.delete
     permission-message: "You do not have permission to delete caches!"
   listcaches:
     description: "Lists all Minecaches"
     usage: "/listcaches [page]"
     aliases: [listc, lc, list]
-    permission: minecaching.listcaches
+    permission: minecaching.command.list
     permission-message: "You do not have permission to view caches!"
   mcadmin:
     description: "[ADMIN] Minecaching Admin Utilities"
     usage: "/mca <reload|version>"
     aliases: [mca]
-    permission: minecaching.admin
+    permission: minecaching.command.admin
     permission-message: "You do not have permission to use the admin utilities"
   mcstats:
     description: "Provides server statistics for Minecaching"
     usage: "/mcstats"
     aliases: [mcs, stats]
-    permission: minecaching.stats
+    permission: minecaching.command.stats
     permission-message: "You do not have permission to see the server statistics"
   archivecache:
     description: "Archives a minecache"
     usage: "/archivecache <id>"
     aliases: [arcache, arc, archive]
-    permission: minecaching.archivecache
+    permission: minecaching.command.archive
     permission-message: "You do not have permission to archive caches!"
   disablecache:
     description: "Disables a minecache"
     usage: "/disablecache <id>"
     aliases: [discache, dic, disable]
-    permission: minecaching.disablecache
+    permission: minecaching.command.disable
     permission-message: "You do not have permission to disable caches!"
   maintainer:
     description: "Sets a different player as the maintainer"
     usage: "/maintainer <id> <username/uuid>"
     aliases: [mt]
-    permission: minecaching.maintainer
-    permission-message: "You do not have permission to change maintainers"
-permissions:
-  minecaching.addcache:
-    default: true
-  minecaching.editcache:
-    default: true
-  minecaching.locatecache:
-    default: true
-  minecaching.logcache:
-    default: true
-  minecaching.logbook:
-    default: true
-  minecaching.admin.publishcache:
-    default: op
-  minecaching.deletecache:
-    default: true
-  minecaching.listcaches:
-    default: true
-  minecaching.archivecache:
-    default: true
-  minecaching.disablecache:
-    default: true
-  minecaching.admin:
-    default: op
-  minecaching.admin.reload:
-    default: op
-  minecaching.admin.edit:
-    default: op
-  minecaching.stats:
-    default: true
-  minecaching.admin.bypass.datamenu:
-    default: op
-  minecaching.maintainer:
-    default: true
+    permission: minecaching.command.maintainer
+    permission-message: "You do not have permission to change maintainers!"
+  cachehint:
+    description: "Gets the cache hint for the currently locating cache"
+    usage: "/cachehint"
+    aliases: [chint, hint]
+    permission: minecaching.command.hint
+    permission-message: "You do not have permission to view cache hints!"

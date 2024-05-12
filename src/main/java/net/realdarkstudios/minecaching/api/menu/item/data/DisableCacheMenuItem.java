@@ -33,7 +33,7 @@ public class DisableCacheMenuItem extends MenuItem {
         Bukkit.getPluginManager().callEvent(pEvent);
 
         if (pEvent.isCancelled()) {
-            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Misc.DISABLE_CANT_DISABLE);
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Misc.CANT_DISABLE);
             return;
         }
 

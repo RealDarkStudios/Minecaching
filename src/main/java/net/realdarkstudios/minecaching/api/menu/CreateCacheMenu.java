@@ -20,6 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -44,6 +45,7 @@ public class CreateCacheMenu extends MCMenu {
         boolean timeCheck = timeCheck(author);
         boolean name = stringCheck(cache.name());
         boolean code = stringCheck(cache.code());
+        boolean hint = stringCheck(cache.hint());
         boolean navLoc = coordCheck(cache.navLocation());
         boolean loc = coordCheck(cache.location());
         boolean cachedist = loc && cacheDistanceCheck(cache.location());
@@ -58,7 +60,6 @@ public class CreateCacheMenu extends MCMenu {
             setItem(13, new CreateCacheMenuItem(MCMessageKeys.Menu.Create.ITEM_CREATE.translate(),
                     new ItemStack(Material.GREEN_CONCRETE), List.of()));
         } else {
-
             setItem(0, new CreateCacheResetMenuItem(MCMessageKeys.Menu.Create.ITEM_RESET.translate(),
                     new ItemStack(Material.LIGHT_GRAY_CONCRETE), List.of()));
             setItem(4, new CreateCachePreviewItem(cache));
@@ -66,6 +67,8 @@ public class CreateCacheMenu extends MCMenu {
                     MCUtils.formatLocation(MCMessageKeys.Menu.Data.PREVIEW_NAVIGATION_COORDS.translate(), cache.navLocation())) :
                     MCMessageKeys.Menu.Create.ITEM_NAVIGATION_COORDS.translate(),
                     new ItemStack(navLoc ? Material.GREEN_WOOL : Material.RED_WOOL), List.of()));
+            setItem(22, new CreateCacheHintMenuItem(MCMessageKeys.Menu.Data.CACHE_HINT.translate(hint ? cache.hint() : "???"),
+                    new ItemStack(hint ? Material.GREEN_WOOL : Material.YELLOW_WOOL), List.of()));
             setItem(23, new CreateCacheCoordMenuItem(loc ? MCMessageKeys.Menu.Create.ITEM_LOCATION.translate(
                     MCUtils.formatLocation(MCMessageKeys.Menu.Data.PREVIEW_COORDS.translate(), cache.location())) :
                     MCMessageKeys.Menu.Create.ITEM_LOCATION_COORDS.translate() ,
@@ -108,7 +111,10 @@ public class CreateCacheMenu extends MCMenu {
 
     private static boolean cacheDistanceCheck(Location loc) {
         if (MinecachingAPI.get().getAllKnownCaches().isEmpty()) return true;
-        Minecache closestCache = MinecachingAPI.get().getSortedCaches(Comparator.comparingDouble(c -> c.location().distanceSquared(loc))).get(0);
+        ArrayList<Minecache> sameWorldCaches = MinecachingAPI.get().getFilteredCaches(c -> c.world() == loc.getWorld());
+        if (sameWorldCaches.isEmpty()) return true;
+        sameWorldCaches.sort(Comparator.comparingDouble(c -> c.location().distanceSquared(loc)));
+        Minecache closestCache = sameWorldCaches.get(0);
         // Subtract 1 to account for the distance being exactly the minCacheDistance, which in this function would return false because distanceCheck would return true
         return !distanceCheck(closestCache.location(), loc, Config.getInstance().getMinCacheDistance() - 1);
     }

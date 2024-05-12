@@ -24,20 +24,11 @@ public class ArchiveCacheCommand extends MCCommand {
             return true;
         }
 
-        String reason = MCMessageKeys.Command.Log.ARCHIVE_DEFAULT_MESSAGE.translate();
-        if (args.length > 1) {
-            StringBuilder rsn = new StringBuilder();
-            for (int i = 1; i < args.length; i++) {
-                rsn.append(args[i]).append(" ");
-            }
-            reason = rsn.toString().trim();
-        }
-
         Minecache cache = MinecachingAPI.get().getMinecache(args[0]);
 
-        if (cacheCheck(sender, cache, args[0])) return true;
+        if (!cacheCheck(sender, cache, args[0])) return true;
         else if (cache.status().equals(MinecacheStatus.ARCHIVED) || cache.status().equals(MinecacheStatus.INVALID)) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.ARCHIVE_CANT_ARCHIVE);
+            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.CANT_ARCHIVE);
         } else {
             MinecacheArchivedEvent event = new MinecacheArchivedEvent(cache, sender);
             Bukkit.getPluginManager().callEvent(event);
@@ -45,6 +36,15 @@ public class ArchiveCacheCommand extends MCCommand {
             if (event.isCancelled()) {
                 LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.ARCHIVE);
                 return true;
+            }
+
+            String reason = MCMessageKeys.Command.Log.ARCHIVE_DEFAULT_MESSAGE.translate();
+            if (args.length > 1) {
+                StringBuilder rsn = new StringBuilder();
+                for (int i = 1; i < args.length; i++) {
+                    rsn.append(args[i]).append(" ");
+                }
+                reason = rsn.toString().trim();
             }
 
             MinecachingAPI.get().archiveMinecache(sender instanceof Player plr ? plr.getUniqueId() : MCUtils.EMPTY_UUID, cache, reason);

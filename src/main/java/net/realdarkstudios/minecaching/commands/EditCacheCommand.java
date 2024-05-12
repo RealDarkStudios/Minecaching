@@ -7,6 +7,7 @@ import net.realdarkstudios.minecaching.api.menu.EditCacheMenu;
 import net.realdarkstudios.minecaching.api.menu.MCMenus;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.misc.Config;
+import net.realdarkstudios.minecaching.api.misc.MCPermissions;
 import net.realdarkstudios.minecaching.api.misc.NotificationType;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
@@ -81,7 +82,7 @@ public class EditCacheCommand extends MCCommand {
                 return true;
             }
 
-            if (pdo.getUniqueID().equals(cache.owner()) || pdo.getPlayer().hasPermission("minecaching.admin.edit")) {
+            if (pdo.getUniqueID().equals(cache.owner()) || hasPerm(pdo.getPlayer(), MCPermissions.BYPASS_EDIT_OTHERS)) {
                 pdo.setEditingCache(cache);
 
                 EditCacheMenu menu = MCMenus.get().getEditCacheMenu(pdo, cache);
@@ -140,7 +141,7 @@ public class EditCacheCommand extends MCCommand {
                         y = MCUtils.interpretCoordinate(args[2], "y");
                         z = MCUtils.interpretCoordinate(args[3], "z");
                     } else {
-                        LocalizedMessages.send(sender, MCMessageKeys.Error.INCORRECT_ARG_COUNT);
+                        LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_ARG_COUNT);
                         LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT_NAVIGATION_COORDS, label);
                         return true;
                     }
@@ -157,7 +158,7 @@ public class EditCacheCommand extends MCCommand {
                         y = MCUtils.interpretCoordinate(args[2], "y");
                         z = MCUtils.interpretCoordinate(args[3], "z");
                     } else {
-                        LocalizedMessages.send(sender, MCMessageKeys.Error.INCORRECT_ARG_COUNT);
+                        LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_ARG_COUNT);
                         LocalizedMessages.send(sender, MCMessageKeys.Usage.EDIT_COORDS, label);
                         return true;
                     }

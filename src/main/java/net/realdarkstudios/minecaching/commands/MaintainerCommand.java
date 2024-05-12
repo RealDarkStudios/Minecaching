@@ -20,7 +20,7 @@ public class MaintainerCommand extends MCCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.INCORRECT_ARG_COUNT);
+            LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_ARG_COUNT);
             LocalizedMessages.send(sender, MCMessageKeys.Usage.MAINTAINER, label);
             return true;
         }
@@ -28,7 +28,7 @@ public class MaintainerCommand extends MCCommand {
         String cacheID = args[0];
         Minecache cache = MinecachingAPI.get().getMinecache(cacheID);
 
-        if (cacheCheck(sender, cache, cacheID)) return true;
+        if (!cacheCheck(sender, cache, cacheID)) return true;
 
         if (sender instanceof Player plr) {
             CacheDataMenu menu = new CacheDataMenu(MCMessageKeys.Menu.Data.TITLE, cache, Minecaching.getInstance(), MinecachingAPI.get().getPlayerData(plr));

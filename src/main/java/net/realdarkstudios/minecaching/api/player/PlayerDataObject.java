@@ -123,8 +123,17 @@ public class PlayerDataObject {
         return locatingId;
     }
 
+    public Minecache getLocatingCache() {
+        return MinecachingAPI.get().getMinecache(locatingId);
+    }
+
     public void setLocatingId(String locatingId) {
         this.locatingId = locatingId;
+        saveData();
+    }
+
+    public void setLocating(Minecache locating) {
+        this.locatingId = locating.id();
         saveData();
     }
 
@@ -416,14 +425,14 @@ public class PlayerDataObject {
                 yaml.set("cache_cooldown_expire", LocalDateTime.now().toString());
                 CacheListMenuOptions.DEFAULT_OPTIONS.toYaml(yaml, "clm_options");
             } catch (Exception e) {
-                MinecachingAPI.tWarning(MCMessageKeys.Error.PLUGIN_CREATE_FILE, uuid + ".yml");
+                MinecachingAPI.tWarning(MCMessageKeys.Error.Misc.CREATE_FILE, uuid + ".yml");
             }
         } else if (Config.getInstance().getPlayerDataVersion() < MinecachingAPI.PLAYER_DATA_VERSION) {
             try {
                 if (!plrFile.canWrite()) throw new Exception();
                 plrFile.createNewFile();
             } catch (Exception e) {
-                MinecachingAPI.tWarning(MCMessageKeys.Error.PLUGIN_UPDATE_FILE, uuid + ".yml");
+                MinecachingAPI.tWarning(MCMessageKeys.Error.Misc.UPDATE_FILE, uuid + ".yml");
             }
         }
 

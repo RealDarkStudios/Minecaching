@@ -88,27 +88,27 @@ public class MCUtils {
     public static boolean locationInvalid(CommandSender sender, int x, int y, int z) {
         Config cfg = Config.getInstance();
         if (x > cfg.getMaxX()) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.ABOVE_COORD_LIMIT, "X", x, cfg.getMaxX());
+            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.ABOVE_COORD_LIMIT, "X", x, cfg.getMaxX());
             return true;
         }
         if (x < cfg.getMinX()) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.BELOW_COORD_LIMIT, "X", x, cfg.getMaxX());
+            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.BELOW_COORD_LIMIT, "X", x, cfg.getMaxX());
             return true;
         }
         if (y > cfg.getMaxY()) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.ABOVE_COORD_LIMIT, "Y", y, cfg.getMaxY());
+            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.ABOVE_COORD_LIMIT, "Y", y, cfg.getMaxY());
             return true;
         }
         if (y < cfg.getMinY()) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.BELOW_COORD_LIMIT, "Y", y, cfg.getMaxY());
+            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.BELOW_COORD_LIMIT, "Y", y, cfg.getMaxY());
             return true;
         }
         if (z > cfg.getMaxZ()) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.ABOVE_COORD_LIMIT, "Z", z, cfg.getMaxZ());
+            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.ABOVE_COORD_LIMIT, "Z", z, cfg.getMaxZ());
             return true;
         }
         if (z < cfg.getMinZ()) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.BELOW_COORD_LIMIT, "Z", z, cfg.getMaxZ());
+            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.BELOW_COORD_LIMIT, "Z", z, cfg.getMaxZ());
             return true;
         }
         return false;

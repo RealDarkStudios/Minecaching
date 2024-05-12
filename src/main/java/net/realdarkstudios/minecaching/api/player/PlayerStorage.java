@@ -23,7 +23,7 @@ public class PlayerStorage {
         if (!file.exists()) file.mkdirs();
 
         File[] plrFiles = file.listFiles(File::isFile);
-        if (plrFiles == null || plrFiles.length == 0) MinecachingAPI.tWarning(MCMessageKeys.Error.PLAYER_LIST_EMPTY);
+        if (plrFiles == null || plrFiles.length == 0) MinecachingAPI.tWarning(MCMessageKeys.Error.Misc.PLAYER_LIST_EMPTY);
 
         HashMap<UUID, PlayerDataObject> players = new HashMap<>();
         for (File plrFile: plrFiles) {
@@ -32,7 +32,7 @@ public class PlayerStorage {
             try {
                 uuid = UUID.fromString(key);
             } catch (Exception e) {
-                MinecachingAPI.tWarning(MCMessageKeys.Error.PLUGIN_PARSE_UUID, key);
+                MinecachingAPI.tWarning(MCMessageKeys.Error.Misc.PARSE_UUID, key);
                 continue;
             }
 
@@ -65,7 +65,7 @@ public class PlayerStorage {
         if (!file.exists()) file.mkdirs();
 
         File[] plrFiles = file.listFiles(File::isFile);
-        if (plrFiles == null || plrFiles.length == 0) MinecachingAPI.tWarning(MCMessageKeys.Error.PLAYER_LIST_EMPTY);
+        if (plrFiles == null || plrFiles.length == 0) MinecachingAPI.tWarning(MCMessageKeys.Error.Misc.PLAYER_LIST_EMPTY);
 
         for (File plrFile: plrFiles) {
             String key = plrFile.getName().replace(".yml", "");
@@ -73,7 +73,7 @@ public class PlayerStorage {
             try {
                 uuid = UUID.fromString(key);
             } catch (Exception e) {
-                MinecachingAPI.tWarning(MCMessageKeys.Error.PLUGIN_PARSE_UUID, key);
+                MinecachingAPI.tWarning(MCMessageKeys.Error.Misc.PARSE_UUID, key);
                 continue;
             }
 

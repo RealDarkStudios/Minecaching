@@ -36,12 +36,12 @@ public enum NotificationType {
 
     public LocalizedMessages.Key getTranslationKey() {
         return switch (this) {
-            case ARCHIVAL -> MCMessageKeys.Plugin.Notification.NOTIFICATION_ARCHIVAL;
-            case DELETION -> MCMessageKeys.Plugin.Notification.NOTIFICATION_DELETION;
-            case DISABLE -> MCMessageKeys.Plugin.Notification.NOTIFICATION_DISABLE;
-            case EDIT -> MCMessageKeys.Plugin.Notification.NOTIFICATION_EDIT;
-            case FLAG -> MCMessageKeys.Plugin.Notification.NOTIFICATION_FLAG;
-            case PUBLISH -> MCMessageKeys.Plugin.Notification.NOTIFICATION_PUBLISH;
+            case ARCHIVAL -> MCMessageKeys.Plugin.Notification.ARCHIVAL;
+            case DELETION -> MCMessageKeys.Plugin.Notification.DELETION;
+            case DISABLE -> MCMessageKeys.Plugin.Notification.DISABLE;
+            case EDIT -> MCMessageKeys.Plugin.Notification.EDIT;
+            case FLAG -> MCMessageKeys.Plugin.Notification.FLAG;
+            case PUBLISH -> MCMessageKeys.Plugin.Notification.PUBLISH;
             default -> MCMessageKeys.ERROR;
         };
     }

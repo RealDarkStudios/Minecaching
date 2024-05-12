@@ -19,6 +19,80 @@ Changes:
 
 CHANGELOG:
 
+Snapshot 24w19a for 0.4.0.0
+Snapshot 24w19a for 0.4.0.0
+
+It's been a few weeks, but I'm back with another snapshot for 0.4.0.0. This snapshot contains a number of upgrades pertaining to improved user experience and ironing out issues with the move to RDSCommons
+
+Added:
+- New aliases for /addcache: /create and /createc
+- New 'hint' field to caches
+- CreateCacheHintMenuItem
+- HintCommand
+- A full data report (/mca datafull)
+- Reworked permissions. You can find the updated permission nodes in the README
+- MCPermissions
+- MCMessageKeys.INCORRECT_ARG_COUNT (shortcut to MessageKeys.Error.INCORRECT_ARG_COUNT
+- MCMessageKeys.Error.Misc.NOT_LOCATING
+- MCCommand#send
+- MCCommand#info
+- MCCommand#warning
+- MCCommand#cacheCheckNoAlert
+- MCCommand#hasPerm
+- MCCommand#hasEitherPerm
+- LogbookDataObject#getFilteredLogs
+- LogbookDataObject#deleteLog
+- PlayerDataObject#getLocatingCache
+- PlayerDataObject#setLocating
+
+Refactors:
+- LogbookDataObject#getLogs -> LogbookDataObject#getAllKnownLogs
+- LogbookDataObject#getLogsSorted -> LogbookDataObject#getSortedLogs
+- LogbookDataObject#get -> LogbookDataObject#getLDO
+- LogbookDataObject#attemptUpdate -> LogbookDataObject#updateData
+- LogbookStorage#getLogbooks -> LogbookStorage#getAllKnownLDOs
+- LogbookStorage#deleteLogbook -> LogbookStorage#deleteLDO
+- LogbookStorage#getLogbook -> LogbookStorage#getLDO
+- LogbookStorage#hasLogbook -> LogbookStorage#hasLDO
+- LogbookStorage#getOrCreateLogbook -> LogbookStorage#getOrCreateLDO
+- MCMessageKeys Changes:
+  - Error.Log.CODE -> Error.Log.INCORRECT_CODE
+  - Error.Misc.ARCHIVE_CANT_ARCHIVE -> Error.Misc.CANT_ARCHIVE
+  - Error.Misc.DISABLE_CANT_DISABLE -> Error.Misc.CANT_DISABLE
+  - Error.Misc.LOCATE_ALREADY_LOCATING -> Error.Misc.ALREADY_LOCATING
+  - Error.Misc.LOCATE_DIFFERENT_WORLD -> Error.Misc.DIFFERENT_WORLD
+  - Error.Misc.LOGBOOK_NO_SLOTS -> Error.Misc.NO_SLOTS
+  - Error.Misc.MCADMIN_CORRECTING_STATS -> Error.Misc.CORRECT_STATS
+  - Error.Misc.PUBLISH_CANT_PUBLISH -> Error.Misc.CANT_PUBLISH
+  - Error.ABOVE_COORD_LIMIT -> Error.Misc.ABOVE_COORD_LIMIT
+  - Error.BELOW_COORD_LIMIT -> Error.Misc.BELOW_COORD_LIMIT
+  - Error.INVALID_LOG_TYPE -> Error.Log.INVALID_TYPE
+  - Error.PLUGIN_CREATE_FILE -> Error.Misc.CREATE_FILE
+  - Error.PLUGIN_UPDATE_FILE -> Error.Misc.UPDATE_FILE
+  - Error.PLUGIN_PARSE_UUID -> Error.Misc.PARSE_UUID
+  - Error.PLAYER_LIST_EMPTY -> Error.Misc.PLAYER_LIST_EMPTY
+  - MOVED TO RDSCOMMONS:
+    - Error.GENERIC
+    - Error.NON_CONSOLE_COMMAND
+    - Error.INCORRECT_USAGE
+    - Error.INCORRECT_ARG_COUNT
+    - Error.FAILED_TO_PARSE_NUMBER
+
+Changes:
+- Changed all plugin.yml permission nodes
+- COMPLETE overhaul of the language keys. The new keys more closely resemble the MCMessageKeys hierarchy. If you were using MCMessageKeys, take note of the Refactors section
+- Minecache Data Version is now 6
+- Started adopting a prefix for plugin messages
+- The AUTO_UPDATE config is now false by default (bukkit was setting this anyways)
+- Generates archive/disable reasons AFTER the event cancelled check
+- CacheListOptionsMenu#styledName now uses key.translateComponentWithOtherStyle instead of creating a new style every time
+- delete/edit other player caches now requires the minecaching.bypass.delete_others/edit_others permission in order to bypass the check. Previously only OPs could (and now ops without the permission cant)
+- LocateCacheMenuItem now plays a different sound when the player and cache's worlds dont match
+- Started updating date formats to be 'd MMM yyyy'
+- Added server uptime and JAR last modified to /mca data
+- (BUGFIX) CreateCacheMenu#cacheDistanceCheck and CreateCacheSaveMenuItem#cacheDistanceCheck should no longer error when there are no caches or none in the same world
+- (BUGFIX) There would sometimes be an error when the plugin is disabling because it cant access RDSCommons classes. This has been resolved
+
 Snapshot 24w13a for 0.4.0.0
 Added:
 - MAVEN SOURCES + JAVADOCS to (hopefully) all future Minecaching releases

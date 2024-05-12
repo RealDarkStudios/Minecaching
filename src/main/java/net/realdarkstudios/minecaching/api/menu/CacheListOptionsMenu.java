@@ -92,7 +92,7 @@ public class CacheListOptionsMenu extends MCMenu {
     }
 
     private String styledName(LocalizedMessages.Key key, boolean b, Object... formatArgs) {
-        return new LocalizedMessages.StyleOptions().setColor(b ? ChatColor.GREEN : ChatColor.RED).applyStyle(key.getMessage(formatArgs)).toLegacyText();
+        return key.translateComponentWithOtherStyle(new LocalizedMessages.StyleOptions().setColor(b ? ChatColor.GREEN : ChatColor.RED), formatArgs).toLegacyText();
     }
 
     private ItemStack styledStack(ItemStack stack, boolean b) {

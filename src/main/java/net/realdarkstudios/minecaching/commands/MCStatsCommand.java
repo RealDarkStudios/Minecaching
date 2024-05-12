@@ -5,6 +5,7 @@ import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
 import net.realdarkstudios.minecaching.api.misc.Config;
+import net.realdarkstudios.minecaching.api.misc.MCPermissions;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.player.PlayerStorage;
 import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
@@ -52,6 +53,8 @@ public class MCStatsCommand extends MCCommand {
         LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.MOST_HIDES, mostHidesPDO.getUsername(), determineValidHides(mostHidesPDO));
         LocalizedMessages.send(sender, MCMessageKeys.Command.Stats.MOST_ACCOMPLISHED,
                 mostAccomplishedPDO.getUsername(), Config.getInstance().getStatsScoreOptions().calculateScore(mostAccomplishedPDO));
+
+        if (hasPerm(sender, MCPermissions.MISC_SECRET)) LocalizedMessages.send(sender, MCMessageKeys.Command.Misc.SECRET);
 
         return true;
     }

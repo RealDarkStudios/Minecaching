@@ -1,7 +1,7 @@
 package net.realdarkstudios.minecaching.api.log;
 
-import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.util.MCUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,14 +25,14 @@ public class LogbookGenerator {
 
     public LogbookGenerator(Minecache minecache) {
         this.minecache = minecache;
-        if (MinecachingAPI.get().hasLogbook(minecache.id()) && !MinecachingAPI.get().getLogbook(minecache.id()).getLogs().isEmpty()) {
-            for (Log log : MinecachingAPI.get().getLogbook(minecache.id()).getLogsSorted(Comparator.comparing(Log::time))) addEntry(log);
+        if (MinecachingAPI.get().hasLogbook(minecache.id()) && !MinecachingAPI.get().getLogbook(minecache.id()).getAllKnownLogs().isEmpty()) {
+            for (Log log : MinecachingAPI.get().getLogbook(minecache.id()).getSortedLogs(Comparator.comparing(Log::time))) addEntry(log);
         }
     }
 
     private void addEntry(Log log) {
         String top = (log.author().equals(minecache.owner()) ? ChatColor.GOLD : ChatColor.RESET) + (log.author().equals(MCUtils.EMPTY_UUID) ? "[CONSOLE]" : Bukkit.getOfflinePlayer(log.author()).getName()) + ChatColor.RESET + (log.isFTF() ? " | FTF" : "");
-        String middle = log.type().toLogFormat() + " " + log.time().format(DateTimeFormatter.ofPattern("M/d/yy"));
+        String middle = log.type().toLogFormat() + " " + log.time().format(DateTimeFormatter.ofPattern("d MMM yyyy"));
         String bottom = log.log();
 
         String logStr = top + "\n" + middle + "\n" + bottom + "\n\n";

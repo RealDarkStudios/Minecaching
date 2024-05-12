@@ -41,7 +41,7 @@ public class LogbookStorage {
         ArrayList<String> lIDs = new ArrayList<>();
 
         for (String key: MinecacheStorage.getInstance().getIDArray()) {
-            LogbookDataObject log = LogbookDataObject.get(key);
+            LogbookDataObject log = LogbookDataObject.getLDO(key);
 
             log.load();
             logs.put(key, log);
@@ -51,20 +51,20 @@ public class LogbookStorage {
         this.logStorage = logs;
     }
 
-    public boolean deleteLogbook(LogbookDataObject log) {
-        return deleteLogbook(log.id());
+    public boolean deleteLDO(LogbookDataObject log) {
+        return deleteLDO(log.id());
     }
 
-    public boolean deleteLogbook(Minecache cache) {
-        return deleteLogbook(cache.id());
+    public boolean deleteLDO(Minecache cache) {
+        return deleteLDO(cache.id());
     }
 
-    public boolean deleteLogbook(String id){
+    public boolean deleteLDO(String id){
         try {
             LogbookStorage.getInstance().save();
 
-            boolean success = getLogbook(id).delete();
-            MinecachingAPI.tInfo(success ? MCMessageKeys.Plugin.LOGBOOK_DELETED : MCMessageKeys.Plugin.LOGBOOK_FAILED_DELETE, id);
+            boolean success = getLDO(id).deleteLDO();
+            MinecachingAPI.tInfo(success ? MCMessageKeys.Plugin.LOGBOOK_DELETED : MCMessageKeys.Plugin.LOGBOOK_FAILED_TO_DELETE, id);
             logIDs.removeAll(Collections.singleton(id));
 
             LogbookStorage.getInstance().updateMaps();
@@ -76,45 +76,45 @@ public class LogbookStorage {
         }
     }
 
-    public LogbookDataObject createLogbook(Minecache cache) {
-        return createLogbook(cache.id());
+    public LogbookDataObject createLDO(Minecache cache) {
+        return createLDO(cache.id());
     }
 
-    public LogbookDataObject createLogbook(String id) {
+    public LogbookDataObject createLDO(String id) {
         logIDs.add(id);
 
         save();
         updateMaps();
 
-        return getLogbook(id);
+        return getLDO(id);
     }
 
-    public boolean hasLogbook(Minecache cache) {
-        return hasLogbook(cache.id());
+    public boolean hasLDO(Minecache cache) {
+        return hasLDO(cache.id());
     }
 
-    public boolean hasLogbook(String id) {
+    public boolean hasLDO(String id) {
         return logStorage.containsKey(id);
     }
 
-    public LogbookDataObject getLogbook(Minecache cache) {
-        return getLogbook(cache.id());
+    public LogbookDataObject getLDO(Minecache cache) {
+        return getLDO(cache.id());
     }
 
-    public LogbookDataObject getLogbook(String id) {
+    public LogbookDataObject getLDO(String id) {
         return logStorage.get(id);
     }
 
-    public LogbookDataObject getOrCreateLogbook(Minecache cache) {
-        return getOrCreateLogbook(cache.id());
+    public LogbookDataObject getOrCreateLDO(Minecache cache) {
+        return getOrCreateLDO(cache.id());
     }
 
-    public LogbookDataObject getOrCreateLogbook(String id) {
-        if (hasLogbook(id)) return getLogbook(id);
-        else return createLogbook(id);
+    public LogbookDataObject getOrCreateLDO(String id) {
+        if (hasLDO(id)) return getLDO(id);
+        else return createLDO(id);
     }
 
-    public List<LogbookDataObject> getLogbooks() {
+    public List<LogbookDataObject> getAllKnownLDOs() {
         return logStorage.values().stream().toList();
     }
 
@@ -127,7 +127,7 @@ public class LogbookStorage {
         try {
             if (logStorage != null) {
                 for (LogbookDataObject log : logStorage.values()) {
-                    log.attemptUpdate();
+                    log.updateData();
                 }
             }
 

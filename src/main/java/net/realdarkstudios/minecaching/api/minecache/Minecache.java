@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Minecache implements IYamlSerializable {
-    public static final Minecache EMPTY = new Minecache("NULL", MinecacheType.TRADITIONAL, null, MCUtils.EMPTY_UUID, null, 0, 0, 0, 0, 0, 0, MCUtils.EMPTY_UUID, MinecacheStatus.INVALID, null, null, 0, null, 0, true);
+    public static final Minecache EMPTY = new Minecache("NULL", MinecacheType.TRADITIONAL, null, MCUtils.EMPTY_UUID, null, 0, 0, 0, 0, 0, 0, MCUtils.EMPTY_UUID, MinecacheStatus.INVALID, null, null, 0, null, 0, null, true);
 
-    private String id, name, code;
+    private String id, name, code, hint;
     private MinecacheType type;
     private UUID author, maintainer, ftf;
     private World world;
@@ -26,11 +26,13 @@ public class Minecache implements IYamlSerializable {
     private Material blockType;
     private boolean invalidated;
 
-    public Minecache(String id, MinecacheType type, String name, UUID author, World world, int x, int y, int z, int nx, int ny, int nz, UUID ftf, MinecacheStatus status, LocalDateTime hidden, Material blockType, int finds, String code, int favorites, boolean invalidated) {
-        this(id, type, name, author, MCUtils.EMPTY_UUID, world, x, y, z, nx, ny, nz, ftf, status, hidden, blockType, finds, code, favorites, invalidated);
+    public Minecache(String id, MinecacheType type, String name, UUID author, World world, int x, int y, int z, int nx, int ny, int nz, UUID ftf, MinecacheStatus status,
+                     LocalDateTime hidden, Material blockType, int finds, String code, int favorites, String hint, boolean invalidated) {
+        this(id, type, name, author, MCUtils.EMPTY_UUID, world, x, y, z, nx, ny, nz, ftf, status, hidden, blockType, finds, code, favorites, hint, invalidated);
     }
 
-    public Minecache(String id, MinecacheType type, String name, UUID author, UUID maintainer, World world, int x, int y, int z, int nx, int ny, int nz, UUID ftf, MinecacheStatus status, LocalDateTime hidden, Material blockType, int finds, String code, int favorites, boolean invalidated) {
+    public Minecache(String id, MinecacheType type, String name, UUID author, UUID maintainer, World world, int x, int y, int z, int nx, int ny, int nz, UUID ftf,
+                     MinecacheStatus status, LocalDateTime hidden, Material blockType, int finds, String code, int favorites, String hint, boolean invalidated) {
         this.id = id;
         this.type = type;
         this.name = name;
@@ -50,6 +52,7 @@ public class Minecache implements IYamlSerializable {
         this.finds = finds;
         this.code = code;
         this.favorites = favorites;
+        this.hint = hint;
         this.invalidated = invalidated;
     }
 
@@ -123,8 +126,14 @@ public class Minecache implements IYamlSerializable {
         return this;
     }
 
-    public void setFavorites(int favorites) {
+    public Minecache setFavorites(int favorites) {
         this.favorites = favorites;
+        return this;
+    }
+
+    public Minecache setHint(String hint) {
+        this.hint = hint;
+        return this;
     }
 
     public Minecache setInvalidated(boolean invalidate) {
@@ -223,6 +232,10 @@ public class Minecache implements IYamlSerializable {
         return favorites;
     }
 
+    public String hint() {
+        return hint;
+    }
+
     public boolean invalidated() {
         return invalidated;
     }
@@ -273,6 +286,7 @@ public class Minecache implements IYamlSerializable {
         int cFinds = yaml.getInt(key + ".finds", 0);
         String cCode = yaml.getString(key + ".code", "");
         int cFavorites = yaml.getInt(key + ".favorites", 0);
+        String cHint = yaml.getString(key + ".hint", MCMessageKeys.Misc.Cache.NO_HINT.getMessage());
 
         MinecacheType cType;
         if (type.equals("invalid")) { cType = MinecacheType.INVALID; } else { cType = MinecacheType.get(type); }
@@ -312,7 +326,7 @@ public class Minecache implements IYamlSerializable {
             });
         }
 
-        return new Minecache(key, cType, cName, cAuthor, cMaintainer, cWorld, cX, cY, cZ, cNX, cNY, cNZ, cFTF, cStatus, cHidden, cBlockType, cFinds, cCode, cFavorites, isInvalidated);
+        return new Minecache(key, cType, cName, cAuthor, cMaintainer, cWorld, cX, cY, cZ, cNX, cNY, cNZ, cFTF, cStatus, cHidden, cBlockType, cFinds, cCode, cFavorites, cHint, isInvalidated);
     }
 
     public void toYaml(YamlConfiguration yaml, String key) {
@@ -335,6 +349,7 @@ public class Minecache implements IYamlSerializable {
         yaml.set(key + ".finds", finds());
         yaml.set(key + ".code", code());
         yaml.set(key + ".favorites", favorites());
+        yaml.set(key + ".hint", hint());
 
         if (yaml.contains(key + ".lx")) yaml.set(".lx", null);
         if (yaml.contains(key + ".ly")) yaml.set(".ly", null);

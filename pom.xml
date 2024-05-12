@@ -6,7 +6,7 @@
 
   <groupId>net.realdarkstudios</groupId>
   <artifactId>minecaching</artifactId>
-  <version>0.4.0.0-snapshot-24w13a</version>
+  <version>0.4.0.0-snapshot-24w19a</version>
   <packaging>jar</packaging>
 
   <name>Minecaching</name>
@@ -143,13 +143,13 @@
     <dependency>
       <groupId>net.realdarkstudios</groupId>
       <artifactId>rdscommons</artifactId>
-      <version>[1.0.0.0-snapshot-24w13d, 1.1.0.0)</version>
+      <version>[1.0.0.0-snapshot-24w15a, 1.0.99999.0)</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>github.scarsz</groupId>
-      <artifactId>mojang</artifactId>
-      <version>1.1.1</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>github.scarsz</groupId>-->
+<!--      <artifactId>mojang</artifactId>-->
+<!--      <version>1.1.1</version>-->
+<!--    </dependency>-->
   </dependencies>
 </project>

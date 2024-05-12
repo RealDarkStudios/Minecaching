@@ -1,11 +1,13 @@
 package net.realdarkstudios.minecaching.api.log;
 
+import net.realdarkstudios.commons.misc.IYamlSerializableEnum;
 import net.realdarkstudios.commons.util.LocalizedMessages;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
 import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.NotNull;
 
-public enum LogType {
+public enum LogType implements IYamlSerializableEnum {
     FOUND("found", ChatColor.GOLD),
     DNF("dnf", ChatColor.BLUE),
     NOTE("note", ChatColor.GRAY),
@@ -38,6 +40,7 @@ public enum LogType {
         };
     }
 
+    @NotNull
     public String getId() {
         return id;
     }

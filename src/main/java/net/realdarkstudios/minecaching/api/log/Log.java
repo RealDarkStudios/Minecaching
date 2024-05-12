@@ -1,19 +1,20 @@
 package net.realdarkstudios.minecaching.api.log;
 
-import net.realdarkstudios.minecaching.api.util.MCUtils;
+import net.realdarkstudios.commons.misc.IYamlSerializable;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
+import net.realdarkstudios.minecaching.api.util.MCUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class Log {
+public class Log implements IYamlSerializable {
     public static final Log EMPTY = new Log(null, null, MCUtils.EMPTY_UUID, LogType.INVALID, LocalDateTime.now(), "", true, false);
 
     private final String cacheID, logID;
     private String log;
     private final UUID author;
-    private LogType type;
+    private final LogType type;
     private final LocalDateTime time;
     private final boolean invalidated, isFTF;
 

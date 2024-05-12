@@ -32,7 +32,7 @@ public class ListCachesCommand extends MCCommand {
         try {
             page = args.length == 0 ? 0 : Math.max(Integer.parseInt(args[0]) - 1, 0);
         } catch (NumberFormatException e) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.FAILED_TO_PARSE_NUMBER);
+            LocalizedMessages.send(sender, MCMessageKeys.FAILED_TO_PARSE_NUMBER);
             LocalizedMessages.send(sender, MCMessageKeys.Usage.LIST, label);
             return true;
         }
@@ -67,13 +67,13 @@ public class ListCachesCommand extends MCCommand {
                 msg.addExtra(MCMessageKeys.Command.List.ENTRY.translateComponentWithOtherStyle(new LocalizedMessages.StyleOptions().setColor(
                         primaryColor.asBungee()), (page * 10) + i + 1, cache.invalidated() ? MinecacheType.INVALID.toString() :
                                 cache.type().getId().substring(0, 4).toUpperCase(), statusColor, cache.invalidated() ? MinecacheStatus.INVALID :
-                                cache.status(), primaryColor, cache.id(), cache.name(), cache.finds()));
+                                cache.status(), primaryColor, cache.id(), cache.name() + "§r", cache.finds()));
             }
         } else {
             msg = MCMessageKeys.Command.List.NO_CACHES.translateComponent();
         }
 
-        sender.spigot().sendMessage(msg);
+        send(sender, msg);
 
         return true;
     }

@@ -6,18 +6,139 @@ Bring [Geocaching](https://www.geocaching.com) to your Minecraft server!
 This plugin allows players to hide and find Minecaches (or "Caches") around the server while allowing operators to manage it.
 
 > DEVELOPERS: After v0.3.1.0, the artifact id is now `minecaching`, not `Minecaching`!
-> ! Some functions have also moved to RDSCommons !
 
-## For Server Owners
+> DEVELOPERS: **Some API stuff has moved to a new plugin, RDSCommons!**
+>
+> RDSCommons is a new plugin for shared code across Minecaching and future plugins.
+> See `For Developers / Transferring To RDSCommons` for more information!
+
+
+## For Server Owners:
+
+### Installation
+You can find the latest version of Minecaching [here](https://modrinth.com/project/minecaching/).
+Minecaching also requires a dependency plugin, RDSCommons, which you can find [here](https://modrinth.com/project/rdscommons).
 
 Server owners can control many things, such as restrictions on where the caches are placed, the types of allowed caches, and more in the config!
-Operators have access to certain commands to, such as `/verify` and can bypass `/delete` and `/edit` checks.
+Operators have access to certain commands, such as `/verify` and can (by default) bypass `/delete` and `/edit` checks.
 
-Setting up the plugin is pretty simple, a drag and drop install should work, however you need to make sure you install [RDSCommons](https://maven.digitalunderworlds.com/#/snapshots/net/realdarkstudios/rdscommons) too.
 For non-english servers, you should change the language in `plugins\Minecaching\config.yml`.
 In there you can also find many other options, such as changing the `/mcstats` scoring, configuring auto-updates, and more.
+You can also change some config values in-game by using `/mca conf`
 
-## For Developers
+### Permission Nodes
+<table>
+<tr>
+<th>Permission Node</th>
+<th>Who has it by default?</th>
+</tr> 
+<tr>
+<td>minecaching.*</td>
+<td>Nobody</td>
+</tr>
+<tr>
+<td>minecaching.bypass.*</td>
+<td>OP</td>
+</tr>
+<tr>
+<td>minecaching.bypass.delete_others</td>
+<td>OP</td>
+</tr>
+<tr>
+<td>minecaching.bypass.edit_others</td>
+<td>OP</td>
+</tr>
+<tr>
+<td>minecaching.admin.*</td>
+<td>OP</td>
+</tr>
+<tr>
+<td>minecaching.admin.*</td>
+<td>OP</td>
+</tr>
+<tr>
+<td>minecaching.admin.config</td>
+<td>OP</td>
+</tr>
+<tr>
+<td>minecaching.admin.force_stat_update</td>
+<td>OP</td>
+</tr>
+<tr>
+<td>minecaching.admin.reload</td>
+<td>OP</td>
+</tr>
+<tr>
+<td>minecaching.admin.server_data</td>
+<td>OP</td>
+</tr>
+<tr>
+<td>minecaching.command.*</td>
+<td>OP</td>
+</tr>
+<tr>
+<td>minecaching.command.admin</td>
+<td>OP</td>
+</tr>
+<tr>
+<td>minecaching.command.archive</td>
+<td>OP</td>
+</tr>
+<tr>
+<td>minecaching.command.create</td>
+<td>Everyone</td>
+</tr>
+<tr>
+<td>minecaching.command.delete</td>
+<td>Everyone</td>
+</tr>
+<tr>
+<td>minecaching.command.disable</td>
+<td>OP</td>
+</tr>
+<tr>
+<td>minecaching.command.edit</td>
+<td>Everyone</td>
+</tr>
+<tr>
+<td>minecaching.command.hint</td>
+<td>Everyone</td>
+</tr>
+<tr>
+<td>minecaching.command.list</td>
+<td>Everyone</td>
+</tr>
+<tr>
+<td>minecaching.command.locate</td>
+<td>Everyone</td>
+</tr>
+<tr>
+<td>minecaching.command.log</td>
+<td>Everyone</td>
+</tr>
+<tr>
+<td>minecaching.command.logbook</td>
+<td>Everyone</td>
+</tr>
+<tr>
+<td>minecaching.command.maintainer</td>
+<td>Everyone</td>
+</tr>
+<tr>
+<td>minecaching.command.publish</td>
+<td>OP</td>
+</tr>
+<tr>
+<td>minecaching.command.stats</td>
+<td>Everyone</td>
+</tr>
+<tr>
+<td>minecaching.misc.*</td>
+<td>OP</td>
+</tr>
+</table>
+
+## For Developers:
 
 You can use the [Digitalunderworlds Maven](https://maven.digitalunderworlds.com) to add Minecaching to your project
 
@@ -55,64 +176,112 @@ You can view versions [here](https://maven.digitalunderworlds.com/#/snapshots/ne
 > If you want to be able to use ANY version, including releases, pick the Snapshot repository!
 </details>
 
-### Changes:
-With 0.3.0.0, an `EXPERIMENTAL_FEATURES` config option was released. To check it, use `Config.getInstance().experimentalFeatures()`
+<details><summary>Transferring to RDSCommons</summary>
+With 0.4.0.0, a new plugin (RDSCommons) was created to hold shared code for Minecaching and future projects.
 
-With 0.3.0.1, The `GUI Menu` framework was added, which is a somewhat modified fork of [AmpMenus](https://github.com/Scarsz/AmpMenus) that is basically just refactors and some minor logic changes.
+To start using RDSCommons, you will need to update to version Snapshot 24w13a or above.
+Then, add this dependency, replacing (version) with the minimum version you require:
+```xml
+<dependency>
+  <groupId>net.realdarkstudios</groupId>
+  <artifactId>rdscommons</artifactId>
+  <version>[(version), 1.0.99999.0)</version>
+  <scope>provided</scope>
+</dependency>
+```
+![Latest RDSCommons Snapshot](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fmaven.digitalunderworlds.com%2Fsnapshots%2Fnet%2Frealdarkstudios%2Frdscommons%2Fmaven-metadata.xml&label=Latest%20RDSCommons%20Snapshot)
+![Latest RDSCommons Release](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fmaven.digitalunderworlds.com%2Freleases%2Fnet%2Frealdarkstudios%2Frdscommons%2Fmaven-metadata.xml&label=Latest%20RDSCommons%20Release)
 
-With 0.3.0.3, the Changelog was added, accessible at [`CHANGELOG.txt`](https://github.com/RealDarkStudios/Minecaching/blob/master/CHANGELOG.txt)
+#### Changes Summary:
+- PACKAGE net.realdarkstudios.minecaching.api.menu.impl -> net.realdarkstudios.commons.menu
+- minecaching.api.misc.AutoUpdater -> commons.util.AutoUpdater
+- minecaching.api.misc.AutoUpdater.Version -> commons.util.Version
+- minecaching.api.misc.Localization -> commons.util.Localization
+- minecaching.api.misc.LocalizationProvider -> commons.util.LocalizationProvider
+- minecaching.api.util.LocalizedMessages -> commons.util.LocalizedMessages
+- minecaching.api.util.TextComponentBuilder -> commons.util.TextComponentBuilder
+- minecaching.api.util.MessagesKeys -> minecaching.api.util.MCMessageKeys (some keys are instead in commons.util.MessageKeys)
 
-With 0.3.0.5, various `PlayerDataObject` methods were added, like `#getUsername()` and `#isOnline()`
-
-With 0.3.1.0-24w10a, the `MCMessages V2` framework was introduced, mainly known as `LocalizationMessages`.
-
-As of `0.3.1.0-24w10a`, the `MCMessages` class and `MinecachingAPI#tInfo(String, Object...)` and `MinecachingAPI#tWarning(String, Object...)`methods have been deprecated, set for removal in 0.3.2.0.
-
-To update to the new system:
-**MinecachingAPI#tInfo/tWarning**:
-
+**Registering A Localization**:
 ```java
+import net.realdarkstudios.minecaching.api.Minecaching;
 import net.realdarkstudios.minecaching.api.MinecachingAPI;
-import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
+import net.realdarkstudios.minecaching.api.misc.Config;
 
-// Using "plugin.reloading" as an example
+// OLD IMPORTS
+import net.realdarkstudios.minecaching.api.misc.LocalizationProvider;
+import net.realdarkstudios.minecaching.api.misc.Localization;
+
+// NEW IMPORTS
+import net.realdarkstudios.commons.CommonsAPI;
+import net.realdarkstudios.commons.util.LocalizationProvider;
+import net.realdarkstudios.commons.util.Localization;
 
 @Override
 public void onEnable() {
+    Localization exampleLocalization;
+
     // OLD
-    MinecachingAPI.tInfo("plugin.reloading");
+    exampleLocalization = MinecachingAPI.getLocalizationProvider().load(Minecaching.getInstance());
 
-    //NEW
-    MinecachingAPI.tInfo(MCMessageKeys.Plugin.RELOADING);
+    // NEW
+    exampleLocalization = CommonsAPI.get().registerLocalization(Minecaching.getInstance(), Config.getInstance().getServerLocale());
 }
+
 ```
 
-**MCMessages**:
+`MCMessages` was also removed. Please switch over to `LocalizedMessages`.
 
-```java
+You may also implement `IRDSPlugin` in your main plugin class to be compliant for any plugin requesting your `Version` information
 
-// Using "error.cantfind" as an example
+You can see the full changelog message below:
 
-import net.md_5.bungee.api.ChatColor;
-import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
+<details><summary>Snapshot 24w13a Changelog</summary>
 
-@Override
-public void onEnable() {
-    // Assuming sender defined elsewhere
+Added:
+- MAVEN SOURCES + JAVADOCS to (hopefully) all future Minecaching releases
+- MCMessageKeys.Command.Stats.NONE
+- MinecachingAPI#getCommonsAPI
 
-    //OLD
-    MCMessages.sendErrorMsg(sender, "cantfind");
-    // god forbid you did this
-    MCMessages.send(sender, ChatColor.RED + "" + ChatColor.UNDERLINE + "cantfind");
+Removed:
+- MinecachingAPI#getConfigDataVersion
+- MinecachingAPI#getMinecacheDataVersion
+- MinecachingAPI#getPlayerDataVersion
+- MinecachingAPI#getLogbookDataVersion
+- MinecachingAPI#tInfo(String, Object...)
+- MinecachingAPI#tWarning(String, Object...)
+- (ALL CLASSES BELOW ARE IN RDSCommons)
+- AutoUpdater
+- BaseEvent
+- BooleanMenuItem
+- CancellableBaseEvent
+- CloseMenuItem
+- ErrorMenuItem
+- GoBackMenuItem
+- Localization
+- LocalizationProvider
+- MCMenu
+- MCMenuHolder
+- MenuItem
+- MenuItemClickEvent
+- MenuItemState
+- MultiStateMenuItem
+- PaginationMenu
+- PaginationMenuItem
+- PaginationPageItem
+- RefreshPaginationMenuItem
+- SkullMenuItem
+- TextComponentBuilder
 
-    //NEW
-    LocalizedMessages.send(sender, MCMessageKeys.Error.CANT_FIND_CACHE);
-}
-```
+Refactors:
+- MessageKeys -> MCMessageKeys
 
-You can view the full issue [here](https://github.com/RealDarkStudios/Minecaching/issues/1)
-
-As of 0.3.1.0, the artifact id moving forward will be `minecaching`. Please update your dependencies!
-
-As of 0.4.0.0, many of the utils such as `AutoUpdater`, `Localization`, `LocalizationProvider`, `LocalizedMessages`, `TextComponentBuilder` and more are moving to a separate `RDSCommons` plugin.
-<br>The packages of these things will be changing from `net.realdarkstudios.minecaching.api.xxx` -> `net.realdarkstudios.commons.xxx`
+Changes:
+- (BUGFIX) Added checks if there are 0 caches (caused issues with adding caches and stats)
+- Switched over to RDSCommons
+- UUID check is now in PlayerDataObject#update
+- RDSCommons dependency
+- MinecachingAPI#getLogger now returns an RDSLogHelper
+- And more
+</details>
+</details>

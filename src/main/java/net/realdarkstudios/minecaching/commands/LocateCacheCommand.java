@@ -65,14 +65,14 @@ public class LocateCacheCommand extends MCCommand {
         Minecache cache = c;
 
         if (!pdo.getLocatingId().equals("NULL") && !gettingNewCompass) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.LOCATE_ALREADY_LOCATING, id);
+            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.ALREADY_LOCATING, id);
             return true;
         }
 
-        if (!gettingNewCompass && cacheCheck(sender, cache, id)) return true;
+        if (!gettingNewCompass && !cacheCheck(sender, cache, id)) return true;
 
         if ((!plr.getWorld().equals(cache.world()))) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.LOCATE_DIFFERENT_WORLD, id);
+            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.DIFFERENT_WORLD, id);
             return true;
         }
 

@@ -5,7 +5,7 @@
 
 # Do not touch!
 CONFIG_VERSION: 11
-MINECACHE_DATA_VERSION: 5
+MINECACHE_DATA_VERSION: 6
 PLAYER_DATA_VERSION: 6
 LOGBOOK_DATA_VERSION: 1
 
@@ -16,10 +16,10 @@ LOCALE: en-US
 
 # Determines whether the plugin will automatically update
 # Defaults: false
-AUTO_UPDATE: true
+AUTO_UPDATE: false
 # Determines the branch to use for the auto updater
 # release: Release versions, such as 0.2.2.1, 0.2.2.2, 0.2.2.3
-# snapshot: Snapshot versions, such as 0.2.2.3-SNAPSHOT-1, 0.2.2.3-SNAPSHOT-2, 0.2.2.3
+# snapshot: Snapshot versions, such as 0.2.2.3-SNAPSHOT-1, 0.2.2.3, 0.4.0.0-snapshot-24w14a
 # Defaults: release
 UPDATE_BRANCH: release
 # Determines whether experimental features are enabled

@@ -18,9 +18,15 @@ public final class Minecaching extends JavaPlugin implements IRDSPlugin {
     private static Minecaching plugin;
     private static Version version;
     private static MinecachingAPI api;
+    private static long uptimeStart;
 
+    private static String disablingMsg;
+    private static String disabledMsg;
+    private static String autoDisabledDownloadMsg;
     @Override
     public void onEnable() {
+        uptimeStart = System.currentTimeMillis();
+
         if (Bukkit.getServer().getPluginManager().getPlugin("RDSCommons") == null) {
             getLogger().warning("RDSCommons is not installed!");
             onDisable();
@@ -44,6 +50,11 @@ public final class Minecaching extends JavaPlugin implements IRDSPlugin {
         } else {
             // Load plugin data
             api.load(true);
+
+            disablingMsg = MCMessageKeys.Plugin.DISABLING.console();
+            disabledMsg = MCMessageKeys.Plugin.DISABLED.console();
+            autoDisabledDownloadMsg = MCMessageKeys.Plugin.Update.AUTO_DISABLED_DOWNLOAD.console(getVersionString());
+
             Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
                 MinecachingAPI.getUpdater().updateBranch(Config.getInstance().getUpdateBranch());
                 MinecachingAPI.getUpdater().checkForUpdate();
@@ -64,6 +75,7 @@ public final class Minecaching extends JavaPlugin implements IRDSPlugin {
             getCommand("logcache").setExecutor(new LogCacheCommand());
             getCommand("logbook").setExecutor(new LogbookCommand());
             getCommand("maintainer").setExecutor(new MaintainerCommand());
+            getCommand("cachehint").setExecutor(new HintCommand());
 
             // Debug Events check
             if (Config.getInstance().debugEvents()) MinecachingAPI.tInfo(MCMessageKeys.Command.Admin.DEBUG_EVENTS_ON, Config.getInstance().getDebugEventsLevel());
@@ -81,7 +93,7 @@ public final class Minecaching extends JavaPlugin implements IRDSPlugin {
     @Override
     public void onDisable() {
         if (Bukkit.getServer().getPluginManager().getPlugin("RDSCommons") != null) {
-            MinecachingAPI.tInfo(MCMessageKeys.Plugin.DISABLING);
+            MinecachingAPI.info(disablingMsg);
 
             // Close all open MCMenus
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -94,17 +106,26 @@ public final class Minecaching extends JavaPlugin implements IRDSPlugin {
             // Performs auto-update if there is a newer plugin version and the config AUTO_UPDATE option is true
             if (MinecachingAPI.getUpdater().hasUpdate() && Config.getInstance().autoUpdate()) {
                 MinecachingAPI.getUpdater().applyUpdate();
-            } else MinecachingAPI.tInfo(MCMessageKeys.Plugin.Update.AUTO_DISABLED_DOWNLOAD);
+            } else MinecachingAPI.info(autoDisabledDownloadMsg);
+
 
             // Save all plugin data
-            String disabledMsg = MCMessageKeys.Plugin.DISABLED.console(getVersionString());
             api.save();
             getLogger().info(disabledMsg);
+        } else {
+            // Performs auto-update if there is a newer plugin version and the config AUTO_UPDATE option is true
+            if (MinecachingAPI.getUpdater().hasUpdate() && Config.getInstance().autoUpdate()) {
+                MinecachingAPI.getUpdater().applyUpdate();
+            } else MinecachingAPI.info("No update available (AUTO_UPDATE might be false in config)");
+
+            // Save all plugin data
+            api.save();
+            getLogger().info("Minecaching has been disabled!");
         }
     }
 
-    public static Minecaching getInstance() {
-        return plugin;
+    public static long getUptimeStart() {
+        return uptimeStart;
     }
 
     @NotNull
@@ -117,6 +138,10 @@ public final class Minecaching extends JavaPlugin implements IRDSPlugin {
     @Override
     public String getVersionString() {
         return version.toString();
+    }
+
+    public static Minecaching getInstance() {
+        return plugin;
     }
 
     public static MinecachingAPI getAPI() {

@@ -17,7 +17,7 @@ public class LogbookCommand extends MCCommand {
         Player plr = (Player) sender;
 
         if (args.length < 1) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.INCORRECT_USAGE);
+            LocalizedMessages.send(sender, MCMessageKeys.INCORRECT_USAGE);
             LocalizedMessages.send(sender, MCMessageKeys.Usage.LOGBOOK, label);
 
             return true;
@@ -33,7 +33,7 @@ public class LogbookCommand extends MCCommand {
         }
 
         if (plr.getInventory().firstEmpty() == -1) {
-            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.LOGBOOK_NO_SLOTS);
+            LocalizedMessages.send(sender, MCMessageKeys.Error.Misc.NO_SLOTS);
         } else plr.getInventory().addItem(new LogbookGenerator(MinecachingAPI.get().getMinecache(id)).getLogbook(bookNum));
         return true;
     }

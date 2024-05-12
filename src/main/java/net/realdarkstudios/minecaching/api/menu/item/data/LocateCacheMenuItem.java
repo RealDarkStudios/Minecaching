@@ -10,6 +10,7 @@ import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -27,14 +28,21 @@ public class LocateCacheMenuItem extends MenuItem {
         // only coordinate support at this time, will add lodestone later
         PlayerDataObject pdo = MinecachingAPI.get().getPlayerData(event.getPlayer());
 
-        LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Command.Locate.COORDS,
-                cache.navLocation().getBlockX(), cache.navLocation().getBlockY(), cache.navLocation().getBlockZ(), "locate");
-        pdo.setLocatingId(cache.id());
+        if (!event.getPlayer().getWorld().equals(cache.world())) {
+            setClickSound(Sound.ENTITY_VILLAGER_TRADE);
+            event.setUpdate(true);
+        } else {
+            LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Command.Locate.COORDS,
+                    cache.navLocation().getBlockX(), cache.navLocation().getBlockY(),
+                    cache.navLocation().getBlockZ(), "locate");
+            pdo.setLocatingId(cache.id());
 
-        StartLocatingMinecacheEvent lEvent = new StartLocatingMinecacheEvent(cache, event.getPlayer(), event.getPlayer().getLocation(), event.getPlayer().getLocation().distance(cache.location()));
-        Bukkit.getPluginManager().callEvent(lEvent);
 
-        event.setClose(true);
+            StartLocatingMinecacheEvent lEvent = new StartLocatingMinecacheEvent(cache, event.getPlayer(), event.getPlayer().getLocation(), event.getPlayer().getLocation().distance(cache.location()));
+            Bukkit.getPluginManager().callEvent(lEvent);
+
+            event.setClose(true);
+        }
 
         super.onItemClick(event);
     }

@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class LogbookDataObject {
     private final String id;
@@ -36,11 +37,15 @@ public class LogbookDataObject {
         return logMap.get(id);
     }
 
-    public List<Log> getLogs() {
+    public List<Log> getAllKnownLogs() {
         return logMap.values().stream().toList();
     }
 
-    public List<Log> getLogsSorted(Comparator<Log> comparator) {
+    public List<Log> getFilteredLogs(Predicate<Log> filter) {
+        return logMap.values().stream().filter(filter).toList();
+    }
+
+    public List<Log> getSortedLogs(Comparator<Log> comparator) {
         return logMap.values().stream().sorted(comparator).toList();
     }
 
@@ -61,11 +66,25 @@ public class LogbookDataObject {
         return log;
     }
 
+    public boolean deleteLog(Log log) {
+        return deleteLog(log.logId());
+    }
+
+    public boolean deleteLog(String id) {
+        try {
+            yaml.set(getLog(id).logId(), null);
+            logMap.remove(id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public void load() {
         yaml = YamlConfiguration.loadConfiguration(file);
         yaml.options().parseComments(true);
 
-        get(id);
+        getLDO(id);
 
         try {
             yaml.load(file);
@@ -86,7 +105,7 @@ public class LogbookDataObject {
         this.logMap = logMap;
     }
 
-    boolean delete() {
+    boolean deleteLDO() {
         File toDelete = file;
         file = new File("");
         return toDelete.delete();
@@ -105,19 +124,19 @@ public class LogbookDataObject {
         }
     }
 
-    public void attemptUpdate() {
+    public void updateData() {
         update();
 
-        get(id);
+        getLDO(id);
 
         saveData();
     }
 
-    public static LogbookDataObject get(Minecache cache) {
-        return get(cache.id());
+    public static LogbookDataObject getLDO(Minecache cache) {
+        return getLDO(cache.id());
     }
 
-    public static LogbookDataObject get(String id) {
+    public static LogbookDataObject getLDO(String id) {
         File logFile = new File(Minecaching.getInstance().getDataFolder() + "/logbook/" + id + ".yml");
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(logFile);
 
@@ -125,7 +144,7 @@ public class LogbookDataObject {
             try {
                 logFile.createNewFile();
             } catch (Exception e) {
-                MinecachingAPI.tWarning(MCMessageKeys.Error.PLUGIN_CREATE_FILE, id + ".yml");
+                MinecachingAPI.tWarning(MCMessageKeys.Error.Misc.CREATE_FILE, id + ".yml");
             }
         } else if (Config.getInstance().getLogbookDataVersion() != MinecachingAPI.LOGBOOK_DATA_VERSION) {
             try {
@@ -136,7 +155,7 @@ public class LogbookDataObject {
                 ldo.saveData();
                 return ldo;
             } catch (Exception e) {
-                MinecachingAPI.tWarning(MCMessageKeys.Error.PLUGIN_UPDATE_FILE, id + ".yml");
+                MinecachingAPI.tWarning(MCMessageKeys.Error.Misc.UPDATE_FILE, id + ".yml");
             }
         }
 

@@ -13,10 +13,7 @@ import net.realdarkstudios.minecaching.api.minecache.Minecache;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStatus;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheStorage;
 import net.realdarkstudios.minecaching.api.minecache.MinecacheType;
-import net.realdarkstudios.minecaching.api.misc.Config;
-import net.realdarkstudios.minecaching.api.misc.MCAutoUpdater;
-import net.realdarkstudios.minecaching.api.misc.Notification;
-import net.realdarkstudios.minecaching.api.misc.NotificationType;
+import net.realdarkstudios.minecaching.api.misc.*;
 import net.realdarkstudios.minecaching.api.player.PlayerDataObject;
 import net.realdarkstudios.minecaching.api.player.PlayerStorage;
 import net.realdarkstudios.minecaching.api.util.MCMessageKeys;
@@ -31,10 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class MinecachingAPI {
@@ -46,7 +40,7 @@ public class MinecachingAPI {
     /**
      * Defines the expected Minecache Data Version
      */
-    public static final int MINECACHE_DATA_VERSION = 5;
+    public static final int MINECACHE_DATA_VERSION = 6;
     /**
      * Defines the expected Player Data Version
      */
@@ -260,7 +254,7 @@ public class MinecachingAPI {
      * @return The list of all Minecaches
      * @since 0.2.0.0
      */
-    public List<Minecache> getAllKnownCaches() {
+    public ArrayList<Minecache> getAllKnownCaches() {
         return cacheStorage.getMinecaches();
     }
 
@@ -269,7 +263,7 @@ public class MinecachingAPI {
      * @return The list of all Minecache IDs
      * @since 0.2.0.0
      */
-    public List<String> getAllKnownCacheIDs() {
+    public ArrayList<String> getAllKnownCacheIDs() {
         return cacheStorage.getIDArray();
     }
 
@@ -278,8 +272,8 @@ public class MinecachingAPI {
      * @return The list of all invalid Minecaches
      * @since 0.2.0.0
      */
-    public List<Minecache> getAllInvalidCaches() {
-        return getAllKnownCaches().stream().filter(m -> m.type().equals(MinecacheType.INVALID)).toList();
+    public ArrayList<Minecache> getAllInvalidCaches() {
+        return new ArrayList<>(getAllKnownCaches().stream().filter(m -> m.type().equals(MinecacheType.INVALID)).toList());
     }
 
     /**
@@ -288,8 +282,8 @@ public class MinecachingAPI {
      * @return The filtered list of Minecaches.
      * @since 0.2.0.0
      */
-    public List<Minecache> getFilteredCaches(Predicate<Minecache> predicate) {
-        return getAllKnownCaches().stream().filter(predicate).toList();
+    public ArrayList<Minecache> getFilteredCaches(Predicate<Minecache> predicate) {
+        return new ArrayList<>(getAllKnownCaches().stream().filter(predicate).toList());
     }
 
     /**
@@ -298,8 +292,8 @@ public class MinecachingAPI {
      * @return The filtered list of Minecache IDs.
      * @since 0.2.0.0
      */
-    public List<String> getFilteredCacheIDs(Predicate<String> predicate) {
-        return getAllKnownCacheIDs().stream().filter(predicate).toList();
+    public ArrayList<String> getFilteredCacheIDs(Predicate<String> predicate) {
+        return new ArrayList<>(getAllKnownCacheIDs().stream().filter(predicate).toList());
     }
 
     /**
@@ -308,8 +302,8 @@ public class MinecachingAPI {
      * @return The sorted list of Minecaches.
      * @since 0.3.0.3
      */
-    public List<Minecache> getSortedCaches(Comparator<Minecache> comparator) {
-        return getAllKnownCaches().stream().sorted(comparator).toList();
+    public ArrayList<Minecache> getSortedCaches(Comparator<Minecache> comparator) {
+        return new ArrayList<>(getAllKnownCaches().stream().sorted(comparator).toList());
     }
 
     /**
@@ -318,8 +312,8 @@ public class MinecachingAPI {
      * @return The sorted list of Minecache IDs.
      * @since 0.3.0.3
      */
-    public List<String> getSortedCacheIDs(Comparator<String> comparator) {
-        return getAllKnownCacheIDs().stream().sorted(comparator).toList();
+    public ArrayList<String> getSortedCacheIDs(Comparator<String> comparator) {
+        return new ArrayList<>(getAllKnownCacheIDs().stream().sorted(comparator).toList());
     }
 
 
@@ -448,7 +442,7 @@ public class MinecachingAPI {
      * @since 0.2.1.0
      */
     public LogbookDataObject getLogbook(String id) {
-        return logbookStorage.getOrCreateLogbook(id);
+        return logbookStorage.getOrCreateLDO(id);
     }
 
     /**
@@ -457,7 +451,7 @@ public class MinecachingAPI {
      * @since 0.2.1.0
      */
     public List<LogbookDataObject> getAllKnownLogbooks() {
-        return logbookStorage.getLogbooks();
+        return logbookStorage.getAllKnownLDOs();
     }
 
     /**
@@ -487,7 +481,7 @@ public class MinecachingAPI {
      * @since 0.2.1.0
      */
     public boolean hasLogbook(String id) {
-        return logbookStorage.hasLogbook(id);
+        return logbookStorage.hasLDO(id);
     }
 
     /**
@@ -517,7 +511,7 @@ public class MinecachingAPI {
      * @since 0.2.1.0
      */
     public boolean deleteLogbook(String id) {
-        return logbookStorage.deleteLogbook(id);
+        return logbookStorage.deleteLDO(id);
     }
 
     /**
@@ -619,7 +613,7 @@ public class MinecachingAPI {
 
             MinecachingAPI.tInfo(MCMessageKeys.Command.Admin.CORRECTED_STATS);
         } catch (Exception e) {
-            MinecachingAPI.tWarning(MCMessageKeys.Error.Misc.MCADMIN_CORRECTING_STATS);
+            MinecachingAPI.tWarning(MCMessageKeys.Error.Misc.CORRECT_STATS);
         }
     }
 
@@ -668,7 +662,7 @@ public class MinecachingAPI {
 
         config.load();
 
-        minecachingLocalization = CommonsAPI.get().registerLocalization(Minecaching.getInstance(), Config.getInstance().getServerLocale());
+        minecachingLocalization = CommonsAPI.get().registerLocalization(Minecaching.getInstance(), Config.getInstance().getServerLocale(), "§8[§6MC§8]§7»§r ");
 
         // Load Message Keys for later use
         MCMessageKeys.init();
@@ -714,6 +708,9 @@ public class MinecachingAPI {
         }
 
         correctStats();
+
+        tInfo(MCMessageKeys.Plugin.LOAD, "Permissions");
+        MCPermissions.init();
     }
 
     /**

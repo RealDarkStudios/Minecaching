@@ -21,6 +21,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -56,7 +57,11 @@ public class CreateCacheSaveMenuItem extends MenuItem {
         } else if (!distanceCheck(cache.location(), cache.navLocation(), Config.getInstance().getMaxLodestoneDistance())) {
             LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Create.NAV_COORDS_TOO_FAR);
         } else {
-            cache.setStatus(MinecacheStatus.REVIEWING).setAuthor(event.getPlayer().getUniqueId()).setBlockType(cache.location().getBlock().getType()).setHidden(LocalDateTime.now()).setFTF(MCUtils.EMPTY_UUID);
+            cache.setStatus(MinecacheStatus.REVIEWING)
+                    .setAuthor(event.getPlayer().getUniqueId())
+                    .setBlockType(cache.location().getBlock().getType())
+                    .setHidden(LocalDateTime.now())
+                    .setFTF(MCUtils.EMPTY_UUID);
 
             MinecacheCreatedEvent cEvent = new MinecacheCreatedEvent(cache, event.getPlayer());
             Bukkit.getPluginManager().callEvent(cEvent);
@@ -92,7 +97,10 @@ public class CreateCacheSaveMenuItem extends MenuItem {
 
     public static boolean cacheDistanceCheck(Location loc) {
         if (MinecachingAPI.get().getAllKnownCaches().isEmpty()) return true;
-        Minecache closestCache = MinecachingAPI.get().getSortedCaches(Comparator.comparingDouble(c -> c.location().distanceSquared(loc))).get(0);
+        ArrayList<Minecache> sameWorldCaches = MinecachingAPI.get().getFilteredCaches(c -> c.world() == loc.getWorld());
+        if (sameWorldCaches.isEmpty()) return true;
+        sameWorldCaches.sort(Comparator.comparingDouble(c -> c.location().distanceSquared(loc)));
+        Minecache closestCache = sameWorldCaches.get(0);
         // Subtract 1 to account for the distance being exactly the minCacheDistance, which in this function would return false because distanceCheck would return true
         return !distanceCheck(closestCache.location(), loc, Config.getInstance().getMinCacheDistance() - 1);
     }

@@ -20,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class LogCreateMenuItem extends MenuItem {
-
     public LogCreateMenuItem(String name, ItemStack item, List<String> lore) {
         super(name, item, lore);
     }
@@ -38,12 +37,12 @@ public class LogCreateMenuItem extends MenuItem {
             if (!logType.equals(LogType.FOUND) || cache.code().equals(pdo.getLogCode())) {
                 if (!logType.equals(LogType.FOUND) || event.getPlayer().getLocation().distance(cache.location()) < 25) {
                     if (!(logType.equals(LogType.NOTE) || logType.equals(LogType.FLAG)) && event.getPlayer().getUniqueId().equals(cache.owner()) || event.getPlayer().getUniqueId().equals(cache.originalAuthor())) {
-                        LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Log.LOG_OWNED_CACHE);
+                        LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Log.LOG_BY_OWNER);
                         return;
                     }
 
                     if ((logType.equals(LogType.FLAG) || logType.equals(LogType.NOTE)) && pdo.getLogMessage().isEmpty()) {
-                        LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Log.NOTE_FLAG_EMPTY);
+                        LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Log.NOTE_OR_FLAG_MSG_EMPTY);
                         return;
                     }
 
@@ -85,10 +84,10 @@ public class LogCreateMenuItem extends MenuItem {
                     pdo.setLogCode("");
                     return;
                 } else {
-                    LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Log.DISTANCE);
+                    LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Log.TOO_FAR);
                 }
             } else {
-                LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Log.CODE);
+                LocalizedMessages.send(event.getPlayer(), MCMessageKeys.Error.Log.INCORRECT_CODE);
                 pdo.setLogCode("");
             }
         } else {
